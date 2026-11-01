@@ -23,7 +23,7 @@ class RoleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('superadmin') ?? false;
+        return auth()->user()?->hasRole('superAdmin') ?? false;
     }
 
     public static function form(Schema $schema): Schema
@@ -37,7 +37,7 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('name')->formatStateUsing(fn (string $state): string => $state === 'superAdmin' ? 'Super Admin' : ucfirst($state))->searchable()->sortable(),
                 TextColumn::make('users_count')->counts('users')->label('Users'),
                 TextColumn::make('created_at')->dateTime()->sortable(),
             ])
@@ -51,9 +51,9 @@ class RoleResource extends Resource
                 EditAction::make()
                     ->modalHeading('Edit role')
                     ->form([TextInput::make('name')->required()->maxLength(125)->unique(ignoreRecord: true)])
-                    ->hidden(fn (Role $record): bool => in_array($record->name, ['superadmin', 'user', 'affiliate', 'associate'], true)),
+                    ->hidden(fn (Role $record): bool => in_array($record->name, ['superAdmin', 'user', 'affiliate', 'associate'], true)),
                 DeleteAction::make()
-                    ->hidden(fn (Role $record): bool => in_array($record->name, ['superadmin', 'user', 'affiliate', 'associate'], true) || $record->users()->exists()),
+                    ->hidden(fn (Role $record): bool => in_array($record->name, ['superAdmin', 'user', 'affiliate', 'associate'], true) || $record->users()->exists()),
             ]);
     }
 
