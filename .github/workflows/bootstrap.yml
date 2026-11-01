@@ -1,0 +1,105 @@
+name: Bootstrap Laravel and Filament
+
+on:
+  push:
+    paths:
+      - '.github/workflows/bootstrap.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: ${{ !contains(github.event.head_commit.message, '[bootstrap-complete]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Set up PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          extensions: mbstring, xml, curl, zip, pdo_mysql, pdo_sqlite, intl, gd, bcmath
+          coverage: none
+      - name: Install Laravel 12
+        run: |
+          composer create-project laravel/laravel:"^12.0" /tmp/wewantyouthere --no-interaction --prefer-dist
+          cp -a /tmp/wewantyouthere/. .
+          rm -rf /tmp/wewantyouthere
+      - name: Install Filament v5
+        run: |
+          composer require filament/filament:"^5.0" -W --no-interaction
+          php artisan filament:install --panels --no-interaction
+      - name: Configure development defaults and superadmin seeder
+        run: |
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env.example
+          sed -i '/^# DB_HOST=/s/^# //' .env.example
+          sed -i '/^# DB_PORT=/s/^# //' .env.example
+          sed -i '/^# DB_DATABASE=/s/^# //' .env.example
+          sed -i '/^# DB_USERNAME=/s/^# //' .env.example
+          sed -i '/^# DB_PASSWORD=/s/^# //' .env.example
+          printf '\nDEV_SUPERADMIN_EMAIL=superadmin@wewantyouthere.com\nDEV_SUPERADMIN_PASSWORD=password\n' >> .env.example
+          cat > database/seeders/DevelopmentSuperadminSeeder.php <<'PHP'
+          <?php
+
+          namespace Database\Seeders;
+
+          use App\Models\User;
+          use Illuminate\Database\Seeder;
+          use Illuminate\Support\Facades\Hash;
+          use RuntimeException;
+
+          class DevelopmentSuperadminSeeder extends Seeder
+          {
+              public function run(): void
+              {
+                  if (! app()->environment('local', 'testing')) {
+                      throw new RuntimeException('Development superadmin seeder may only run locally or in tests.');
+                  }
+
+                  $email = env('DEV_SUPERADMIN_EMAIL', 'superadmin@wewantyouthere.com');
+                  $password = env('DEV_SUPERADMIN_PASSWORD');
+
+                  if (! $password) {
+                      throw new RuntimeException('Set DEV_SUPERADMIN_PASSWORD in .env first.');
+                  }
+
+                  User::updateOrCreate(
+                      ['email' => $email],
+                      ['name' => 'Super Administrator', 'password' => Hash::make($password), 'email_verified_at' => now()]
+                  );
+              }
+          }
+          PHP
+          cat > DEVELOPMENT.md <<'MD'
+          # We Want You There - Development
+
+          Laravel 12, Filament v5, PHP 8.4 and MySQL.
+
+          1. Run `composer install` and `npm install`.
+          2. Copy `.env.example` to `.env` and configure your local MySQL database.
+          3. Run `php artisan key:generate`.
+          4. Run `php artisan migrate`.
+          5. Run `php artisan db:seed --class=DevelopmentSuperadminSeeder`.
+          6. Run `composer run dev`.
+
+          Filament admin panel: `/admin`.
+
+          Development-only account: `superadmin@wewantyouthere.com`. The example environment password is `password`; replace it before sharing any environment. The seeder refuses to run in production. The account is a seeded user; Filament panel authorization and explicit superadmin roles must be implemented before production use. Never commit `.env`.
+          MD
+      - name: Validate application
+        run: |
+          php artisan about
+          php artisan route:list --path=admin
+          php artisan test
+      - name: Commit generated application
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: install Laravel 12 and Filament v5 [bootstrap-complete]"
+          git push origin HEAD:main
