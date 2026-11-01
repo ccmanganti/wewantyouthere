@@ -18,7 +18,7 @@ class AssignInitialSuperadminSeeder extends Seeder
             throw new RuntimeException('Create rsvp@wewantyouthere.com first using php artisan make:filament-user.');
         }
 
-        $user->assignRole('superAdmin');
+        $user->assignRole('Superadmin');
         $user->forceFill(['email_verified_at' => $user->email_verified_at ?? now()])->save();
     }
 }
