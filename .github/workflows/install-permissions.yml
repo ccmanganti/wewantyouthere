@@ -25,6 +25,8 @@ jobs:
           composer require spatie/laravel-permission:"^6.0" -W --no-interaction
           php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="permission-migrations" --no-interaction
           php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="permission-config" --no-interaction
+          cp .env.example .env
+          php artisan key:generate
           php artisan test
       - name: Commit dependencies and migrations
         run: |
