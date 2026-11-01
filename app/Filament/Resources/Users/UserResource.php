@@ -29,7 +29,7 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('superAdmin') ?? false;
+        return auth()->user()?->hasRole('Superadmin') ?? false;
     }
 
     public static function form(Schema $schema): Schema
@@ -48,7 +48,7 @@ class UserResource extends Resource
                 ->helperText('Leave blank when editing to keep the current password.'),
             Select::make('role')
                 ->label('Role')
-                ->options(fn (): array => Role::query()->where('guard_name', 'web')->pluck('name', 'name')->mapWithKeys(fn (string $name, string $key): array => [$key => match ($name) { 'superAdmin' => 'Super Admin', default => ucfirst($name) }])->all())
+                ->options(fn (): array => Role::query()->where('guard_name', 'web')->pluck('name', 'name')->mapWithKeys(fn (string $name, string $key): array => [$key => match ($name) { 'Superadmin' => 'Superadmin', default => ucfirst($name) }])->all())
                 ->required()
                 ->dehydrated(false),
         ];
@@ -62,14 +62,14 @@ class UserResource extends Resource
                 TextColumn::make('email')->searchable()->sortable(),
                 SelectColumn::make('role')
                     ->label('Role (quick edit)')
-                    ->options(fn (): array => Role::query()->where('guard_name', 'web')->pluck('name', 'name')->mapWithKeys(fn (string $name, string $key): array => [$key => match ($name) { 'superAdmin' => 'Super Admin', default => ucfirst($name) }])->all())
+                    ->options(fn (): array => Role::query()->where('guard_name', 'web')->pluck('name', 'name')->mapWithKeys(fn (string $name, string $key): array => [$key => match ($name) { 'Superadmin' => 'Superadmin', default => ucfirst($name) }])->all())
                     ->getStateUsing(fn (User $record): ?string => $record->getRoleNames()->first())
                     ->updateStateUsing(function (User $record, ?string $state): void {
-                        if (! auth()->user()?->hasRole('superAdmin')) {
+                        if (! auth()->user()?->hasRole('Superadmin')) {
                             abort(403);
                         }
 
-                        if ($record->is(auth()->user()) && $state !== 'superAdmin') {
+                        if ($record->is(auth()->user()) && $state !== 'Superadmin') {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'role' => 'You cannot remove your own superadmin access.',
                             ]);
@@ -107,7 +107,7 @@ class UserResource extends Resource
                         $role = $data['role'];
                         unset($data['role']);
 
-                        if ($record->is(auth()->user()) && $role !== 'superAdmin') {
+                        if ($record->is(auth()->user()) && $role !== 'Superadmin') {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'role' => 'You cannot remove your own superadmin access.',
                             ]);
@@ -119,7 +119,7 @@ class UserResource extends Resource
                         return $record;
                     }),
                 DeleteAction::make()
-                    ->hidden(fn (User $record): bool => $record->is(auth()->user()) || $record->hasRole('superAdmin')),
+                    ->hidden(fn (User $record): bool => $record->is(auth()->user()) || $record->hasRole('Superadmin')),
             ])
             ->defaultSort('created_at', 'desc');
     }
