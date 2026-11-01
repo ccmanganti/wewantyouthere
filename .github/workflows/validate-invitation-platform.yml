@@ -1,0 +1,33 @@
+name: Validate invitation platform
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/Filament/Resources/**'
+      - 'app/Models/**'
+      - 'app/Support/**'
+      - 'database/migrations/**'
+      - 'database/seeders/**'
+      - '.github/workflows/validate-invitation-platform.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, curl, zip, pdo_sqlite, intl, gd, bcmath
+      - run: composer install --no-interaction --prefer-dist
+      - run: |
+          find app database -name '*.php' -print0 | xargs -0 -n1 php -l
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          php artisan migrate --force
+          php artisan db:seed --class=EventTypeQuestionSeeder --force
+          php artisan route:list --path=admin
+          php artisan filament:cache-components
