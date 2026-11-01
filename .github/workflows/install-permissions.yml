@@ -1,0 +1,35 @@
+name: Install Spatie Permissions
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-permissions.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: ${{ !contains(github.event.head_commit.message, '[permissions-installed]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          extensions: mbstring, xml, curl, zip, pdo_mysql, pdo_sqlite, intl, gd, bcmath
+      - name: Install Spatie Laravel Permission
+        run: |
+          composer require spatie/laravel-permission:"^6.0" -W --no-interaction
+          php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="permission-migrations" --no-interaction
+          php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="permission-config" --no-interaction
+          php artisan test
+      - name: Commit dependencies and migrations
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add composer.json composer.lock config database/migrations
+          git commit -m "feat: install Spatie permissions and migrations [permissions-installed]"
+          git push origin HEAD:main
