@@ -37,7 +37,7 @@
         body.builder-page > main{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
         body.builder-page .topbar{height:65px;flex:none}
         body.builder-page .foot{display:none}
-        body.builder-page .nav .hide-mobile{display:none}
+        body.builder-page .nav{display:none}
     </style>
     @stack('styles')
 </head>
@@ -51,7 +51,7 @@
             <form action="{{ route('wedding.logout') }}" method="POST">@csrf<button class="btn btn-outline" type="submit">Log out</button></form>
         @else
             <a class="hide-mobile" href="{{ route('login') }}">Log in</a>
-            <a class="btn" href="{{ route('wedding.register') }}">Get started</a>
+            <a class="btn" href="{{ route('home') }}#templates">Create invitation</a>
         @endauth
     </nav>
 </div></header>
