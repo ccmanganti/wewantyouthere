@@ -1,3 +1,5 @@
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <style>
 :root {
     --wwyt-cotton: #EDEBDD;
@@ -185,4 +187,12 @@ body:has(.wwyt-auth-global-nav) .wwyt-auth-home-link{display:none}
 .fi-sidebar-header .wwyt-dynamic-brand .wwyt-logo-light,.fi-simple-header .wwyt-dynamic-brand .wwyt-logo-light{display:none}
 .fi-sidebar-header .wwyt-dynamic-brand .wwyt-logo-color,.fi-simple-header .wwyt-dynamic-brand .wwyt-logo-color{display:block}
 
+
+/* Strong font icons on customer surfaces replace thin decorative arrows. */
+.wwyt-panel-topnav .fa-solid,.wwyt-sidebar-footer .fa-solid,.wwyt-dashboard .fa-solid,.wwyt-auth-global-nav .fa-solid{font-size:1em;line-height:1}
+.wwyt-dashboard .wwyt-dash-quick .arrow i{font-size:12px;color:#810100}
+.wwyt-google-icon{font-size:20px;background:linear-gradient(45deg,#4285F4 0 35%,#34A853 35% 53%,#FBBC05 53% 68%,#EA4335 68%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fi-sidebar-item .fi-sidebar-item-icon{width:20px;height:20px}
+.fi-sidebar-item .fi-sidebar-item-icon svg{stroke-width:2.5}
+@media(prefers-reduced-motion:reduce){.wwyt-sidebar-footer .fa-solid,.wwyt-dashboard .fa-solid{transition:none}}
 </style>
