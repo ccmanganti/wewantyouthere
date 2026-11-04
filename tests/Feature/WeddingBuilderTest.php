@@ -107,7 +107,7 @@ class WeddingBuilderTest extends TestCase
             ->assertSee('Choose sections')
             ->assertSee('Step 01')
             ->assertSee('Publish free invitation')
-            ->assertSee('coming soon', false);
+            ->assertSee('Coming soon');
 
         $this->assertGuest();
     }
