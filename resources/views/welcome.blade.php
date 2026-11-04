@@ -234,6 +234,6 @@
 </script>
 @endif
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"We Want You There","url":"https://wewantyouthere.com","applicationCategory":"LifestyleApplication","description":"A free wedding invitation website builder with templates, a guided questionnaire, and live previews.","offers":{"@type":"Offer","price":"0","priceCurrency":"PHP"}}
+{"@@context":"https://schema.org","@type":"WebApplication","name":"We Want You There","url":"https://wewantyouthere.com","applicationCategory":"LifestyleApplication","description":"A free wedding invitation website builder with templates, a guided questionnaire, and live previews.","offers":{"@type":"Offer","price":"0","priceCurrency":"PHP"}}
 </script>
 @endpush
