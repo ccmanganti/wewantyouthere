@@ -57,6 +57,21 @@ class BrandingExperienceTest extends TestCase
             ->assertSee('Back to home');
     }
 
+    public function test_login_keeps_google_signin_and_nav_with_compact_form_header(): void
+    {
+        $this->get('/app/login')->assertOk()
+            ->assertSee('wwyt-auth-intro--login')
+            ->assertSee('YOUR INVITATION WORKSPACE')
+            ->assertSee('OR CONTINUE WITH EMAIL')
+            ->assertDontSee('Your celebration continues here.');
+
+        $styles = file_get_contents(resource_path('views/filament/customer/brand.blade.php'));
+
+        $this->assertStringContainsString('max-width:445px!important', $styles);
+        $this->assertStringContainsString('padding:83px 24px 14px 48%!important', $styles);
+        $this->assertStringContainsString('body:has(.wwyt-auth-intro--login)', $styles);
+    }
+
     public function test_customer_workspace_includes_home_link_and_branded_cards(): void
     {
         $user = User::create([
