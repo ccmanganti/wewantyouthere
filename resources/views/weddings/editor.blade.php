@@ -55,13 +55,17 @@
         </button>
         @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
         <span class="wizard-arrow" aria-hidden="true">›</span>
+        <button type="button" class="wizard-step" data-step-navigation="refine" disabled>
+            <span class="step-dot">3</span> Preview & refine
+        </button>
+        <span class="wizard-arrow" aria-hidden="true">›</span>
         <button type="button" class="wizard-step" data-step-navigation="photos" disabled>
-            <span class="step-dot">3</span> Add your photos
+            <span class="step-dot">4</span> Add your photos
         </button>
         @endif
         <span class="wizard-arrow" aria-hidden="true">›</span>
         <button type="button" class="wizard-step" data-step-navigation="publish" disabled>
-            <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 4 : 3 }}</span> Review & publish
+            <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> Publish
         </button>
     </nav>
 
@@ -76,7 +80,7 @@
         <div class="editor-pane" aria-label="Invitation editor">
             <section class="editor-stage is-active" data-stage="sections" aria-labelledby="section-stage-title">
                 <div class="stage-top">
-                    <span class="stage-kicker">Step 01 / 03 · Make it personal</span>
+                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '01 / 05' : '01 / 03' }} · Make it personal</span>
                     <h1 id="section-stage-title">What would you like to include?</h1>
                     <p>Select the sections that belong in your wedding invitation. You can change this later without losing what you've typed.</p>
                 </div>
@@ -168,12 +172,13 @@
             </section>
 
             @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+                @include('weddings.partials.royal-preview-refine-stage')
                 @include('weddings.partials.photo-builder-stage')
             @endif
 
             <section class="editor-stage" data-stage="publish" aria-labelledby="publish-stage-title">
                 <div class="stage-top">
-                    <span class="stage-kicker">Step 03 / 03 · Almost there</span>
+                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '05 / 05' : '03 / 03' }} · Almost there</span>
                     <h2 id="publish-stage-title">It's ready to share.</h2>
                     <p>Review your invitation, compare free and premium features, then publish your free website. No payment required.</p>
                 </div>
