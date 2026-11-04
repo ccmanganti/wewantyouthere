@@ -21,7 +21,7 @@
         <button class="btn btn-outline" type="button" onclick="navigator.clipboard?.writeText(location.href).then(()=>this.textContent='Link copied!').catch(()=>window.prompt('Copy link',location.href))">Share invitation →</button>
     </div>
     <div class="public-invite">
-        @include('weddings.partials.invitation', ['answers' => $answers, 'sections' => $sections, 'isPreview' => false])
+        @include('weddings.partials.invitation', ['answers' => $answers, 'sections' => $sections, 'questions' => $questions, 'isPreview' => false])
     </div>
 </div>
 @endsection
