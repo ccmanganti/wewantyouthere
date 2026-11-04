@@ -214,6 +214,24 @@ class CustomerWorkspaceTest extends TestCase
         $this->assertTrue(InvitationAccounts::canCreateWebsite($user));
     }
 
+    public function test_owner_can_delete_an_invitation_through_the_filament_modal_and_free_the_slot(): void
+    {
+        $owner = $this->user('delete@example.test');
+        $site = $this->website($owner, 'to-be-deleted');
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel(Filament::getPanel('app'));
+
+        Livewire::test(ListInvitations::class)
+            ->assertSuccessful()
+            ->callAction(TestAction::make('delete')->table($site))
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseMissing('invitation_websites', ['id' => $site->id]);
+        $this->assertTrue(InvitationAccounts::canCreateWebsite($owner));
+        $this->get('/i/to-be-deleted')->assertNotFound();
+    }
+
     public function test_changing_a_custom_uri_preserves_the_old_share_link_and_qr_destination(): void
     {
         $owner = $this->user('rename@example.test');
