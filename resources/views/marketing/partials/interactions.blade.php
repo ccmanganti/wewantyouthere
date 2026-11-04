@@ -27,6 +27,18 @@
         } catch (error) { /* Storage can be blocked, or the draft can be invalid. */ }
     });
 
+    // Stroke drawing is intersection-triggered, never a per-frame scroll handler.
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const lineObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-drawn');
+            lineObserver.unobserve(entry.target);
+        }), {threshold:0.16});
+        root.querySelectorAll('.mkt-line-reveal').forEach(el => lineObserver.observe(el));
+    } else {
+        root.querySelectorAll('.mkt-line-reveal').forEach(el => el.classList.add('is-drawn'));
+    }
+
     const dialog = root.querySelector('[data-template-dialog]');
     const frame = root.querySelector('[data-dialog-frame]');
     let opener = null;
