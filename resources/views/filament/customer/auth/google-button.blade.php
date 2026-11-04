@@ -1,19 +1,18 @@
-<div class="wwyt-auth-intro">
+@php($isRegistering = request()->is('app/register'))
+<div class="wwyt-auth-intro {{ $isRegistering ? 'wwyt-auth-intro--register' : 'wwyt-auth-intro--login' }}">
     <div class="wwyt-auth-top">
-        <span class="wwyt-auth-mini-label">WE WANT YOU THERE <span>✦</span> YOUR CELEBRATION HUB</span>
-        <a href="{{ route('home') }}" class="wwyt-auth-home-link">← Back to home</a>
+        <img class="wwyt-login-seal" src="{{ asset('brand/wwyt/seal-3d.png') }}"
+            alt="" width="38" height="38">
+        <span class="wwyt-auth-mini-label">YOUR INVITATION WORKSPACE</span>
+        <a href="{{ route('home') }}" class="wwyt-auth-home-link">Back to home</a>
     </div>
 
-    <img class="wwyt-login-seal" src="{{ asset('brand/wwyt/seal-3d.png') }}" alt="We Want You There wax seal" width="70" height="70">
-
-    <h2 class="wwyt-auth-tagline">
-        {{ request()->is('app/register') ? 'A beautiful beginning.' : 'Your celebration continues here.' }}
-    </h2>
-    <p class="wwyt-auth-text">
-        {{ request()->is('app/register')
-            ? 'Create your free account to save, publish and manage a wedding invitation website worth sharing.'
-            : 'Sign in to manage your invitation website, update details and share every meaningful moment.' }}
-    </p>
+    @if($isRegistering)
+        <h2 class="wwyt-auth-tagline">A beautiful beginning.</h2>
+        <p class="wwyt-auth-text">Create your free account to publish and manage your wedding invitation.</p>
+    @else
+        <p class="wwyt-auth-text">Manage your invitations, update details and keep every moment together.</p>
+    @endif
 
     @if($errors->has('google'))
         <div class="wwyt-auth-error" role="alert">{{ $errors->first('google') }}</div>
