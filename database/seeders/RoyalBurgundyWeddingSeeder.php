@@ -43,7 +43,7 @@ class RoyalBurgundyWeddingSeeder extends Seeder
             $order += 10;
         }
 
-        InvitationTemplate::firstOrCreate(['slug' => 'royal-burgundy-wedding'], [
+        $template = InvitationTemplate::firstOrCreate(['slug' => 'royal-burgundy-wedding'], [
             'event_type_id' => $event->id,
             'name' => 'Royal Burgundy · The Grand Wedding',
             'status' => 'published',
@@ -54,8 +54,20 @@ class RoyalBurgundyWeddingSeeder extends Seeder
                 'view' => 'weddings.themes.royal-burgundy',
                 'theme' => 'royal_burgundy',
                 'photo_slots' => array_keys(config('wedding_photos', [])),
-                'description' => 'Editorial burgundy, candlelit gold, and ivory. A complete wedding website featuring love story, entourage, program, venue, photos and RSVP details.',
+                'description' => 'A stationery-inspired wedding website with elegant cream pages, burgundy panels, real envelope opening, wedding calendar, artistic venue sections and interactive photo uploads.',
             ],
         ]);
+
+        // Do not reset administrators' customizations or publication state.
+        // Upgrade only the architectural fields needed by the new renderer.
+        $settings = $template->settings ?? [];
+        $settings['renderer'] = 'builtin_wedding';
+        $settings['theme'] = 'royal_burgundy';
+        $settings['view'] = 'weddings.themes.royal-burgundy';
+        $settings['photo_slots'] = array_keys(config('wedding_photos', []));
+        $template->forceFill([
+            'settings' => $settings,
+            'version' => max((int) $template->version, 2),
+        ])->save();
     }
 }
