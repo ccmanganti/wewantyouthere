@@ -10,7 +10,8 @@
     body.invitation-page{background:#fbf8f1}
     body.invitation-page .topbar,body.invitation-page .foot{display:none}
     body.invitation-page>main{display:block;width:100%;margin:0;padding:0}
-    body.invitation-page .wrap:has(.alert){max-width:none;background:#f6f4e9}
+    body.invitation-page>.wrap:has(.alert){position:fixed;top:15px;left:50%;transform:translateX(-50%);z-index:60;max-width:560px;width:calc(100% - 30px)}
+    body.invitation-page>.wrap .alert{box-shadow:0 8px 28px #1e2a1e36;margin:0}
     .public-wedding{width:100%;min-height:100svh;margin:0}
     .public-wedding .wedding-invite{width:100%}
     .invite-share{position:fixed;right:24px;bottom:24px;z-index:50;font:14px 'DM Sans',Arial,sans-serif}
