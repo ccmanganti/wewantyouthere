@@ -40,6 +40,7 @@
         body.builder-page .nav{display:none}
     </style>
     @stack('styles')
+    @include('partials.site-brand-overrides')
 </head>
 <body class="@yield('body_class')">
 <header class="topbar"><div class="wrap topbar-inner">
@@ -48,9 +49,10 @@
         <a class="hide-mobile" href="{{ route('home') }}#templates">Templates</a>
         <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
         @auth
-            <form action="{{ route('wedding.logout') }}" method="POST">@csrf<button class="btn btn-outline" type="submit">Log out</button></form>
+            <a class="hide-mobile" href="{{ url('/app/invitations') }}">My invitations</a>
+            <a class="btn" href="{{ url('/app') }}">My dashboard</a>
         @else
-            <a class="hide-mobile" href="{{ route('login') }}">Log in</a>
+            <a class="hide-mobile" href="{{ url('/app/login') }}">Log in</a>
             <a class="btn" href="{{ route('home') }}#templates">Create invitation</a>
         @endauth
     </nav>
