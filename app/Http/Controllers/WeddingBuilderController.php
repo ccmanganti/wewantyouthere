@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class WeddingBuilderController extends Controller
@@ -54,6 +58,46 @@ class WeddingBuilderController extends Controller
         return view('weddings.editor', compact('template', 'groups', 'draft', 'questions'));
     }
 
+    /**
+     * Public availability check for a couple's preferred invitation URL.
+     * The database unique index and publish validation are authoritative.
+     */
+    public function slugAvailability(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'slug' => ['required', 'string', 'min:3', 'max:72', 'regex:/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/D'],
+        ]);
+
+        return response()->json([
+            'available' => ! InvitationWebsite::query()->where('slug', $data['slug'])->exists(),
+        ]);
+    }
+
+    public function qrCode(Request $request, string $slug): Response
+    {
+        $website = InvitationWebsite::query()->where('slug', $slug)
+            ->where('status', 'published')->firstOrFail();
+
+        // Use the configured application URL rather than an untrusted Host header.
+        $link = rtrim(config('app.url'), '/') . '/i/' . rawurlencode($website->slug);
+        $svg = (new QRCode(new QROptions([
+            'outputBase64' => false,
+            'addQuietzone' => true,
+            'quietzoneSize' => 4,
+            'drawLightModules' => true,
+            'scale' => 10,
+        ])))->render($link);
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml; charset=UTF-8',
+            'Content-Disposition' => ($request->boolean('download') ? 'attachment' : 'inline')
+                . '; filename="' . $website->slug . '-qr.svg"',
+            'Cache-Control' => 'public, max-age=3600',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Robots-Tag' => 'noindex',
+        ]);
+    }
+
     public function publish(Request $request, string $slug): RedirectResponse
     {
         $template = InvitationTemplate::query()
@@ -61,7 +105,8 @@ class WeddingBuilderController extends Controller
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->firstOrFail();
 
-        $request->validate([
+        $base = $request->validate([
+            'slug' => ['nullable', 'string', 'min:3', 'max:72', 'regex:/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/D', Rule::unique('invitation_websites', 'slug')],
             'answers' => ['required', 'array'],
             'sections' => ['nullable', 'array'],
             'sections.*' => ['nullable', Rule::in(['0', '1', 0, 1])],
@@ -98,6 +143,7 @@ class WeddingBuilderController extends Controller
         $answers = array_filter($validated['answers'] ?? [], fn ($value) => $value !== null && $value !== '');
         $pending = [
             'template_id' => $template->id,
+            'slug' => $base['slug'] ?? null,
             'answers' => $answers,
             'sections' => $sections,
         ];
@@ -143,7 +189,14 @@ class WeddingBuilderController extends Controller
         $names = collect([$pending['answers']['bride_name'] ?? '', $pending['answers']['groom_name'] ?? ''])
             ->filter()->implode(' & ');
         $title = $names !== '' ? $names . ' — Wedding Invitation' : 'Our Wedding Invitation';
-        $slug = Str::slug(($names ?: 'our-wedding')) . '-' . Str::lower(Str::random(8));
+        $requestedSlug = $pending['slug'] ?? null;
+
+        if ($requestedSlug && InvitationWebsite::query()->where('slug', $requestedSlug)->exists()) {
+            return redirect()->route('wedding.editor', $template->slug)
+                ->withErrors(['slug' => 'This invitation link was taken while you signed up. Please choose a different link.']);
+        }
+
+        $slug = $requestedSlug ?: Str::slug(($names ?: 'our-wedding')) . '-' . Str::lower(Str::random(8));
 
         $website = InvitationWebsite::create([
             'user_id' => $request->user()->id,
