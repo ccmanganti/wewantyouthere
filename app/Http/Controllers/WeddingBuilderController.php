@@ -332,7 +332,8 @@ class WeddingBuilderController extends Controller
         $photoUrls = [];
         foreach ($website->media ?? [] as $slot => $photo) {
             if (array_key_exists($slot, config('wedding_photos', []))) {
-                $photoUrls[$slot] = route('wedding.photos.site', ['slug' => $website->slug, 'slot' => $slot]);
+                $photoUrls[$slot] = route('wedding.photos.site', ['slug' => $website->slug, 'slot' => $slot])
+                    . '?v=' . rawurlencode(basename($photo['path'] ?? '0'));
             }
         }
 
