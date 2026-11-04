@@ -57,7 +57,7 @@ class WeddingBuilderController extends Controller
     public function publish(Request $request, string $slug): RedirectResponse
     {
         $template = InvitationTemplate::query()
-            ->where('slug', $slug)->where('status', 'published')
+            ->where('slug', $slug)->where('status', 'published')->where('is_premium', false)
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->firstOrFail();
 
@@ -121,7 +121,7 @@ class WeddingBuilderController extends Controller
 
         $template = InvitationTemplate::query()
             ->whereKey($pending['template_id'])
-            ->where('status', 'published')
+            ->where('status', 'published')->where('is_premium', false)
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding'))
             ->firstOrFail();
 
