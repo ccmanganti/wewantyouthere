@@ -40,6 +40,14 @@
     .share-actions .share-primary{background:#405c46;color:#fff;border:1px solid #405c46}
     .share-actions .share-secondary{background:#fff;color:#405c46;border:1px solid #b6c4b6}
     @media(max-width:650px){.invite-share{bottom:13px;right:13px}.invite-share summary{padding:13px 17px}}
+    @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+    body.invitation-page:has(.rb-invite) .invite-share summary{background:#650d16;border-color:#bd8768;color:#fff1de}
+    body.invitation-page:has(.rb-invite) .invite-share summary:hover{background:#7c1822}
+    body.invitation-page:has(.rb-invite) .invite-share-panel{background:#fbf3e5;border-color:#d4b18c;color:#5d2528}
+    body.invitation-page:has(.rb-invite) .invite-share-panel h2{color:#721c28}
+    body.invitation-page:has(.rb-invite) .share-primary{background:#650d16;border-color:#650d16}
+    body.invitation-page:has(.rb-invite) .share-secondary{color:#650d16;border-color:#c9a79b}
+    @endif
     @media print{.invite-share{display:none!important}body.invitation-page .wedding-invite .invite-site-nav{display:none}}
 </style>
 @endpush
