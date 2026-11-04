@@ -33,11 +33,17 @@ class WeddingBuilderController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('welcome', compact('templates'));
+        $canCreate = ! Auth::check() || InvitationAccounts::canCreateWebsite(Auth::user());
+
+        return view('welcome', compact('templates', 'canCreate'));
     }
 
-    public function editor(string $slug): View
+    public function editor(string $slug): View | RedirectResponse
     {
+        if (Auth::check() && ! InvitationAccounts::canCreateWebsite(Auth::user())) {
+            return redirect('/app/invitations')->with('status', 'Your free plan already has one invitation. You can edit or delete it from My Invitations.');
+        }
+
         $template = InvitationTemplate::query()
             ->where('slug', $slug)
             ->where('status', 'published')
