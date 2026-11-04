@@ -39,6 +39,7 @@
                 <div class="mkt-hero-orb" aria-hidden="true"></div>
                 <div class="mkt-floating-words" aria-hidden="true">YOU'RE INVITED</div>
                 <div class="mkt-pulse" aria-hidden="true"></div>
+                <img class="mkt-hero-brandseal" src="{{ asset('branding/wwyt-icon-3d.svg') }}" width="115" height="115" alt="" aria-hidden="true">
                 <div class="mkt-mock-screen">
                     <div class="mkt-mock-browser">
                         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -98,6 +99,9 @@
                 <article class="mkt-step mkt-reveal"><div class="number">02</div><h3>Tell us your details</h3><p>Choose the sections you need, add names, entourage, ninong and ninang, schedule, venues, dress code and more. See changes live.</p></article>
                 <article class="mkt-step mkt-reveal"><div class="number">03</div><h3>Publish and share</h3><p>Create a free account, choose a personalized website URL and get a shareable invitation link with its own downloadable QR code.</p></article>
             </div>
+            <svg class="mkt-journey-line mkt-line-reveal" viewBox="0 0 1000 48" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+                <path d="M10 24 C235 -7 280 57 502 24 S766 -8 990 24" fill="none" stroke="#BA9871" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="7 10"/>
+            </svg>
         </div>
     </section>
 
