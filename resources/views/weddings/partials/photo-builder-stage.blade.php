@@ -1,6 +1,6 @@
 <section class="editor-stage" data-stage="photos" aria-labelledby="photo-stage-title">
     <div class="stage-top photo-stage-head">
-        <span class="stage-kicker">Step 03 / 04 · Make it yours</span>
+        <span class="stage-kicker">Step 04 / 05 · Your images</span>
         <h2 id="photo-stage-title">Add your beautiful moments.</h2>
         <p>Select a photo placement below. The live website preview will scroll to that area and highlight it. Upload or replace photos without leaving the builder.</p>
     </div>
@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="stage-footer">
-        <button type="button" class="back-btn" id="photos-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to details</button>
-        <button type="button" class="btn" id="photos-next">Review invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="back-btn" id="photos-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to preview</button>
+        <button type="button" class="btn" id="photos-next">Continue to publish <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </div>
 </section>
