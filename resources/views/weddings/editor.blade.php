@@ -191,7 +191,8 @@
                             <h3>Free invitation</h3>
                             <div class="plan-price">₱0</div>
                             <ul>
-                                <li>Shareable website link</li>
+                                <li>Custom shareable website link</li>
+                                <li>Downloadable invitation QR code</li>
                                 <li>Wedding details & entourage</li>
                                 <li>Venue & event program</li>
                                 <li>Mobile-friendly invitation</li>
@@ -203,7 +204,7 @@
                             <h3>Premium invitation</h3>
                             <div class="plan-price">Pricing later</div>
                             <ul>
-                                <li>QR and guest-specific links</li>
+                                <li>Guest-specific QR codes & personalized links</li>
                                 <li>Maps and enhanced directions</li>
                                 <li>RSVP dashboard & email alerts</li>
                                 <li>Excel exports and extra editing</li>
