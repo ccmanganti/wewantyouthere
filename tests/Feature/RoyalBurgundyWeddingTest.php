@@ -55,6 +55,9 @@ class RoyalBurgundyWeddingTest extends TestCase
         $this->assertSame('published', $this->royal()->status);
         $this->assertSame('builtin_wedding', $this->royal()->settings['renderer']);
         $this->assertSame('royal_burgundy', $this->royal()->settings['theme']);
+        $this->assertSame(2, $this->royal()->version);
+        $this->assertContains('venue_ceremony', $this->royal()->settings['photo_slots']);
+        $this->assertContains('venue_reception', $this->royal()->settings['photo_slots']);
 
         $question = EventQuestion::where('event_type_id', EventType::where('slug', 'wedding')->firstOrFail()->id)
             ->where('key','love_story_proposal')->firstOrFail();
@@ -77,15 +80,23 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('rb-invite')
             ->assertSee('Our <em>love story</em>', false)
             ->assertSee('rb-story')
+            ->assertSee('envelope-front.webp')
+            ->assertSee('dress-swatches.webp')
+            ->assertSee('rb-calendar')
             ->assertSee('wedding-entourage')
             ->assertSee('wedding-guests');
 
         $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
-            ->assertSee('Step 03 / 04')
+            ->assertSee('Step 04 / 05')
             ->assertSee('Add your beautiful moments')
             ->assertSee('data-photo-slot="hero"', false)
             ->assertSee('data-photo-locate="hero"', false)
-            ->assertSee('data-photo-edit="hero"', false);
+            ->assertSee('data-photo-edit="hero"', false)
+            ->assertSee('data-step-navigation="refine"', false)
+            ->assertSee('data-step-navigation="photos"', false)
+            ->assertSee('data-photo-slot="venue_ceremony"', false)
+            ->assertSee('data-photo-slot="venue_reception"', false)
+            ->assertSee('replay-envelope-intro', false);
     }
 
     public function test_anonymous_photo_upload_can_be_previewed_then_published_after_registration(): void
@@ -125,6 +136,17 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertHeader('Content-Type','image/jpeg');
 
         $this->get('/templates/wedding/royal-burgundy-wedding/photos/hero')->assertNotFound();
+    }
+
+    public function test_venue_photos_are_uploadable_into_the_late_photo_step(): void
+    {
+        $this->postJson('/templates/wedding/royal-burgundy-wedding/photos', [
+            'slot' => 'venue_ceremony',
+            'photo' => UploadedFile::fake()->image('chapel.jpg', 1000, 700),
+        ])->assertOk()->assertJsonPath('slot', 'venue_ceremony');
+
+        $this->get('/templates/wedding/royal-burgundy-wedding/photos/venue_ceremony')
+            ->assertOk()->assertHeader('Content-Type', 'image/jpeg');
     }
 
     public function test_unsupported_file_types_and_unknown_image_slots_are_rejected(): void
