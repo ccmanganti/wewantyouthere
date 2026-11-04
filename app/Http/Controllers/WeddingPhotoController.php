@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InvitationTemplate;
 use App\Models\InvitationWebsite;
+use App\Support\InvitationAccounts;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class WeddingPhotoController extends Controller
     public function upload(Request $request, string $slug): JsonResponse
     {
         $template = $this->template($slug);
+        abort_if($request->user() && ! InvitationAccounts::canCreateWebsite($request->user()), 403);
         $this->validatePhoto($request);
         $slot = $request->string('slot')->toString();
         $file = $request->file('photo');
@@ -56,7 +58,7 @@ class WeddingPhotoController extends Controller
         $existing = $request->session()->get($key, []);
         $relative = 'wedding-drafts/' . hash('sha256', $request->session()->getId())
             . '/' . $template->id . '/' . Str::random(36) . '.' . $extension;
-        Storage::disk('local')->put($relative, fopen($file->getRealPath(), 'rb'));
+        abort_unless(Storage::disk('local')->putFileAs(dirname($relative), $file, basename($relative)), 503);
         if (isset($existing[$slot]['path'])) {
             Storage::disk('local')->delete($existing[$slot]['path']);
         }
@@ -99,10 +101,12 @@ class WeddingPhotoController extends Controller
     public function publicPhoto(string $slug, string $slot): Response
     {
         $this->validSlot($slot);
-        $website = InvitationWebsite::query()->where('slug', $slug)
-            ->where('status', 'published')->firstOrFail();
+        $website = InvitationWebsite::query()->where('slug', $slug)->firstOrFail();
+        abort_unless($website->status === 'published'
+            || (auth()->check() && (int) auth()->id() === (int) $website->user_id), 404);
         $entry = ($website->media ?? [])[$slot] ?? null;
         abort_unless(is_array($entry) && isset($entry['path'], $entry['mime'])
+            && str_starts_with($entry['path'], 'wedding-sites/' . $website->id . '/')
             && Storage::disk('local')->exists($entry['path']), 404);
 
         return $this->privateImage($entry, true);
@@ -131,7 +135,7 @@ class WeddingPhotoController extends Controller
         $manifest = $website->media ?? [];
         $old = $manifest[$slot]['path'] ?? null;
         $path = 'wedding-sites/' . $website->id . '/' . $slot . '-' . Str::random(10) . '.' . $extension;
-        Storage::disk('local')->put($path, fopen($file->getRealPath(), 'rb'));
+        abort_unless(Storage::disk('local')->putFileAs(dirname($path), $file, basename($path)), 503);
         $manifest[$slot] = ['path' => $path, 'mime' => $mime];
         $website->update(['media' => $manifest]);
         if ($old) Storage::disk('local')->delete($old);
