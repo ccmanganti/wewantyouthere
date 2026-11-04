@@ -245,4 +245,15 @@ filter:blur(9px)}
 @media(max-width:680px){.mkt .mkt-hero-brandseal{right:1%;top:7%;width:84px}.mkt .mkt-journey-line{height:28px}}
 @media(prefers-reduced-motion:reduce){.mkt .mkt-section-head:after{transform:scaleX(1)!important;transition:none!important}.mkt .mkt-journey-line path{stroke-dashoffset:0!important;transition:none!important}}
 
+
+/* Burgundy wedding card distinguishes the new full-site design from Ever After. */
+.mkt .mkt-template-royal .mkt-template-cover{
+    background:radial-gradient(circle at 50% 15%,#aa4a43 0%,#660c14 46%,#22080f 100%);
+}
+.mkt .mkt-template-royal .mini-poster{
+    background:linear-gradient(135deg,#4c0710,#850c19 55%,#3c070e);
+    border:1px solid #f2cf8d71;color:#ffe1a6;
+}
+.mkt .mkt-template-royal .mini-poster .couple{font-family:Georgia,serif;font-style:italic;color:#ffe2ab}
+.mkt .mkt-template-royal .mini-poster .date{color:#fff4dc}
 </style>
