@@ -1,0 +1,80 @@
+name: Build Royal Burgundy Raster Artwork
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-royal-burgundy-assets.yml'
+      - 'scripts/generate_royal_burgundy_assets.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: royal-burgundy-raster-assets
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image library
+        run: python -m pip install pillow==11.3.0
+
+      - name: Generate real WebP images
+        run: python scripts/generate_royal_burgundy_assets.py
+
+      - name: Validate generated assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          root=Path('public/wedding/royal-burgundy')
+          expected=[
+              'paper-texture.webp','grand-doors.webp','botanical-engraving.webp',
+              'dress-swatches.webp','envelope-back.webp','envelope-front.webp',
+              'envelope-flap.webp','envelope-letter.webp','wax-seal.webp',
+          ]
+          for name in expected:
+              path=root/name
+              assert path.exists(), f'Missing asset: {name}'
+              with Image.open(path) as image:
+                  assert image.format=='WEBP', f'Not WebP: {name}'
+                  assert image.width >= 200, f'Too small: {name}'
+                  assert path.stat().st_size < 850_000, f'Asset too large: {name}'
+              print(name, path.stat().st_size, 'bytes')
+          PY
+
+      - name: Commit optimized graphics to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/wedding/royal-burgundy/
+          if git diff --cached --quiet; then
+            echo "Artwork unchanged"
+            exit 0
+          fi
+          git commit -m "assets: add original Royal Burgundy WebP stationery graphics"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo "Graphics committed and pushed"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Unable to push generated assets"
+          exit 1
