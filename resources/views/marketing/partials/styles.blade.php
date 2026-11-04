@@ -173,8 +173,8 @@ filter:blur(9px)}
 .mkt .mkt-empty h3{font:29px 'DM Serif Display',serif}
 .mkt .mkt-empty p{color:#77655f}
 @media(prefers-reduced-motion:no-preference){
-  .mkt .mkt-reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease, transform .7s ease}
-  .mkt .mkt-reveal.is-revealed{opacity:1;transform:translateY(0)}
+  .js-motion .mkt .mkt-reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease, transform .7s ease}
+  .js-motion .mkt .mkt-reveal.is-revealed{opacity:1;transform:translateY(0)}
   .mkt .mkt-mock-screen{animation:mkt-bob 7s ease-in-out infinite}
   .mkt .mkt-float-tag.one{animation:mkt-float1 6s ease-in-out infinite}
   .mkt .mkt-float-tag.two{animation:mkt-float2 8s ease-in-out infinite}
