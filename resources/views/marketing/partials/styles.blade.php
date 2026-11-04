@@ -1,6 +1,7 @@
 <style>
 :root{--mkt-ink:#1B1717;--mkt-red:#810100;--mkt-darkred:#630000;--mkt-cotton:#EDEBDD;--mkt-gold:#B89B72;--mkt-muted:#625856}
 body.marketing-v2{background:#EDEBDD;color:#1B1717;overflow-x:hidden}
+.mkt [hidden]{display:none!important}
 body.marketing-v2 .topbar{height:80px;background:#1B1717;border-color:#3b2425;position:sticky;top:0;z-index:90;backdrop-filter:blur(16px)}
 body.marketing-v2 .topbar .nav a{color:#EDEBDD}
 body.marketing-v2 .topbar .nav a:hover{color:#fff}
