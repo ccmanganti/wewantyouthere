@@ -110,7 +110,9 @@
                     <a class="btn" href="#templates">Explore wedding templates ↗</a>
                 @endif
                 <a href="#templates" class="btn btn-line">Browse templates</a>
-                @if($featured)<a href="{{ route('wedding.editor', $featured->slug) }}" class="btn btn-line" id="hero-resume" hidden>Continue my draft →</a>@endif
+                @if($featured)
+                <a href="{{ route('wedding.editor', $featured->slug) }}" class="btn btn-line" id="hero-resume" hidden>Continue my draft →</a>
+                @endif
             </div>
             <div class="hero-checks"><span>Free to publish</span><span>Live website preview</span><span>No design experience needed</span></div>
         </div>
@@ -205,7 +207,11 @@
 
 <section class="final-banner"><div class="wrap">
     <div><span class="eyebrow" style="color:#f7d2ad">Start something beautiful</span><h2>Make the invitation as memorable as the moment.</h2><p>Your beautiful free wedding website starts with a template.</p></div>
-    @if($featured)<a class="btn" href="{{ route('wedding.editor', $featured->slug) }}">Create my invitation →</a>@else<a class="btn" href="#templates">Explore templates →</a>@endif
+    @if($featured)
+    <a class="btn" href="{{ route('wedding.editor', $featured->slug) }}">Create my invitation →</a>
+    @else
+    <a class="btn" href="#templates">Explore templates →</a>
+    @endif
 </div></section>
 </div>
 @endsection
