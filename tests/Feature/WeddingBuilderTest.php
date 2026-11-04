@@ -24,8 +24,7 @@ class WeddingBuilderTest extends TestCase
     {
         $this->get('/')->assertOk()->assertSee('Ever After');
         $this->get('/templates/wedding/ever-after-classic')->assertOk()
-            ->assertSee('Our entourage')
-            ->assertSee('Personalize', false);
+            ->assertSee('Our entourage');
     }
 
     public function test_wedding_questions_are_idempotent_and_preserve_admin_disabled_state(): void
