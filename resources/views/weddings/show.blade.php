@@ -1,27 +1,89 @@
 @extends('layouts.wwyt')
-@section('title', ($answers['bride_name'] ?? 'Our') . ' & ' . ($answers['groom_name'] ?? 'Wedding') . ' — Wedding Invitation')
-@section('meta_description', 'You are invited to celebrate a wedding. Discover the ceremony, reception, wedding entourage and celebration details.')
+@section('body_class', 'invitation-page')
+@section('robots', 'noindex,nofollow')
+@section('title', ($answers['bride_name'] ?? 'Our') . ' & ' . ($answers['groom_name'] ?? 'Wedding') . ' | Wedding Invitation')
+@section('meta_description', 'You are invited to our wedding celebration. Browse our ceremony, reception, entourage, program and wedding details.')
+
 @push('styles')
+@include('weddings.partials.invitation-theme-styles')
 <style>
-.public-invite{max-width:740px;margin:45px auto;box-shadow:0 20px 70px #213d3020}
-.wedding-invite{color:#5c5247;background:#fcf8f0;text-align:center;font-family:Georgia,serif}
-.wedding-invite [hidden]{display:none!important}
-.invite-cover{min-height:740px;position:relative;padding:140px 48px 105px;border:1px solid #e1dacd;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
-.ornament{position:absolute;font-size:175px;line-height:1;color:#b4c0a7;opacity:.6}.ornament-top{top:-75px;left:-30px;transform:rotate(-20deg)}.ornament-bottom{bottom:-75px;right:-30px;transform:rotate(145deg)}
-.invite-eyebrow,.invite-small{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.23em;font-weight:600}.invite-divider{height:1px;width:78px;background:#c4b49c;margin:26px auto}.invite-cover h1{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(48px,7vw,80px);font-weight:400;line-height:1.12;color:#4b634d;margin:22px 0}.invite-cover h1 span{display:block}.invite-cover h1 i{display:block;font-size:.55em;font-weight:400}
-.invite-message{font-style:italic;max-width:420px;line-height:1.85}.invite-date{font-family:'DM Serif Display',Georgia,serif;font-size:28px;margin:0 0 10px}
-.invite-section{padding:75px 50px;background:#fffdf8;border-top:1px solid #eae5d9}.invite-section h2{font-family:'DM Serif Display',Georgia,serif;font-size:45px;font-weight:400;color:#516b52;margin:16px 0 27px}.invite-section h3{font:600 11px 'DM Sans',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#66745f;margin:30px 0 12px}.invite-section p{line-height:1.75}.invite-tinted{background:#f0f1e9}.invite-two-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding-top:10px}.subtle{color:#888477;font-size:14px}.pre-line{white-space:pre-line}.invite-footer{padding:46px;font:italic 27px 'DM Serif Display',Georgia,serif}.invite-footer small{display:block;margin-top:13px;font:600 9px 'DM Sans',sans-serif;letter-spacing:.2em}
-@media(max-width:580px){.invite-cover{padding:95px 23px;min-height:580px}.invite-section{padding:54px 23px}.invite-two-cols{grid-template-columns:1fr}.public-invite{margin:0 auto}.invite-section h2{font-size:36px}}
+    body.invitation-page{background:#fbf8f1}
+    body.invitation-page .topbar,body.invitation-page .foot{display:none}
+    body.invitation-page>main{display:block;width:100%;margin:0;padding:0}
+    body.invitation-page .wrap:has(.alert){max-width:none;background:#f6f4e9}
+    .public-wedding{width:100%;min-height:100svh;margin:0}
+    .public-wedding .wedding-invite{width:100%}
+    .invite-share{position:fixed;right:24px;bottom:24px;z-index:50;font:14px 'DM Sans',Arial,sans-serif}
+    .invite-share summary{background:#3f5442;color:#fff;border:1px solid #869a87;
+        box-shadow:0 12px 28px #20271c3d;border-radius:999px;min-height:52px;
+        padding:14px 20px;display:flex;align-items:center;gap:10px;cursor:pointer;
+        font-size:13px;font-weight:700;list-style:none}
+    .invite-share summary::-webkit-details-marker{display:none}
+    .invite-share summary:hover{background:#304636}
+    .invite-share[open] summary{background:#2f4836}
+    .invite-share-panel{position:absolute;right:0;bottom:calc(100% + 12px);width:min(340px,calc(100vw - 26px));
+        padding:22px;background:#fffcf5;border:1px solid #d1c8b5;border-radius:14px;
+        box-shadow:0 23px 65px #19261c46;color:#344136;text-align:center}
+    .invite-share-panel h2{font:31px 'DM Serif Display',Georgia,serif;color:#3c5640;margin:0 0 7px}
+    .invite-share-panel p{font-size:12px;color:#697368;line-height:1.7;margin:0 0 14px}
+    .invite-share-panel .qr-frame{background:#fff;border:1px solid #d7dbc9;border-radius:10px;padding:13px;display:grid;place-items:center;margin:0 auto 16px;max-width:230px}
+    .invite-share-panel .qr-frame img{display:block;width:194px;height:194px;max-width:100%}
+    .share-url{font-size:11px;font-weight:600;color:#586e5c;overflow-wrap:anywhere;padding:9px 10px;background:#edf0e8;border-radius:7px;margin-bottom:14px}
+    .share-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+    .share-actions button,.share-actions a{border-radius:9px;padding:11px 13px;font:700 12px 'DM Sans',Arial,sans-serif;cursor:pointer;text-decoration:none}
+    .share-actions .share-primary{background:#405c46;color:#fff;border:1px solid #405c46}
+    .share-actions .share-secondary{background:#fff;color:#405c46;border:1px solid #b6c4b6}
+    @media(max-width:650px){.invite-share{bottom:13px;right:13px}.invite-share summary{padding:13px 17px}}
+    @media print{.invite-share{display:none!important}body.invitation-page .wedding-invite .invite-site-nav{display:none}}
 </style>
 @endpush
+
 @section('content')
-<div class="wrap">
-    <div style="max-width:740px;margin:36px auto 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
-        <span class="pill">A We Want You There invitation</span>
-        <button class="btn btn-outline" type="button" onclick="navigator.clipboard?.writeText(location.href).then(()=>this.textContent='Link copied!').catch(()=>window.prompt('Copy link',location.href))">Share invitation →</button>
-    </div>
-    <div class="public-invite">
-        @include('weddings.partials.invitation', ['answers' => $answers, 'sections' => $sections, 'questions' => $questions, 'isPreview' => false])
-    </div>
+<div class="public-wedding">
+    @include('weddings.partials.invitation', [
+        'answers' => $answers,
+        'sections' => $sections,
+        'questions' => $questions,
+        'isPreview' => false,
+    ])
 </div>
+
+<details class="invite-share" id="invite-share">
+    <summary aria-label="Share this wedding invitation and get its QR code">
+        <span aria-hidden="true">↗</span> Share & QR
+    </summary>
+    <div class="invite-share-panel" role="group" aria-label="Invitation sharing options">
+        <h2>Share our day</h2>
+        <p>Scan this QR code or share the link with friends and family.</p>
+        <div class="qr-frame">
+            <img src="{{ route('wedding.qr', $website->slug) }}"
+                alt="QR code linking to this wedding invitation"
+                width="194" height="194" loading="lazy">
+        </div>
+        <div class="share-url" id="share-url">{{ route('wedding.show', $website->slug) }}</div>
+        <div class="share-actions">
+            <button type="button" id="copy-invitation-link" class="share-primary">Copy link</button>
+            <a class="share-secondary" href="{{ route('wedding.qr', ['slug' => $website->slug, 'download' => 1]) }}">Download QR (SVG)</a>
+        </div>
+    </div>
+</details>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const button = document.getElementById('copy-invitation-link');
+    const link = @json(route('wedding.show', $website->slug));
+    if (!button) return;
+    button.addEventListener('click', async function () {
+        try {
+            if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard not available');
+            await navigator.clipboard.writeText(link);
+            button.textContent = 'Copied!';
+        } catch (error) {
+            window.prompt('Copy your invitation link:', link);
+        }
+    });
+})();
+</script>
+@endpush
