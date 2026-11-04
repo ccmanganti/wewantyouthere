@@ -45,6 +45,7 @@
         body.builder-page .foot{display:none}
         body.builder-page .nav{display:none}
     </style>
+    <script>document.documentElement.classList.add('js-motion')</script>
     @include('partials.site-brand-overrides')
     @stack('styles')
 </head>
