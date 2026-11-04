@@ -71,14 +71,14 @@ class RoyalBurgundyWeddingTest extends TestCase
         $this->assertDatabaseCount('invitation_templates', 2);
     }
 
-    public function test_royal_template_is_discoverable_and_has_fullpage_and_four_step_live_editor(): void
+    public function test_royal_template_is_discoverable_and_has_fullpage_and_five_step_live_editor(): void
     {
         $this->get('/')->assertOk()->assertSee('Royal Burgundy');
         $this->get('/wedding-invitation-templates')->assertOk()->assertSee('Royal Burgundy');
 
         $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
             ->assertSee('rb-invite')
-            ->assertSee('Our <em>love story</em>', false)
+            ->assertSee('Our love story')
             ->assertSee('rb-story')
             ->assertSee('envelope-front.webp')
             ->assertSee('dress-swatches.webp')
