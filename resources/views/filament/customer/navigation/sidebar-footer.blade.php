@@ -1,6 +1,6 @@
 <div class="wwyt-sidebar-footer">
     <div class="wwyt-sidebar-brand-stamp">
-        <img src="{{ asset('branding/wwyt-icon-outline.svg') }}" alt="" width="35" height="35" loading="lazy">
+        <img src="{{ asset('brand/wwyt/seal-outline.png') }}" alt="" width="35" height="35" loading="lazy">
         <div>
             <strong>Every moment matters.</strong>
             <span>Your celebration, beautifully invited.</span>
