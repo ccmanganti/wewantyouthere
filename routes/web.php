@@ -3,6 +3,7 @@
 use App\Http\Controllers\WeddingAuthController;
 use App\Http\Controllers\WeddingBuilderController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
@@ -14,6 +15,10 @@ Route::get('/templates/{slug}/preview', [MarketingController::class, 'templatePr
 Route::get('/privacy', fn () => app(MarketingController::class)->legal('privacy'))->name('marketing.privacy');
 Route::get('/terms', fn () => app(MarketingController::class)->legal('terms'))->name('marketing.terms');
 Route::get('/sitemap.xml', [MarketingController::class, 'sitemap'])->name('marketing.sitemap');
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+    ->middleware('throttle:20,1')->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+    ->middleware('throttle:20,1')->name('auth.google.callback');
 Route::get('/robots.txt', [MarketingController::class, 'robots'])->name('marketing.robots');
 Route::get('/templates/wedding/{slug}', [WeddingBuilderController::class, 'editor'])->name('wedding.editor');
 Route::post('/templates/wedding/{slug}/cancel', [WeddingBuilderController::class, 'cancel'])->name('wedding.cancel');
