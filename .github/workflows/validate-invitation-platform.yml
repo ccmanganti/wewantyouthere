@@ -25,6 +25,9 @@ jobs:
         with:
           php-version: '8.4'
           extensions: mbstring, xml, curl, zip, pdo_sqlite, intl, gd, bcmath
+      - name: Check wedding builder JavaScript syntax
+        run: |
+          node -e "const fs=require('fs'); const src=fs.readFileSync('resources/views/weddings/partials/editor-script.blade.php','utf8').replace(/^<script>\\s*/,'').replace(/\\s*<\\/script>\\s*$/,''); new Function(src); console.log('Builder JavaScript syntax valid');"
       - run: composer install --no-interaction --prefer-dist
       - run: |
           find app database -name '*.php' -print0 | xargs -0 -n1 php -l
