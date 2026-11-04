@@ -1,11 +1,11 @@
-<article class="mkt-template-card mkt-reveal" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' wedding elegant ivory invitation website') }}">
+<article class="mkt-template-card mkt-reveal {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'mkt-template-royal' : '' }}" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' ' . ($template->settings['description'] ?? '') . ' invitation website') }}">
     <div class="mkt-template-cover">
         <img class="mkt-template-stamp" src="{{ asset('brand/wwyt/seal-flat.png') }}" width="43" height="43" loading="lazy" alt="" aria-hidden="true">
         <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM' : 'FREE WEBSITE' }}</span>
         <div class="mini-poster" aria-hidden="true">
-            <span class="overline">TOGETHER WITH OUR FAMILIES</span>
+            <span class="overline">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'A ROYAL CELEBRATION OF LOVE' : 'TOGETHER WITH OUR FAMILIES' }}</span>
             <span class="couple">Amelia<br><small>&</small><br>Gabriel</span>
-            <span class="overline">CELEBRATE OUR WEDDING</span>
+            <span class="overline">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'YOU ARE CORDIALLY INVITED' : 'CELEBRATE OUR WEDDING' }}</span>
             <span class="date">DECEMBER 12, 2027</span>
         </div>
     </div>
