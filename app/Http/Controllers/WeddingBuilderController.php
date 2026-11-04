@@ -35,7 +35,7 @@ class WeddingBuilderController extends Controller
 
         $canCreate = ! Auth::check() || InvitationAccounts::canCreateWebsite(Auth::user());
 
-        return view('welcome', compact('templates', 'canCreate'));
+        return view('marketing.home', compact('templates', 'canCreate'));
     }
 
     public function editor(string $slug): View | RedirectResponse
