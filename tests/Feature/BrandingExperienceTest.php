@@ -29,8 +29,8 @@ class BrandingExperienceTest extends TestCase
         $this->assertStringContainsString("brand/wwyt/logo-white.png", $branding);
         $this->assertStringContainsString("brand/wwyt/logo-primary.png", $branding);
 
-        $this->assertStringNotContainsString("brand/wwyt/logo-white.png", $layout);
-        $this->assertStringNotContainsString("branding/logo-primary.png", $branding);
+        $this->assertStringNotContainsString("branding/wwyt-horizontal-light.svg", $layout);
+        $this->assertStringNotContainsString("branding/wwyt-horizontal-color.svg", $branding);
     }
 
     public function test_homepage_uses_new_brand_assets_and_scroll_line_decorations(): void
