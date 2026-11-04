@@ -286,6 +286,7 @@
         app.querySelectorAll('.comparison-name').forEach(function (node) {
             node.textContent = bride + ' & ' + groom;
         });
+        window.dispatchEvent(new Event('wwyt:preview-updated'));
     }
 
     function renderGroup() {
