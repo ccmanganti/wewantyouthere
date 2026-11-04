@@ -321,7 +321,7 @@
     </main>
 
     {{-- Real raster stationery layers. Displayed only on live visits, or when replayed from the builder. --}}
-    <div class="rb-envelope-intro" data-envelope-intro data-envelope-autoplay="{{ $isPreview ? '0' : '1' }}" data-envelope-phase="closed" hidden role="dialog" aria-label="Opening your wedding invitation">
+    <div class="rb-envelope-intro" data-envelope-intro data-envelope-autoplay="{{ ($isPreview || ($suppressEnvelopeIntro ?? false)) ? '0' : '1' }}" data-envelope-phase="closed" hidden role="dialog" aria-label="Opening your wedding invitation">
         <div class="rb-envelope-stage">
             <span class="rb-envelope-caption">A SPECIAL INVITATION FOR YOU</span>
             <div class="rb-envelope-object">
