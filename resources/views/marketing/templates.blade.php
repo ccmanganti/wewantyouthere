@@ -26,7 +26,7 @@
                 <div><div class="mkt-kicker red">LIVE WEDDING TEMPLATES</div><h2 style="font-size:clamp(28px,4vw,40px);margin-top:6px">Ready to personalize.</h2></div>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;max-width:410px;width:100%">
                     <label for="mkt-template-search" style="font-weight:800;font-size:11px;align-self:flex-start">Search available templates</label>
-                    <input id="mkt-template-search" type="search" placeholder="Search wedding, ivory, elegant..." autocomplete="off">
+                    <input id="mkt-template-search" type="search" placeholder="Search wedding, ivory, burgundy, elegant..." autocomplete="off">
                     <span id="mkt-template-count" role="status">{{ $templates->count() }} {{ $templates->count() === 1 ? 'design available' : 'designs available' }}</span>
                 </div>
             </div>
