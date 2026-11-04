@@ -19,8 +19,21 @@
             <a href="#wedding-entourage" data-nav-section="entourage" @if(!$visible('entourage')) hidden @endif>Our people</a>
             <a href="#wedding-program" data-nav-section="program" @if(!$visible('program')) hidden @endif>Program</a>
             <a href="#wedding-details" data-nav-section="details" @if(!$visible('details')) hidden @endif>Details</a>
+            <a href="#wedding-moments">Gallery</a>
             <a href="#wedding-guests" data-nav-section="guests" @if(!$visible('guests')) hidden @endif>RSVP</a>
         </div>
+        <details class="rb-mobile-menu">
+            <summary aria-label="Open invitation menu"><i class="fa-solid fa-bars" aria-hidden="true"></i> Menu</summary>
+            <div class="rb-mobile-links">
+                <a href="#wedding-ceremony">The day</a>
+                <a href="#wedding-story">Our story</a>
+                <a href="#wedding-entourage" data-nav-section="entourage" @if(!$visible('entourage')) hidden @endif>Our people</a>
+                <a href="#wedding-program" data-nav-section="program" @if(!$visible('program')) hidden @endif>Program</a>
+                <a href="#wedding-details" data-nav-section="details" @if(!$visible('details')) hidden @endif>Details</a>
+                <a href="#wedding-moments">Gallery</a>
+                <a href="#wedding-guests" data-nav-section="guests" @if(!$visible('guests')) hidden @endif>RSVP</a>
+            </div>
+        </details>
     </nav>
 
     <section class="rb-cover" id="wedding-home" data-preview-section="couple">
