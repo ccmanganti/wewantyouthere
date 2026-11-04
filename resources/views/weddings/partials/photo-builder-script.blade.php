@@ -87,11 +87,12 @@
                     }
                     img.src = url;
                     target.querySelector('.rb-photo-empty')?.remove();
+                    target.querySelector('.rb-image-placeholder')?.remove();
                 } else {
                     img?.remove();
-                    if (!target.querySelector('.rb-photo-empty')) {
+                    if (!target.querySelector('.rb-photo-empty') && !target.querySelector('.rb-image-placeholder')) {
                         const placeholder = document.createElement('div');
-                        placeholder.className = 'rb-photo-empty';
+                        placeholder.className = 'rb-image-placeholder rb-placeholder-photo';
                         const symbol = document.createElement('span');
                         symbol.setAttribute('aria-hidden','true');
                         symbol.textContent = '✦';
