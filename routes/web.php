@@ -2,9 +2,19 @@
 
 use App\Http\Controllers\WeddingAuthController;
 use App\Http\Controllers\WeddingBuilderController;
+use App\Http\Controllers\MarketingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
+Route::get('/wedding-invitation-templates', [MarketingController::class, 'templates'])->name('marketing.templates');
+Route::get('/wedding-invitation-templates/{slug}', [MarketingController::class, 'templateDetail'])
+    ->where('slug', '[a-z0-9-]+')->name('marketing.templateDetail');
+Route::get('/templates/{slug}/preview', [MarketingController::class, 'templatePreview'])
+    ->where('slug', '[a-z0-9-]+')->name('marketing.templatePreview');
+Route::get('/privacy', fn () => app(MarketingController::class)->legal('privacy'))->name('marketing.privacy');
+Route::get('/terms', fn () => app(MarketingController::class)->legal('terms'))->name('marketing.terms');
+Route::get('/sitemap.xml', [MarketingController::class, 'sitemap'])->name('marketing.sitemap');
+Route::get('/robots.txt', [MarketingController::class, 'robots'])->name('marketing.robots');
 Route::get('/templates/wedding/{slug}', [WeddingBuilderController::class, 'editor'])->name('wedding.editor');
 Route::post('/templates/wedding/{slug}/cancel', [WeddingBuilderController::class, 'cancel'])->name('wedding.cancel');
 Route::post('/templates/wedding/{slug}/publish', [WeddingBuilderController::class, 'publish'])
