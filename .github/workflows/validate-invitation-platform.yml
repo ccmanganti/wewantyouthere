@@ -31,3 +31,4 @@ jobs:
           php artisan db:seed --class=EventTypeQuestionSeeder --force
           php artisan route:list --path=admin
           php artisan filament:cache-components
+          php artisan test --filter=WeddingBuilderTest
