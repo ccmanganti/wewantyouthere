@@ -4,6 +4,7 @@ use App\Http\Controllers\WeddingAuthController;
 use App\Http\Controllers\WeddingBuilderController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\WeddingPhotoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
@@ -20,6 +21,22 @@ Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
     ->middleware('throttle:20,1')->name('auth.google.callback');
 Route::get('/robots.txt', [MarketingController::class, 'robots'])->name('marketing.robots');
+Route::post('/templates/wedding/{slug}/photos', [WeddingPhotoController::class, 'upload'])
+    ->middleware('throttle:16,1')->name('wedding.photos.upload');
+Route::get('/templates/wedding/{slug}/photos/{slot}', [WeddingPhotoController::class, 'draft'])
+    ->name('wedding.photos.draft');
+Route::delete('/templates/wedding/{slug}/photos/{slot}', [WeddingPhotoController::class, 'removeDraft'])
+    ->middleware('throttle:30,1')->name('wedding.photos.removeDraft');
+Route::middleware('auth')->group(function () {
+    Route::get('/app/invitations/{website}/photos', [WeddingPhotoController::class, 'manage'])
+        ->name('wedding.photos.manage');
+    Route::post('/app/invitations/{website}/photos', [WeddingPhotoController::class, 'replace'])
+        ->middleware('throttle:16,1')->name('wedding.photos.replace');
+    Route::delete('/app/invitations/{website}/photos/{slot}', [WeddingPhotoController::class, 'remove'])
+        ->name('wedding.photos.remove');
+});
+Route::get('/i/{slug}/photos/{slot}', [WeddingPhotoController::class, 'publicPhoto'])
+    ->name('wedding.photos.site');
 Route::get('/templates/wedding/{slug}', [WeddingBuilderController::class, 'editor'])->name('wedding.editor');
 Route::post('/templates/wedding/{slug}/cancel', [WeddingBuilderController::class, 'cancel'])->name('wedding.cancel');
 Route::post('/templates/wedding/{slug}/publish', [WeddingBuilderController::class, 'publish'])
