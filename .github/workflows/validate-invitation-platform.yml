@@ -39,4 +39,12 @@ jobs:
           php artisan db:seed --class=EventTypeQuestionSeeder --force
           php artisan route:list --path=admin
           php artisan filament:cache-components
+          php artisan view:cache
+          for file in storage/framework/views/*.php; do
+            if grep -q 'More than an invitation' "$file"; then
+              echo "== Compiled wedding homepage =="
+              php -l "$file" || true
+              nl -ba "$file" | tail -n 75
+            fi
+          done
           php artisan test --filter=WeddingBuilderTest
