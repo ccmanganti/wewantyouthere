@@ -101,8 +101,8 @@
     <div class="wrap hero-grid">
         <div>
             <div class="eyebrow">Made for the moments that matter</div>
-            <h1>More than an invitation. <em>A little piece of forever.</em></h1>
-            <p>Craft a beautiful wedding website without the complicated steps. Choose a design, select what you want to share, see your edits instantly, and publish for free.</p>
+            <h1>YOUR MOMENT, <em>beautifully invited.</em></h1>
+            <p>Build a website invitation that feels unmistakably yours. Choose a design, select what you want to share, see your edits instantly, and publish for free.</p>
             <div class="hero-ctas">
                 @if($featured)
                     <a class="btn" href="{{ route('wedding.editor', $featured->slug) }}">Create my invitation ↗</a>
