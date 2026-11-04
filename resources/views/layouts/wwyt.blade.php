@@ -3,11 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#171417">
+    <meta name="theme-color" content="#1B1717">
     <meta name="robots" content="@yield('robots', 'index,follow')">
     <meta name="description" content="@yield('meta_description', 'Create elegant wedding invitation websites in minutes. Choose a template, customize every detail and publish your wedding invitation for free.')">
     <title>@yield('title', 'We Want You There — Wedding Invitation Websites & RSVP')</title>
     <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="We Want You There">
+    <meta property="og:title" content="@yield('title', 'We Want You There — Digital Invitation Websites')">
+    <meta property="og:description" content="@yield('meta_description', 'Create a beautiful digital wedding invitation website for free.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -39,14 +45,14 @@
         body.builder-page .foot{display:none}
         body.builder-page .nav{display:none}
     </style>
-    @stack('styles')
     @include('partials.site-brand-overrides')
+    @stack('styles')
 </head>
 <body class="@yield('body_class')">
 <header class="topbar"><div class="wrap topbar-inner">
     <a class="brand" href="{{ route('home') }}" aria-label="We Want You There homepage">we want <span>you there.</span></a>
     <nav class="nav" aria-label="Main">
-        <a class="hide-mobile" href="{{ route('home') }}#templates">Templates</a>
+        <a class="hide-mobile" href="{{ route('marketing.templates') }}">Templates</a>
         <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
         @auth
             <a class="hide-mobile" href="{{ url('/app/invitations') }}">My invitations</a>
@@ -59,7 +65,7 @@
 </div></header>
 @if(session('status'))<div class="wrap"><div class="alert" role="status">{{ session('status') }}</div></div>@endif
 <main>@yield('content')</main>
-<footer class="foot"><div class="wrap"><span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span><span>Digital invitations made for meaningful moments.</span></div></footer>
+<footer class="foot"><div class="wrap"><span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span><span><a href="{{ route('marketing.templates') }}">Templates</a> · <a href="{{ route('marketing.privacy') }}">Privacy</a> · <a href="{{ route('marketing.terms') }}">Terms</a> · Digital invitations for meaningful moments.</span></div></footer>
 @if(session()->has('clear_wedding_draft'))
 <script>
 try {
