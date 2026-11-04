@@ -107,4 +107,74 @@ body:has(.wwyt-auth-intro) input:focus-visible,body:has(.wwyt-auth-intro) a:focu
     .wwyt-google-button{transition:none}
 }
 
+
+/* Shared brand shell: the customer dashboard uses the same language as the homepage. */
+.fi-body:not(:has(.wwyt-auth-intro)){background:#f5efe7!important}
+.fi-topbar{background:#1B1717!important;border-bottom:1px solid #493234!important;box-shadow:0 8px 23px #1b171715}
+.fi-topbar .fi-logo{height:2.7rem;max-width:235px;object-fit:contain}
+.fi-topbar .fi-topbar-start{display:flex;align-items:center;gap:20px}
+.fi-topbar .fi-icon-btn,.fi-topbar .fi-topbar-item-label,.fi-topbar svg{color:#EDEBDD}
+.fi-sidebar,.fi-sidebar-header{background:#EDEBDD!important}
+.fi-sidebar{border-right:1px solid #d9c5b8!important}
+.fi-sidebar-header{border-bottom:1px solid #d9c5b8}
+.fi-sidebar-header .fi-logo{content:url('/branding/wwyt-horizontal-color.svg');height:3.25rem;width:auto;object-fit:contain}
+.fi-sidebar-nav{padding-top:24px!important}
+.fi-sidebar-item{margin-bottom:3px}
+.fi-sidebar-item-button{min-height:44px;padding:10px 13px!important;color:#4b3b37!important;transition:background .16s ease,transform .16s ease}
+.fi-sidebar-item-button:hover{background:#e5d6c8!important;transform:translateX(2px)}
+.fi-sidebar-item.fi-active .fi-sidebar-item-button{background:#81010016!important;border-left:3px solid #810100;color:#630000!important}
+.fi-sidebar-item.fi-active .fi-sidebar-item-label{color:#630000;font-weight:800}
+.fi-main-ctn{background:#f7f2ec}
+.fi-main{max-width:1500px!important;margin:0 auto}
+.fi-header-heading{font-family:Georgia,serif!important;font-size:clamp(28px,2.7vw,38px)!important;color:#281c1d!important;letter-spacing:-.045em}
+.fi-section,.fi-ta-ctn{border:1px solid #e4d4c9;border-radius:14px;background:#fffdf9;box-shadow:0 9px 22px #4d1b1608}
+.fi-btn-primary{background:#810100!important}
+.fi-btn-primary:hover{background:#630000!important}
+.fi-sidebar .fi-sidebar-item-icon{color:#8c5856}
+.wwyt-panel-topnav{display:flex;align-items:center;gap:7px;margin-inline-start:12px}
+.wwyt-panel-topnav a{color:#EDEBDD!important;font-size:12px;font-weight:700;padding:10px 13px;border-radius:8px;white-space:nowrap;text-decoration:none;transition:background .18s ease,color .18s ease}
+.wwyt-panel-topnav a:hover,.wwyt-panel-topnav a[aria-current=page]{background:#810100;color:#fff!important}
+.wwyt-sidebar-footer{padding:17px 17px 25px;border-top:1px solid #dbc9bb;margin-top:20px}
+.wwyt-sidebar-brand-stamp{display:flex;gap:11px;align-items:center;color:#630000;margin-bottom:18px}
+.wwyt-sidebar-brand-stamp img{width:37px;height:37px;flex:none}
+.wwyt-sidebar-brand-stamp strong{font:italic 14px Georgia,serif;display:block;line-height:1.3}
+.wwyt-sidebar-brand-stamp span{display:block;font-size:10px;color:#846f64;line-height:1.6}
+.wwyt-sidebar-back,.wwyt-sidebar-explore{display:flex;align-items:center;gap:9px;text-decoration:none;font-size:12px;font-weight:700;padding:10px 12px;border-radius:8px}
+.wwyt-sidebar-back{background:#1B1717;color:#EDEBDD!important}
+.wwyt-sidebar-back:hover{background:#630000}
+.wwyt-sidebar-explore{color:#810100!important;margin-top:6px}
+.wwyt-sidebar-explore:hover{background:#8101000d}
+.wwyt-auth-global-nav{
+    position:fixed;z-index:100;left:0;right:0;top:0;
+    min-height:77px;display:flex;align-items:center;justify-content:space-between;
+    padding:9px clamp(18px,4vw,66px);gap:25px;background:#1B1717;border-bottom:1px solid #4b2a2b;
+    box-shadow:0 6px 22px #1b17171e;
+}
+.wwyt-auth-nav-brand{display:inline-flex;align-items:center;flex:none}
+.wwyt-auth-nav-brand img{width:218px;height:54px;object-fit:contain}
+.wwyt-auth-nav-links{display:flex;align-items:center;gap:clamp(12px,2vw,30px)}
+.wwyt-auth-nav-links a{color:#EDEBDD!important;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
+.wwyt-auth-nav-links a:hover{color:#eacda0!important}
+.wwyt-auth-nav-links a.wwyt-auth-nav-cta{display:inline-flex;align-items:center;justify-content:center;background:#810100;padding:12px 16px;border-radius:7px}
+.wwyt-auth-nav-links a.wwyt-auth-nav-cta:hover{background:#a31116;color:#fff!important}
+body:has(.wwyt-auth-global-nav) .fi-simple-layout{padding-top:114px!important;min-height:100dvh}
+body:has(.wwyt-auth-global-nav) .wwyt-auth-home-link{display:none}
+.wwyt-login-seal{width:70px;height:70px;display:block;object-fit:contain;margin:-5px 0 18px}
+@media(max-width:1350px){.wwyt-panel-topnav a{padding:9px 9px;font-size:11px}}
+@media(max-width:1080px){.wwyt-panel-topnav{display:none}}
+@media(max-width:720px){
+    .wwyt-auth-global-nav{min-height:69px;padding:8px 15px}
+    .wwyt-auth-nav-brand img{width:162px;height:41px}
+    .wwyt-auth-nav-links{gap:8px}
+    .wwyt-auth-nav-links .wwyt-hide-mobile,.wwyt-auth-nav-links a[href$='/wedding-invitation-templates']{display:none}
+    .wwyt-auth-nav-links a{font-size:11px}
+    .wwyt-auth-nav-links a.wwyt-auth-nav-cta{padding:9px 11px}
+    .fi-header-heading{font-size:29px!important}
+}
+@media(max-width:380px){.wwyt-auth-nav-links a:first-child{display:none}}
+@media(prefers-reduced-motion:reduce){
+    .fi-sidebar-item-button,.wwyt-panel-topnav a,.wwyt-auth-nav-links a{transition:none!important}
+    .fi-section,.fi-ta-ctn{animation:none!important}
+}
+
 </style>
