@@ -1,0 +1,1 @@
+<dialog class="mkt-dialog" data-template-dialog><div class="mkt-dialog-head"><strong data-dialog-title>Website preview</strong><button type="button" data-dialog-close>Close ✕</button></div><iframe data-dialog-frame title="Sample wedding invitation website" loading="lazy" src="about:blank"></iframe></dialog>
