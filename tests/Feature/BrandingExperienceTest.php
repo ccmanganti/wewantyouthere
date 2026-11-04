@@ -17,32 +17,39 @@ class BrandingExperienceTest extends TestCase
         $this->seed(WeddingBuilderSeeder::class);
     }
 
-    public function test_required_brand_logo_variants_are_available(): void
+    public function test_expected_uploaded_raster_brand_assets_are_used_instead_of_svg_logos(): void
     {
-        foreach (['color', 'light', 'dark', 'outline', '3d'] as $variant) {
-            foreach (['icon', 'horizontal'] as $form) {
-                $filename = public_path("branding/wwyt-{$form}-{$variant}.svg");
-                $this->assertFileExists($filename);
-                $this->assertStringContainsString('<svg', file_get_contents($filename));
-            }
-        }
+        // The user uploads these PNGs directly to the Hostinger public web root.
+        // Do not make repository CI depend on assets that are not in the Git repository.
+        $layout = file_get_contents(resource_path('views/layouts/wwyt.blade.php'));
+        $branding = file_get_contents(resource_path('views/filament/customer/navigation/brand-logo.blade.php'));
+
+        $this->assertStringContainsString("brand/wwyt/logo-white.png", $layout);
+        $this->assertStringContainsString("brand/wwyt/favicon.png", $layout);
+        $this->assertStringContainsString("brand/wwyt/logo-white.png", $branding);
+        $this->assertStringContainsString("brand/wwyt/logo-primary.png", $branding);
+
+        $this->assertStringNotContainsString("brand/wwyt/logo-white.png", $layout);
+        $this->assertStringNotContainsString("branding/logo-primary.png", $branding);
     }
 
     public function test_homepage_uses_new_brand_assets_and_scroll_line_decorations(): void
     {
         $this->get('/')->assertOk()
-            ->assertSee('branding/wwyt-horizontal-light.svg')
-            ->assertSee('branding/wwyt-icon-3d.svg')
+            ->assertSee('brand/wwyt/logo-white.png')
+            ->assertSee('brand/wwyt/seal-3d.png')
             ->assertSee('mkt-journey-line')
-            ->assertSee('mkt-line-reveal');
+            ->assertSee('mkt-line-reveal')
+            ->assertSee('fa-solid fa-qrcode')
+            ->assertSee('fa-solid fa-arrow-right');
     }
 
     public function test_login_and_registration_have_full_website_navigation(): void
     {
         $this->get('/app/login')->assertOk()
             ->assertSee('wwyt-auth-global-nav')
-            ->assertSee('branding/wwyt-horizontal-light.svg')
-            ->assertSee('branding/wwyt-icon-3d.svg')
+            ->assertSee('brand/wwyt/logo-white.png')
+            ->assertSee('brand/wwyt/seal-3d.png')
             ->assertSee('Templates');
 
         $this->get('/app/register')->assertOk()
@@ -61,9 +68,10 @@ class BrandingExperienceTest extends TestCase
         $this->actingAs($user)->get('/app')->assertOk()
             ->assertSee('wwyt-dashboard')
             ->assertSee('wwyt-panel-topnav')
-            ->assertSee('wwyt-horizontal-color.svg')
-            ->assertSee('branding/wwyt-icon-outline.svg')
+            ->assertSee('logo-primary.png')
+            ->assertSee('brand/wwyt/seal-outline.png')
             ->assertSee('Back to website')
-            ->assertSee('Explore invitation designs');
+            ->assertSee('Explore invitation designs')
+            ->assertSee('fa-solid fa-chevron-right');
     }
 }
