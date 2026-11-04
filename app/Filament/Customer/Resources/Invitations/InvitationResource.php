@@ -35,7 +35,7 @@ class InvitationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'My Invitations';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope-open';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-s-envelope-open';
 
     protected static ?int $navigationSort = 1;
 
@@ -89,7 +89,7 @@ class InvitationResource extends Resource
             ->headerActions([
                 Action::make('createInvitation')
                     ->label('Create invitation')
-                    ->icon('heroicon-o-plus')
+                    ->icon('heroicon-s-plus')
                     ->color('primary')
                     ->url(route('wedding.editor', 'ever-after-classic'))
                     ->visible(fn (): bool => InvitationAccounts::canCreateWebsite(Filament::auth()->user())),
@@ -97,13 +97,13 @@ class InvitationResource extends Resource
             ->recordActions([
                 Action::make('visit')
                     ->label('View website')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->icon('heroicon-s-arrow-top-right-on-square')
                     ->url(fn (InvitationWebsite $record): string => route('wedding.show', $record->slug))
                     ->openUrlInNewTab()
                     ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'),
                 EditAction::make('quickEdit')
                     ->label('Quick edit')
-                    ->icon('heroicon-o-pencil-square')
+                    ->icon('heroicon-s-pencil-square')
                     ->modalHeading('Edit invitation settings')
                     ->modalDescription('Update your title, link, or visibility without leaving this page.')
                     ->form([
@@ -136,7 +136,7 @@ class InvitationResource extends Resource
                     }),
                 Action::make('editContent')
                     ->label('Edit details')
-                    ->icon('heroicon-o-document-text')
+                    ->icon('heroicon-s-document-text')
                     ->color('gray')
                     ->modalHeading('Edit your wedding details')
                     ->modalDescription('Update any information and decide which sections guests can see.')
