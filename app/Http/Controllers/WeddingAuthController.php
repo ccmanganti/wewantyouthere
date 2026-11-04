@@ -15,12 +15,12 @@ class WeddingAuthController extends Controller
 {
     public function registration(): View|RedirectResponse
     {
-        return Auth::check() ? redirect()->route('home') : view('weddings.auth', ['mode' => 'register']);
+        return redirect('/app/register');
     }
 
     public function loginForm(): View|RedirectResponse
     {
-        return Auth::check() ? redirect()->route('home') : view('weddings.auth', ['mode' => 'login']);
+        return redirect('/app/login');
     }
 
     public function register(Request $request): RedirectResponse
