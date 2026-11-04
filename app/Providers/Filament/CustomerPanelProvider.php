@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Customer\Auth\Register as CustomerRegister;
+use App\Http\Middleware\CompletePendingWeddingAfterSignIn;
 use App\Filament\Customer\Pages\Billing;
 use App\Filament\Customer\Widgets\WelcomeWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -61,6 +62,7 @@ class CustomerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                CompletePendingWeddingAfterSignIn::class,
             ]);
     }
 }
