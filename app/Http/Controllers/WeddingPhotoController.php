@@ -22,6 +22,7 @@ class WeddingPhotoController extends Controller
             ->where('slug', $slug)
             ->where('status', 'published')
             ->where('settings->renderer', 'builtin_wedding')
+            ->where('settings->theme', 'royal_burgundy')
             ->firstOrFail();
     }
 
