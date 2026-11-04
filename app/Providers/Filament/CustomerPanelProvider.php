@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Customer\Auth\Register as CustomerRegister;
+use App\Filament\Customer\Auth\Login as CustomerLogin;
 use App\Http\Middleware\CompletePendingWeddingAfterSignIn;
 use App\Filament\Customer\Pages\Billing;
 use App\Filament\Customer\Widgets\WelcomeWidget;
@@ -30,7 +31,7 @@ class CustomerPanelProvider extends PanelProvider
             ->id('app')
             ->path('app')
             ->brandName('we want you there.')
-            ->login()
+            ->login(CustomerLogin::class)
             ->registration(CustomerRegister::class)
             ->passwordReset()
             ->profile(isSimple: false)
@@ -49,6 +50,8 @@ class CustomerPanelProvider extends PanelProvider
                 WelcomeWidget::class,
             ])
             ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('filament.customer.brand'))
+            ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, fn () => view('filament.customer.auth.google-button'))
+            ->renderHook(PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE, fn () => view('filament.customer.auth.google-button'))
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
