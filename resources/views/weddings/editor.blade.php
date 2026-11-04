@@ -10,6 +10,7 @@
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-burgundy-styles')
 @include('weddings.partials.photo-builder-styles')
+@include('weddings.partials.royal-preview-refine-styles')
 @endif
 @include('weddings.partials.editor-uri-styles')
 @endpush
@@ -279,5 +280,6 @@
 @include('weddings.partials.editor-script')
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.partials.photo-builder-script')
+@include('weddings.themes.royal-burgundy-script')
 @endif
 @endpush
