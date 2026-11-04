@@ -145,4 +145,13 @@
 .rb-invite .rb-rsvp-grid--no-photo .rb-rsvp-copy{max-width:720px;margin:auto}
 .rb-invite .rb-story-item:not(:has(.rb-story-photo)) .rb-story-copy{max-width:400px}
 @media(max-width:620px){.rb-invite .rb-gallery-few{flex-wrap:wrap}.rb-invite .rb-gallery-few .rb-gallery-photo{width:min(44%,250px);min-width:145px}}
+
+.rb-invite .rb-mobile-menu{display:none;position:relative;font-family:'Cinzel',serif;font-size:11px}
+.rb-invite .rb-mobile-menu summary{list-style:none;display:flex;gap:9px;align-items:center;cursor:pointer;color:#ffe2b7;border:1px solid #eac38465;border-radius:7px;padding:8px 12px}
+.rb-invite .rb-mobile-menu summary::-webkit-details-marker{display:none}
+.rb-invite .rb-mobile-links{position:absolute;right:0;top:calc(100% + 12px);width:min(250px,76vw);background:#210c12;border:1px solid #d2b07b6d;box-shadow:0 20px 40px #0004;display:grid;padding:8px;border-radius:9px;z-index:19}
+.rb-invite .rb-mobile-links a{color:#fff1d7;padding:10px 12px;font:600 11px 'Cinzel',serif;border-radius:6px;text-decoration:none}
+.rb-invite .rb-mobile-links a:hover{background:#76111c}
+@media(max-width:900px){.rb-invite .rb-mobile-menu{display:block}.rb-invite .rb-nav{justify-content:space-between}}
+
 </style>
