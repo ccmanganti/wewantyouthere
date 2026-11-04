@@ -117,6 +117,28 @@
         else uploadedKeys.delete(slot);
     }
 
+    async function optimizeFile(file) {
+        // Client-side image resizing keeps invitation websites lightweight and
+        // strips incidental camera EXIF metadata in supported browsers.
+        if (!window.createImageBitmap || !HTMLCanvasElement.prototype.toBlob) return file;
+        let bitmap;
+        try {
+            bitmap = await createImageBitmap(file);
+            const scale = Math.min(1, 2000 / Math.max(bitmap.width, bitmap.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+            canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .84));
+            if (!blob || blob.type !== 'image/webp' || blob.size >= file.size) return file;
+            return new File([blob], file.name.replace(/\\.[^.]+$/, '') + '.webp', {type:'image/webp'});
+        } catch (error) {
+            return file; // Older browsers can send the original validated file.
+        } finally {
+            bitmap?.close?.();
+        }
+    }
+
     async function upload(slot, file) {
         if (!file) return;
         const allowed = ['image/jpeg','image/png','image/webp'];
@@ -130,7 +152,7 @@
         try {
             const body = new FormData();
             body.append('slot',slot);
-            body.append('photo',file);
+            body.append('photo',await optimizeFile(file));
             const response = await fetch(uploadUrl,{
                 method:'POST',
                 credentials:'same-origin',
