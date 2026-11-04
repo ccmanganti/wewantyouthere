@@ -117,7 +117,7 @@ body:has(.wwyt-auth-intro) input:focus-visible,body:has(.wwyt-auth-intro) a:focu
 .fi-sidebar,.fi-sidebar-header{background:#EDEBDD!important}
 .fi-sidebar{border-right:1px solid #d9c5b8!important}
 .fi-sidebar-header{border-bottom:1px solid #d9c5b8}
-.fi-sidebar-header .fi-logo{content:url('/branding/wwyt-horizontal-color.svg');height:3.25rem;width:auto;object-fit:contain}
+.fi-sidebar-header .fi-logo{height:3.25rem;width:auto;object-fit:contain}
 .fi-sidebar-nav{padding-top:24px!important}
 .fi-sidebar-item{margin-bottom:3px}
 .fi-sidebar-item-button{min-height:44px;padding:10px 13px!important;color:#4b3b37!important;transition:background .16s ease,transform .16s ease}
@@ -176,5 +176,13 @@ body:has(.wwyt-auth-global-nav) .wwyt-auth-home-link{display:none}
     .fi-sidebar-item-button,.wwyt-panel-topnav a,.wwyt-auth-nav-links a{transition:none!important}
     .fi-section,.fi-ta-ctn{animation:none!important}
 }
+
+
+/* Logos in dark header, cotton sidebar, and pale login form are independent. */
+.wwyt-dynamic-brand{display:inline-flex;align-items:center;height:100%;min-height:42px;max-width:235px}
+.wwyt-dynamic-brand img{height:100%;max-height:54px;width:auto;max-width:235px;object-fit:contain}
+.wwyt-dynamic-brand .wwyt-logo-color{display:none}
+.fi-sidebar-header .wwyt-dynamic-brand .wwyt-logo-light,.fi-simple-header .wwyt-dynamic-brand .wwyt-logo-light{display:none}
+.fi-sidebar-header .wwyt-dynamic-brand .wwyt-logo-color,.fi-simple-header .wwyt-dynamic-brand .wwyt-logo-color{display:block}
 
 </style>
