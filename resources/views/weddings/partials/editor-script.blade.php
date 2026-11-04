@@ -7,7 +7,9 @@
 
     const form = document.getElementById('wedding-form');
     const draftKey = 'wwyt:wedding:draft:v2:' + app.dataset.template;
-    const stageNames = ['sections', 'details', 'publish'];
+    const stageNames = app.dataset.photosEnabled === '1'
+        ? ['sections', 'details', 'photos', 'publish']
+        : ['sections', 'details', 'publish'];
     const stageNodes = Array.from(app.querySelectorAll('[data-stage]'));
     const stepButtons = Array.from(app.querySelectorAll('[data-step-navigation]'));
     const questionGroups = Array.from(app.querySelectorAll('[data-question-group]'));
@@ -150,7 +152,7 @@
             ? saved.advancedOpen : {};
         if (groups.includes(saved.group)) currentGroup = saved.group;
         reachedStage = Number.isInteger(saved.reachedStage)
-            ? Math.max(0, Math.min(2, saved.reachedStage)) : 0;
+            ? Math.max(0, Math.min(stageNames.length - 1, saved.reachedStage)) : 0;
         if (stageNames.includes(saved.stage)) stage = saved.stage;
         reachedStage = Math.max(reachedStage, stageNames.indexOf(stage));
     }
@@ -303,7 +305,9 @@
         document.getElementById('group-counter').textContent = 'Section ' + (index + 1) + ' of ' + enabled.length;
         document.getElementById('group-subtitle').textContent = currentNode.dataset.groupDescription || '';
         document.getElementById('details-next').textContent =
-            index === enabled.length - 1 ? 'Review & publish →' : 'Next section →';
+            index === enabled.length - 1
+                ? (app.dataset.photosEnabled === '1' ? 'Continue to photos →' : 'Review & publish →')
+                : 'Next section →';
         document.getElementById('details-previous').textContent =
             index === 0 ? '← Choose sections' : '← Previous section';
         const detailScroll = document.getElementById('detail-scroll');
@@ -394,7 +398,7 @@
             renderGroup();
             writeDraft();
         } else if (validateAllGroups()) {
-            goToStage('publish');
+            goToStage(app.dataset.photosEnabled === '1' ? 'photos' : 'publish');
         }
     }
 
@@ -474,8 +478,16 @@
         }
     });
     document.getElementById('publish-back').addEventListener('click', function () {
-        goToStage('details');
+        goToStage(app.dataset.photosEnabled === '1' ? 'photos' : 'details');
     });
+    if (app.dataset.photosEnabled === '1') {
+        document.getElementById('photos-back')?.addEventListener('click', function () {
+            goToStage('details');
+        });
+        document.getElementById('photos-next')?.addEventListener('click', function () {
+            if (validateAllGroups()) goToStage('publish');
+        });
+    }
 
     app.querySelectorAll('[data-group-tab]').forEach(function (button) {
         button.addEventListener('click', function () {
