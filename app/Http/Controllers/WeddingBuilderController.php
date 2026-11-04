@@ -51,7 +51,7 @@ class WeddingBuilderController extends Controller
         $draft = session('wedding_builder_draft', []);
         $draft = ($draft['template_id'] ?? null) === $template->id ? $draft : [];
 
-        return view('weddings.editor', compact('template', 'groups', 'draft'));
+        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions'));
     }
 
     public function publish(Request $request, string $slug): RedirectResponse
