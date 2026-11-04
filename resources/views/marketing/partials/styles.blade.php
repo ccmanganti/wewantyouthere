@@ -256,4 +256,22 @@ filter:blur(9px)}
 }
 .mkt .mkt-template-royal .mini-poster .couple{font-family:Georgia,serif;font-style:italic;color:#ffe2ab}
 .mkt .mkt-template-royal .mini-poster .date{color:#fff4dc}
+
+/* Royal Burgundy cover in the gallery mirrors the actual cream-and-wine invitation. */
+.mkt .mkt-template-royal .rb-catalogue-poster{
+    display:flex;flex-direction:column;align-items:center;justify-content:start;
+    gap:0;width:min(225px,90%);min-height:305px;padding:18px 18px 22px;
+    background:#f4f1df url('/wedding/royal-burgundy/paper-texture.webp') center/320px auto;
+    border:1px solid #e5ccab;box-shadow:9px 12px 28px #0005;text-align:center;position:relative
+}
+.mkt .rb-catalogue-the{font:italic 23px 'DM Serif Display',Georgia,serif;color:#751723;line-height:.9}
+.mkt .mkt-template-royal .rb-catalogue-poster>strong{
+    font:600 25px/1 'DM Serif Display',Georgia,serif;letter-spacing:-.055em;
+    color:#67141e;margin:5px 0 13px;display:block
+}
+.mkt .rb-catalogue-poster>strong em{font:italic 30px 'DM Serif Display',serif;display:block}
+.mkt .rb-catalogue-poster img{width:100%;height:124px;object-fit:cover;border:4px solid #fff8ee;box-shadow:0 4px 12px #2b0e1933}
+.mkt .rb-catalogue-names{font:italic 22px Georgia,serif;color:#691d27;margin:12px 0 7px}
+.mkt .rb-catalogue-names span{font-size:12px;padding:0 4px}
+.mkt .rb-catalogue-poster>small{font:800 8px 'DM Sans',sans-serif;letter-spacing:.17em;color:#996a4d}
 </style>
