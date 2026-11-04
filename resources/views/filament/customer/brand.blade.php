@@ -195,4 +195,87 @@ body:has(.wwyt-auth-global-nav) .wwyt-auth-home-link{display:none}
 .fi-sidebar-item .fi-sidebar-item-icon{width:20px;height:20px}
 .fi-sidebar-item .fi-sidebar-item-icon svg{stroke-width:2.5}
 @media(prefers-reduced-motion:reduce){.wwyt-sidebar-footer .fa-solid,.wwyt-dashboard .fa-solid{transition:none}}
+
+
+/* Compact authentication: navigation and all login actions stay visible on laptops.
+   Registration has more fields, so it remains naturally scrollable on small screens. */
+body:has(.wwyt-auth-intro--login) .fi-simple-layout{
+    padding:83px 24px 14px 48%!important;
+}
+body:has(.wwyt-auth-intro--login) .fi-simple-main{
+    max-width:445px!important;
+    padding:20px 27px!important;
+    border-radius:12px;
+}
+body:has(.wwyt-auth-intro--login) .fi-simple-header{
+    margin-bottom:8px!important;
+}
+body:has(.wwyt-auth-intro--login) .fi-simple-header .wwyt-dynamic-brand{
+    display:none!important; /* The global navigation already contains the full logo. */
+}
+body:has(.wwyt-auth-intro--login) .fi-simple-header-heading{
+    font-size:29px!important;
+    line-height:1.15;
+}
+body:has(.wwyt-auth-intro) .wwyt-auth-top{
+    gap:9px;
+    align-items:center;
+    flex-wrap:nowrap;
+    margin-bottom:9px;
+}
+body:has(.wwyt-auth-intro) .wwyt-login-seal{
+    display:block;
+    width:38px;
+    height:38px;
+    flex:none;
+    margin:0;
+}
+body:has(.wwyt-auth-intro) .wwyt-auth-mini-label{font-size:9px;line-height:1.4}
+body:has(.wwyt-auth-intro) .wwyt-auth-text{
+    font-size:11px;
+    line-height:1.55;
+    margin:0 0 12px;
+}
+body:has(.wwyt-auth-intro--login) .wwyt-google-button{
+    min-height:43px;
+}
+body:has(.wwyt-auth-intro--login) .wwyt-auth-divider{
+    margin:12px 0 1px;
+}
+body:has(.wwyt-auth-intro--login) .fi-fo-component-ctn,
+body:has(.wwyt-auth-intro--login) .fi-sc{
+    row-gap:12px;
+}
+body:has(.wwyt-auth-intro--login) .fi-btn-primary{
+    min-height:42px;
+}
+@media (min-width:981px) and (max-height:780px){
+    body:has(.wwyt-auth-intro--login) .fi-simple-main{padding:16px 23px!important}
+    body:has(.wwyt-auth-intro--login) .fi-simple-layout{padding-top:76px!important;padding-bottom:8px!important}
+    body:has(.wwyt-auth-intro--login) .fi-simple-layout::before{
+        top:28%;
+        font-size:clamp(32px,3.6vw,51px);
+    }
+}
+@media(max-width:980px){
+    body:has(.wwyt-auth-intro--login) .fi-simple-layout{
+        padding:84px 16px 15px!important;
+        align-items:center;
+    }
+    body:has(.wwyt-auth-intro--login) .fi-simple-main{max-width:460px!important}
+}
+@media(max-width:520px){
+    body:has(.wwyt-auth-intro--login) .fi-simple-layout{
+        padding:76px 11px 12px!important;
+        align-items:flex-start;
+    }
+    body:has(.wwyt-auth-intro--login) .fi-simple-main{
+        padding:17px 19px!important;
+        margin:0 auto;
+    }
+    body:has(.wwyt-auth-intro--login) .fi-simple-header-heading{font-size:26px!important}
+    body:has(.wwyt-auth-intro--login) .wwyt-google-button{min-height:42px}
+    body:has(.wwyt-auth-intro--login) .wwyt-auth-text{margin-bottom:9px}
+}
+
 </style>
