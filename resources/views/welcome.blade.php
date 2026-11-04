@@ -221,13 +221,19 @@
 <script>
 (function () {
     try {
-        const template = @json($featured->slug);
-        const saved = localStorage.getItem('wwyt:wedding:draft:v2:' + template);
-        if (!saved || !JSON.parse(saved)) return;
-        const resume = document.getElementById('hero-resume');
-        if (resume) resume.hidden = false;
+        const featured = @json($featured->slug);
         document.querySelectorAll('[data-resume-template]').forEach(function (link) {
-            if (link.dataset.resumeTemplate === template) link.classList.add('is-visible');
+            const saved = localStorage.getItem('wwyt:wedding:draft:v2:' + link.dataset.resumeTemplate);
+            if (!saved) return;
+            try {
+                const draft = JSON.parse(saved);
+                if (draft.version !== 2 || draft.template !== link.dataset.resumeTemplate) return;
+                link.classList.add('is-visible');
+                if (link.dataset.resumeTemplate === featured) {
+                    const resume = document.getElementById('hero-resume');
+                    if (resume) resume.hidden = false;
+                }
+            } catch (error) { /* An invalid draft is left untouched until cancelled. */ }
         });
     } catch (error) { /* Browser storage may be disabled. */ }
 })();
