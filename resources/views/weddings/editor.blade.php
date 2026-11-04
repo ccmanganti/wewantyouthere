@@ -131,7 +131,7 @@
                     </div>
                 </div>
                 <div id="website-preview" class="preview-scroll">
-                    <div class="preview-frame">@include('weddings.partials.invitation', ['answers' => $draft['answers'] ?? [], 'sections' => $draft['sections'] ?? [], 'isPreview' => true])</div>
+                    <div class="preview-frame">@include('weddings.partials.invitation', ['answers' => $draft['answers'] ?? [], 'sections' => $draft['sections'] ?? [], 'questions' => $questions, 'isPreview' => true])</div>
                 </div>
                 <div id="paper-preview" class="preview-premium" hidden><div class="premium-placeholder"><span class="glyph">✉</span><h3>Printed invitation</h3><p>A print-ready version of this design is planned as a premium extra. Preview and export aren't active yet.</p><span class="pill">Coming soon</span></div></div>
                 <div id="animated-preview" class="preview-premium" hidden><div class="premium-placeholder"><span class="glyph">✦</span><h3>Animated & video invitations</h3><p>Photo animations and video invitation versions are planned as premium extras. Rendering and downloads are not yet available.</p><span class="pill">Coming soon</span></div></div>
@@ -178,6 +178,8 @@
             if (input && input.type === 'date') value = dateFormat(value);
             if (input && input.type === 'time') value = timeFormat(value);
             target.textContent = value || target.dataset.fallback || '';
+            const extraRow = target.closest('[data-extra-row]');
+            if (extraRow) extraRow.hidden = !value.trim();
         });
         groups.forEach(group => {
             const toggle = group.querySelector('[data-section-toggle]');
