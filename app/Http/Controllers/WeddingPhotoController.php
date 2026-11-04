@@ -7,7 +7,7 @@ use App\Models\InvitationWebsite;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -70,7 +70,7 @@ class WeddingPhotoController extends Controller
         ]);
     }
 
-    public function draft(Request $request, string $slug, string $slot): Response
+    public function draft(Request $request, string $slug, string $slot): BinaryFileResponse
     {
         $template = $this->template($slug);
         $this->validSlot($slot);
