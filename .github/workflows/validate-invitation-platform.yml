@@ -14,6 +14,7 @@ on:
       - 'composer.lock'
       - 'routes/**'
       - 'resources/views/**'
+      - 'public/branding/**'
       - 'config/wedding_builder.php'
       - 'tests/Feature/**'
       - 'app/Support/**'
@@ -52,3 +53,4 @@ jobs:
           php artisan test --filter=CustomerWorkspaceTest
           php artisan test --filter=MarketingPagesTest
           php artisan test --filter=GoogleLoginTest
+          php artisan test --filter=BrandingExperienceTest
