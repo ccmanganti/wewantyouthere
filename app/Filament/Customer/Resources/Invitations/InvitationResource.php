@@ -92,7 +92,7 @@ class InvitationResource extends Resource
                     ->label('Create invitation')
                     ->icon('heroicon-s-plus')
                     ->color('primary')
-                    ->url(route('wedding.editor', 'ever-after-classic'))
+                    ->url(route('marketing.templates'))
                     ->visible(fn (): bool => InvitationAccounts::canCreateWebsite(Filament::auth()->user())),
             ])
             ->recordActions([
