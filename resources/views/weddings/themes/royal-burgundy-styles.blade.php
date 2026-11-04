@@ -154,4 +154,8 @@
 .rb-invite .rb-mobile-links a:hover{background:#76111c}
 @media(max-width:900px){.rb-invite .rb-mobile-menu{display:block}.rb-invite .rb-nav{justify-content:space-between}}
 
+
+.rb-invite{container-type:inline-size}
+@container (max-width:780px){.rb-invite .rb-links{display:none}.rb-invite .rb-mobile-menu{display:block}.rb-invite .rb-intro-grid,.rb-invite .rb-rsvp-grid,.rb-invite .rb-locations{grid-template-columns:1fr}.rb-invite .rb-people-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-invite .rb-info-grid,.rb-invite .rb-program-grid{grid-template-columns:1fr}}
+@container (max-width:500px){.rb-invite .rb-people-grid{grid-template-columns:1fr}.rb-invite .rb-story{padding-left:25px}.rb-invite .rb-story::before{left:13px}.rb-invite .rb-story-item{grid-template-columns:1fr;padding-left:12px}.rb-invite .rb-story-marker{position:absolute;left:-33px;top:8px;grid-column:auto;grid-row:auto}.rb-invite .rb-story-item .rb-story-photo,.rb-invite .rb-story-item:nth-child(even) .rb-story-photo,.rb-invite .rb-story-item .rb-story-copy,.rb-invite .rb-story-item:nth-child(even) .rb-story-copy{grid-column:1;grid-row:auto;justify-self:stretch;text-align:left}.rb-invite .rb-gallery{grid-template-columns:repeat(2,1fr)}}
 </style>
