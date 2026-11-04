@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class Billing extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-s-credit-card';
 
     protected static ?string $navigationLabel = 'Plan & Billing';
 
