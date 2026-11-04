@@ -130,7 +130,7 @@
                             $primaryQuestions = $all->filter(fn ($question, $index) => $index < 4 || $question->is_required);
                             $advancedQuestions = $all->reject(fn ($question, $index) => $index < 4 || $question->is_required);
                         @endphp
-                        <div class="question-group" data-question-group="{{ $key }}">
+                        <div class="question-group" data-question-group="{{ $key }}" data-group-description="{{ $group['description'] }}">
                             <div class="question-grid">
                                 @foreach($primaryQuestions as $question)
                                     @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
