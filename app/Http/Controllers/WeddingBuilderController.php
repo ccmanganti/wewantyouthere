@@ -110,6 +110,21 @@ class WeddingBuilderController extends Controller
             : redirect()->route('wedding.register')->with('status', 'Create your free account to publish your invitation.');
     }
 
+    public function cancel(Request $request, string $slug): RedirectResponse
+    {
+        $template = InvitationTemplate::query()->where('slug', $slug)->firstOrFail();
+
+        foreach (['pending_wedding', 'wedding_builder_draft'] as $key) {
+            if (($request->session()->get($key)['template_id'] ?? null) === $template->id) {
+                $request->session()->forget($key);
+            }
+        }
+
+        return redirect()->route('home')
+            ->with('clear_wedding_draft', $template->slug)
+            ->with('status', 'Your draft was discarded. You can start a new invitation anytime.');
+    }
+
     public function complete(Request $request): RedirectResponse
     {
         abort_unless(Auth::check(), 403);
@@ -143,7 +158,9 @@ class WeddingBuilderController extends Controller
         ]);
 
         $request->session()->forget(['pending_wedding', 'wedding_builder_draft']);
-        return redirect()->route('wedding.show', $website->slug)->with('status', 'Your free wedding website is live!');
+        return redirect()->route('wedding.show', $website->slug)
+            ->with('status', 'Your free wedding website is live!')
+            ->with('clear_wedding_draft', $template->slug);
     }
 
     public function show(string $slug): View
