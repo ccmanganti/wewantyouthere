@@ -108,7 +108,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
                 @endif
             </div>
         </div>
-        <img class="wwyt-dash-hero-seal" src="{{ asset('branding/wwyt-icon-3d.svg') }}" alt="" width="280" height="280">
+        <img class="wwyt-dash-hero-seal" src="{{ asset('brand/wwyt/seal-3d.png') }}" alt="" width="280" height="280">
     </section>
 
     <div class="wwyt-dash-stats" aria-label="Account statistics">
@@ -145,7 +145,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
                 </div>
             @else
                 <div class="wwyt-dash-empty">
-                    <img src="{{ asset('branding/wwyt-icon-outline.svg') }}" width="85" height="85" alt="">
+                    <img src="{{ asset('brand/wwyt/seal-outline.png') }}" width="85" height="85" alt="">
                     <h4>Your first invitation starts here.</h4>
                     <p>Explore the wedding template collection and create your website in a guided step-by-step builder.</p>
                     <a href="{{ route('marketing.templates') }}" class="wwyt-dash-button primary">Browse wedding templates →</a>
@@ -166,7 +166,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
     </div>
 
     <div class="wwyt-dash-bottom">
-        <img src="{{ asset('branding/wwyt-icon-outline.svg') }}" alt="" width="43" height="43">
+        <img src="{{ asset('brand/wwyt/seal-outline.png') }}" alt="" width="43" height="43">
         <div><strong>The best moments are shared.</strong><p>A little invitation can bring everyone together. Made with love, We Want You There.</p></div>
         <a href="{{ route('marketing.templates') }}">Discover designs →</a>
     </div>
