@@ -88,6 +88,11 @@ class GoogleAuthController extends Controller
                     if ($user && $user->google_id && $user->google_id !== $identity) {
                         return null; // Never replace an existing Google identity.
                     }
+
+                    if ($user && $user->hasRole('Superadmin') && ! $user->google_id) {
+                        // Privileged accounts require an explicit separate linking process.
+                        return null;
+                    }
                 }
 
                 if (! $user) {
