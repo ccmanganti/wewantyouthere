@@ -8,7 +8,7 @@
     const form = document.getElementById('wedding-form');
     const draftKey = 'wwyt:wedding:draft:v2:' + app.dataset.template;
     const stageNames = app.dataset.photosEnabled === '1'
-        ? ['sections', 'details', 'photos', 'publish']
+        ? ['sections', 'details', 'refine', 'photos', 'publish']
         : ['sections', 'details', 'publish'];
     const stageNodes = Array.from(app.querySelectorAll('[data-stage]'));
     const stepButtons = Array.from(app.querySelectorAll('[data-step-navigation]'));
@@ -29,7 +29,9 @@
     const stageIcons = {
         sections: 'Choose sections',
         details: 'Add your details',
-        publish: 'Review & publish'
+        refine: 'Preview & refine',
+        photos: 'Add your photos',
+        publish: 'Publish'
     };
     let stage = 'sections';
     let reachedStage = 0;
@@ -306,7 +308,7 @@
         document.getElementById('group-subtitle').textContent = currentNode.dataset.groupDescription || '';
         document.getElementById('details-next').textContent =
             index === enabled.length - 1
-                ? (app.dataset.photosEnabled === '1' ? 'Continue to photos →' : 'Review & publish →')
+                ? (app.dataset.photosEnabled === '1' ? 'Preview & refine →' : 'Review & publish →')
                 : 'Next section →';
         document.getElementById('details-previous').textContent =
             index === 0 ? '← Choose sections' : '← Previous section';
@@ -398,7 +400,7 @@
             renderGroup();
             writeDraft();
         } else if (validateAllGroups()) {
-            goToStage(app.dataset.photosEnabled === '1' ? 'photos' : 'publish');
+            goToStage(app.dataset.photosEnabled === '1' ? 'refine' : 'publish');
         }
     }
 
@@ -481,8 +483,27 @@
         goToStage(app.dataset.photosEnabled === '1' ? 'photos' : 'details');
     });
     if (app.dataset.photosEnabled === '1') {
-        document.getElementById('photos-back')?.addEventListener('click', function () {
+        document.getElementById('refine-back')?.addEventListener('click', function () {
             goToStage('details');
+        });
+        document.getElementById('refine-next')?.addEventListener('click', function () {
+            if (validateAllGroups()) goToStage('photos');
+        });
+        document.querySelectorAll('[data-refine-section]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const section = button.dataset.refineSection;
+                const destination = preview.querySelector('#' + section);
+                if (!destination || destination.hidden) return;
+                const pane = document.getElementById('preview-scroll');
+                const top = destination.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop - 12;
+                const websiteTab = app.querySelector('[data-preview-format="website"]');
+                if (websiteTab?.getAttribute('aria-selected') !== 'true') websiteTab?.click();
+                pane.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+                setMobileView('preview');
+            });
+        });
+        document.getElementById('photos-back')?.addEventListener('click', function () {
+            goToStage('refine');
         });
         document.getElementById('photos-next')?.addEventListener('click', function () {
             if (validateAllGroups()) goToStage('publish');
@@ -502,7 +523,7 @@
         button.addEventListener('click', function () {
             const destination = button.dataset.stepNavigation;
             if (stageNames.indexOf(destination) > reachedStage) return;
-            if (destination === 'publish' && !validateAllGroups()) return;
+            if (['refine','photos','publish'].includes(destination) && !validateAllGroups()) return;
             goToStage(destination);
             setMobileView('edit');
         });
