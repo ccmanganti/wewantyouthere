@@ -51,3 +51,15 @@ Only templates with \`is_premium = false\` may be published via the public free 
 - All editor questions come from enabled database records; their default schema lives at \`config/wedding_builder.php\`.
 - Public users cannot enter the Filament Superadmin admin panel.
 - The account/password inputs use Laravel authentication and Laravel's hashed password model cast.
+
+## November 2026 guided builder update
+
+- Public homepage and wizard now use a black, burgundy-red and gold interface, while the invitation template itself remains a separate visual theme.
+- Builder desktop viewport is fixed-height; its question panel and website preview are individually scrollable. On mobile, edit/preview are switchable full-height panes.
+- Wizard has three steps: (1) choose optional sections, (2) answer one selected question group at a time, with optional fields initially collapsed, (3) compare free and future premium options and publish.
+- Browser draft key: `wwyt:wedding:draft:v2:{templateSlug}`, stored in `localStorage`. It includes answers, selected sections, current stage and group, and expanded optional fields.
+- **Drafts are browser/device-local**, not yet synced to a user account or backed up on the server. They can be lost if the browser deletes site data, storage is blocked, or the person uses another device. Avoid promising recovery across devices.
+- The only intentional removal of local draft data occurs after successful `POST /templates/wedding/{slug}/cancel` or successful free publication. Both set a session flash key `clear_wedding_draft`, which causes the shared layout to remove the corresponding browser key on the destination page.
+- Do not clear drafts in the wizard form submit event: guests may be redirected to registration/login before the invitation is actually published.
+- Home page shows a Continue draft link whenever local data exists for a template; visitors do not need to register before starting.
+- The CI workflow compiles/lints all Blade templates, checks JavaScript syntax and runs `WeddingBuilderTest` to cover cancellation, signup, publishing, required-field validation and seeder behavior.
