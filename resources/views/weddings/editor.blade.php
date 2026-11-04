@@ -7,6 +7,10 @@
 @push('styles')
 @include('weddings.partials.editor-styles')
 @include('weddings.partials.invitation-theme-styles')
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-burgundy-styles')
+@include('weddings.partials.photo-builder-styles')
+@endif
 @include('weddings.partials.editor-uri-styles')
 @endpush
 
@@ -22,7 +26,7 @@
             || ($draft['sections'][$key] ?? $defaultSelections[$key] ?? false);
     }
 @endphp
-<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit">
+<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}">
     <div class="builder-utility">
         <div class="builder-title">
             <a class="builder-back" href="{{ route('home') }}#templates" title="Back to templates"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Templates</a>
@@ -49,9 +53,15 @@
         <button type="button" class="wizard-step" data-step-navigation="details" disabled>
             <span class="step-dot">2</span> Add your details
         </button>
+        @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+        <span class="wizard-arrow" aria-hidden="true">›</span>
+        <button type="button" class="wizard-step" data-step-navigation="photos" disabled>
+            <span class="step-dot">3</span> Add your photos
+        </button>
+        @endif
         <span class="wizard-arrow" aria-hidden="true">›</span>
         <button type="button" class="wizard-step" data-step-navigation="publish" disabled>
-            <span class="step-dot">3</span> Review & publish
+            <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 4 : 3 }}</span> Review & publish
         </button>
     </nav>
 
@@ -157,6 +167,10 @@
                 </div>
             </section>
 
+            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+                @include('weddings.partials.photo-builder-stage')
+            @endif
+
             <section class="editor-stage" data-stage="publish" aria-labelledby="publish-stage-title">
                 <div class="stage-top">
                     <span class="stage-kicker">Step 03 / 03 · Almost there</span>
@@ -237,7 +251,7 @@
                         <div class="compare-block premium"><span class="small-badge">PREMIUM CONCEPT</span><strong class="comparison-name">Amelia & Gabriel</strong><span>Advanced RSVP, extra formats and more (soon)</span></div>
                     </div>
                     <div class="preview-canvas">
-                        @include('weddings.partials.invitation', ['answers' => $draft['answers'] ?? [], 'sections' => $currentSectionSelection, 'questions' => $questions, 'isPreview' => true])
+                        @include('weddings.partials.invitation', ['answers' => $draft['answers'] ?? [], 'sections' => $currentSectionSelection, 'questions' => $questions, 'isPreview' => true, 'template' => $template, 'photoUrls' => $photoUrls ?? []])
                     </div>
                 </div>
                 <div id="preview-paper" hidden>
@@ -249,7 +263,7 @@
             </div>
             <div class="preview-bottom">
                 <span><span class="preview-dot" aria-hidden="true"></span><span id="preview-caption">Live preview · Changes saved on this browser</span></span>
-                <span>Ever After · Classic Ivory</span>
+                <span>{{ $template->name }}</span>
             </div>
         </aside>
     </form>
@@ -258,4 +272,7 @@
 
 @push('scripts')
 @include('weddings.partials.editor-script')
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.partials.photo-builder-script')
+@endif
 @endpush
