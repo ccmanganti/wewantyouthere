@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Customer\Resources\Invitations\InvitationResource;
+use App\Filament\Customer\Resources\Invitations\Pages\ListInvitations;
 use App\Models\InvitationTemplate;
 use App\Models\InvitationWebsite;
 use App\Models\User;
@@ -11,6 +12,8 @@ use App\Support\InvitationWebsiteManager;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\WeddingBuilderSeeder;
 use Filament\Facades\Filament;
+use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -83,6 +86,61 @@ class CustomerWorkspaceTest extends TestCase
         $this->assertFalse(InvitationResource::canDelete($theirs));
 
         $this->get('/app/invitations')->assertOk()->assertDontSee('private-wedding');
+    }
+
+    public function test_customer_table_and_quick_edit_modal_work_without_an_edit_page(): void
+    {
+        $owner = $this->user('quick-editor@example.test');
+        $site = $this->website($owner, 'original-title');
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel(Filament::getPanel('app'));
+
+        Livewire::test(ListInvitations::class)
+            ->assertSuccessful()
+            ->assertCanSeeTableRecords([$site])
+            ->assertActionVisible(TestAction::make('quickEdit')->table($site))
+            ->callAction(TestAction::make('quickEdit')->table($site), data: [
+                'name' => 'Updated wedding',
+                'slug' => 'new-title',
+                'status' => 'published',
+            ])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('invitation_websites', [
+            'id' => $site->id,
+            'slug' => 'new-title',
+            'name' => 'Updated wedding',
+        ]);
+
+        $this->get('/i/original-title')->assertRedirect('/i/new-title');
+    }
+
+    public function test_content_edit_modal_saves_answers_and_section_visibility(): void
+    {
+        $owner = $this->user('content-editor@example.test');
+        $site = $this->website($owner, 'content-wedding');
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel(Filament::getPanel('app'));
+
+        Livewire::test(ListInvitations::class)
+            ->assertSuccessful()
+            ->callAction(TestAction::make('editContent')->table($site), data: [
+                'answers' => [
+                    'bride_name' => 'Updated Bride',
+                    'groom_name' => 'Updated Groom',
+                    'event_date' => '2027-12-12',
+                    'event_title' => 'Updated wedding',
+                    'venue_name' => 'New venue',
+                ],
+                'sections' => ['reception' => false, 'guests' => true],
+            ])
+            ->assertHasNoFormErrors();
+
+        $site->refresh();
+        $this->assertSame('Updated Bride', $site->answers['bride_name']);
+        $this->assertFalse($site->answers['_sections']['reception']);
     }
 
     public function test_free_accounts_have_one_slot_even_for_direct_publish_requests(): void
