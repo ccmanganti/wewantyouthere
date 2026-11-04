@@ -295,6 +295,9 @@ class WeddingBuilderController extends Controller
                 : route('wedding.editor', $template->slug);
 
             return redirect($destination)->withErrors($error->errors());
+        } catch (RuntimeException $error) {
+            return redirect()->route('wedding.editor', $template->slug)
+                ->withErrors(['photos' => $error->getMessage()]);
         }
 
 
