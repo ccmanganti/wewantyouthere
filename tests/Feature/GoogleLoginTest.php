@@ -117,6 +117,24 @@ class GoogleLoginTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_superadmin_cannot_be_implicitly_linked_to_a_new_google_account(): void
+    {
+        $admin = User::create([
+            'name' => 'Site Administrator',
+            'email' => 'admin-google@example.test',
+            'password' => 'admin-password-123',
+        ]);
+        $admin->assignRole('Superadmin');
+
+        $this->mockGoogle('google-new-identity', 'admin-google@example.test');
+
+        $this->get('/auth/google/callback')->assertRedirect('/app/login')
+            ->assertSessionHasErrors('google');
+
+        $this->assertNull($admin->fresh()->google_id);
+        $this->assertGuest();
+    }
+
     public function test_google_signin_is_disabled_without_credentials(): void
     {
         Config::set('services.google.client_id', null);
