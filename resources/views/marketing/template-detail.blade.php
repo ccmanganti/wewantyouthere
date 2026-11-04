@@ -16,7 +16,7 @@
                 </div>
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:24px">
                     <p style="font-size:11px;color:#756865">Scroll inside the preview to explore the full invitation website.</p>
-                    <a class="mkt-button small ghost" href="{{ route('marketing.templatePreview', $template->slug) }}" target="_blank" rel="noopener noreferrer">Open full website preview ↗</a>
+                    <a class="mkt-button small ghost" href="{{ route('marketing.templatePreview', $template->slug) }}" target="_blank" rel="noopener noreferrer">Open full website preview <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div class="mkt-detail-copy">
@@ -35,18 +35,18 @@
                 </ul>
                 <div style="display:flex;gap:10px;flex-wrap:wrap">
                     @if(!$canCreate)
-                        <a class="mkt-button" href="{{ url('/app/invitations') }}">Manage my invitation →</a>
+                        <a class="mkt-button" href="{{ url('/app/invitations') }}">Manage my invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     @elseif($template->is_premium)
                         <span class="mkt-pill">Premium publishing is coming soon</span>
                     @else
-                        <a class="mkt-button" href="{{ route('wedding.editor', $template->slug) }}">Customize this design →</a>
+                        <a class="mkt-button" href="{{ route('wedding.editor', $template->slug) }}">Customize this design <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     @endif
                 </div>
                 <p style="font-size:11px;margin-top:16px">The preview uses demonstration details. You can replace them with your own during creation. Your free account allows one website.</p>
             </div>
         </div>
     </div></section>
-    <section class="mkt-last"><div class="mkt-wrap"><div><div class="mkt-kicker">DESIGN IS ONLY THE BEGINNING</div><h2>SHARE THE DAY. <span class="mkt-serif">keep the feeling.</span></h2></div><a class="mkt-button light" href="{{ route('marketing.templates') }}">Explore other templates →</a></div></section>
+    <section class="mkt-last"><div class="mkt-wrap"><div><div class="mkt-kicker">DESIGN IS ONLY THE BEGINNING</div><h2>SHARE THE DAY. <span class="mkt-serif">keep the feeling.</span></h2></div><a class="mkt-button light" href="{{ route('marketing.templates') }}">Explore other templates <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div></section>
 </div>
 @endsection
 @push('scripts')
