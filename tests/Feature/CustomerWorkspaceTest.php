@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Customer\Auth\Register as CustomerRegister;
 use App\Filament\Customer\Resources\Invitations\InvitationResource;
 use App\Filament\Customer\Resources\Invitations\Pages\ListInvitations;
 use App\Models\InvitationTemplate;
@@ -141,6 +142,50 @@ class CustomerWorkspaceTest extends TestCase
         $site->refresh();
         $this->assertSame('Updated Bride', $site->answers['bride_name']);
         $this->assertFalse($site->answers['_sections']['reception']);
+    }
+
+    public function test_filament_registration_creates_a_customer_account_with_user_role(): void
+    {
+        Filament::setCurrentPanel(Filament::getPanel('app'));
+
+        Livewire::test(CustomerRegister::class)
+            ->fillForm([
+                'name' => 'New Couple',
+                'email' => 'registered-in-filament@example.test',
+                'password' => 'secure-password-123',
+                'passwordConfirmation' => 'secure-password-123',
+            ])
+            ->call('register')
+            ->assertHasNoFormErrors();
+
+        $user = User::where('email', 'registered-in-filament@example.test')->firstOrFail();
+        $this->assertTrue($user->hasRole('User'));
+        $this->assertSame('free', $user->account_tier);
+    }
+
+    public function test_filament_account_visit_finishes_the_pending_wedding_only_once(): void
+    {
+        $user = $this->user('finisher@example.test');
+        $template = InvitationTemplate::where('slug', 'ever-after-classic')->firstOrFail();
+
+        $this->actingAs($user)->withSession([
+            'pending_wedding' => [
+                'template_id' => $template->id,
+                'slug' => 'finished-after-login',
+                'sections' => ['couple' => true, 'ceremony' => true],
+                'answers' => [
+                    'bride_name' => 'Andrea',
+                    'groom_name' => 'Miguel',
+                    'event_title' => 'Wedding',
+                    'event_date' => '2027-12-12',
+                    'venue_name' => 'The Glass Garden',
+                ],
+            ],
+        ])->get('/app')->assertRedirect('/i/finished-after-login');
+
+        $this->assertDatabaseCount('invitation_websites', 1);
+        $this->get('/app')->assertOk();
+        $this->assertDatabaseCount('invitation_websites', 1);
     }
 
     public function test_free_accounts_have_one_slot_even_for_direct_publish_requests(): void
