@@ -6,6 +6,7 @@
 
 @push('styles')
 @include('weddings.partials.editor-styles')
+@include('weddings.partials.invitation-theme-styles')
 @endpush
 
 @section('content')
@@ -162,6 +163,25 @@
                     <p>Review your invitation, compare free and premium features, then publish your free website. No payment required.</p>
                 </div>
                 <div class="stage-scroll">
+                    <div class="custom-link-panel">
+                        <label for="invitation-slug" class="custom-link-label">Your personalized invitation link</label>
+                        <p>Choose a short, memorable address. This will be the link guests use to visit your wedding website and scan your QR code.</p>
+                        <div class="custom-link-field">
+                            <span class="url-prefix">{{ parse_url(config('app.url'), PHP_URL_HOST) ?: 'wewantyouthere.com' }}/i/</span>
+                            <input id="invitation-slug" name="slug" type="text" inputmode="url" autocapitalize="none" spellcheck="false"
+                                autocomplete="off" minlength="3" maxlength="72" pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                                value="{{ old('slug', $draft['slug'] ?? '') }}"
+                                placeholder="andrea-and-miguel" required
+                                aria-describedby="slug-availability" data-availability-url="{{ route('wedding.slugAvailability') }}"
+                                data-invitation-base="{{ rtrim(config('app.url'), '/') }}/i/">
+                        </div>
+                        <div class="slug-feedback" id="slug-availability" role="status" aria-live="polite">
+                            Use lowercase letters, numbers and hyphens only.
+                        </div>
+                        @error('slug')<div class="field-error" role="alert">{{ $message }}</div>@enderror
+                        <div class="full-url-preview">Full address: <span id="full-invitation-url"></span></div>
+                        <div class="full-url-preview qr-note">A downloadable QR code will be generated automatically once your invitation is published.</div>
+                    </div>
                     <h3 style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9f353c;margin:0 0 12px">Your invitation includes</h3>
                     <ul class="review-list" id="review-sections" aria-label="Selected sections"></ul>
                     <div class="plan-grid">
