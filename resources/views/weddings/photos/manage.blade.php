@@ -49,7 +49,7 @@
         <article class="card">
             <div class="preview">
                 @if($hasImage)
-                    <img src="{{ route('wedding.photos.site', ['slug' => $website->slug, 'slot' => $slot]) }}?v={{ $website->updated_at?->timestamp }}" alt="{{ $definition['label'] }}" loading="lazy">
+                    <img src="{{ route('wedding.photos.site', ['slug' => $website->slug, 'slot' => $slot]) }}?v={{ rawurlencode(basename(($website->media ?? [])[$slot]['path'] ?? '0')) }}" alt="{{ $definition['label'] }}" loading="lazy">
                 @else
                     <div class="empty"><i class="fa-solid fa-image" aria-hidden="true"></i> No photo yet</div>
                 @endif
