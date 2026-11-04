@@ -15,6 +15,14 @@
     const sectionControls = Array.from(app.querySelectorAll('[data-section-toggle]'));
     const preview = document.getElementById('wedding-invite');
     const draftIndicator = document.getElementById('draft-indicator');
+    const slugInput = document.getElementById('invitation-slug');
+    const slugFeedback = document.getElementById('slug-availability');
+    const invitationBase = slugInput.dataset.invitationBase;
+    const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    let slugWasEdited = Boolean(slugInput.value);
+    let slugCheckTimer = null;
+    let slugCheckId = 0;
+    let slugAvailability = 'unknown';
     const groups = questionGroups.map(function (node) { return node.dataset.questionGroup; });
     const stageIcons = {
         sections: 'Choose sections',
@@ -92,6 +100,8 @@
             reachedStage: reachedStage,
             group: currentGroup,
             advancedOpen: advancedOpen,
+            slug: slugInput.value,
+            slugManual: slugWasEdited,
             savedAt: new Date().toISOString()
         };
         try {
@@ -134,6 +144,8 @@
                 element.checked = saved.sections[element.dataset.sectionToggle];
             }
         });
+        if (typeof saved.slug === 'string') slugInput.value = saved.slug.slice(0, 72);
+        if (typeof saved.slugManual === 'boolean') slugWasEdited = saved.slugManual;
         advancedOpen = saved.advancedOpen && typeof saved.advancedOpen === 'object'
             ? saved.advancedOpen : {};
         if (groups.includes(saved.group)) currentGroup = saved.group;
@@ -155,6 +167,78 @@
         }
     }
 
+    function suggestSlug() {
+        const first = fieldFor('bride_name')?.value || '';
+        const second = fieldFor('groom_name')?.value || '';
+        const pair = [first, second].filter(Boolean).join(' and ');
+        const normalized = (pair || 'our-wedding').normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+            .slice(0, 72).replace(/-+$/g, '');
+
+        return normalized || 'our-wedding';
+    }
+
+    function showSlugStatus(state, message) {
+        slugAvailability = state;
+        slugFeedback.dataset.state = state;
+        slugFeedback.textContent = message;
+    }
+
+    function updateFullUrl() {
+        const url = invitationBase + (slugInput.value || 'your-wedding');
+        document.getElementById('full-invitation-url').textContent = url;
+    }
+
+    async function checkSlugAvailable() {
+        const currentSlug = slugInput.value;
+        const id = ++slugCheckId;
+        updateFullUrl();
+
+        slugInput.setCustomValidity('');
+        if (currentSlug.length < 3 || currentSlug.length > 72 || !slugPattern.test(currentSlug)) {
+            showSlugStatus('invalid', 'Use 3–72 lowercase letters, numbers or single hyphens. No spaces.');
+            return false;
+        }
+
+        showSlugStatus('checking', 'Checking availability...');
+        try {
+            const endpoint = slugInput.dataset.availabilityUrl + '?slug=' + encodeURIComponent(currentSlug);
+            const response = await fetch(endpoint, {credentials: 'same-origin', headers: {'Accept': 'application/json'}});
+            if (!response.ok) throw new Error('Could not check this address');
+            const result = await response.json();
+            if (id !== slugCheckId || slugInput.value !== currentSlug) return false;
+            if (result.available === true) {
+                showSlugStatus('available', '✓ This invitation link is available.');
+                return true;
+            }
+            slugInput.setCustomValidity('This invitation link is already taken. Please choose another.');
+            showSlugStatus('unavailable', 'This link is already taken. Try another variation.');
+            return false;
+        } catch (error) {
+            if (id === slugCheckId) showSlugStatus('unknown', 'Live checking is unavailable. We will confirm when you publish.');
+            return false;
+        }
+    }
+
+    function queueSlugCheck() {
+        if (slugCheckTimer !== null) clearTimeout(slugCheckTimer);
+        slugInput.setCustomValidity('');
+        slugCheckId++;
+        updateFullUrl();
+        if (!slugPattern.test(slugInput.value) || slugInput.value.length < 3) {
+            showSlugStatus('invalid', 'Use at least 3 lowercase letters, numbers or hyphens.');
+            return;
+        }
+        showSlugStatus('checking', 'Checking availability...');
+        slugCheckTimer = setTimeout(checkSlugAvailable, 400);
+    }
+
+    function updateSuggestedSlug() {
+        if (slugWasEdited) return;
+        slugInput.value = suggestSlug();
+        queueSlugCheck();
+    }
+
     function refreshSections() {
         const enabled = activeGroups();
         app.querySelectorAll('[data-section-input]').forEach(function (input) {
@@ -172,6 +256,9 @@
         });
         preview.querySelectorAll('[data-preview-section]').forEach(function (section) {
             section.hidden = !selected(section.dataset.previewSection);
+        });
+        preview.querySelectorAll('[data-nav-section]').forEach(function (link) {
+            link.hidden = !selected(link.dataset.navSection);
         });
         const counter = document.getElementById('section-selection-count');
         counter.textContent = enabled.length + ' sections selected · Change them anytime';
@@ -324,13 +411,32 @@
 
     refreshSections();
     refreshPreview();
+    updateSuggestedSlug();
+    if (slugWasEdited) queueSlugCheck();
     renderStage();
     restoring = false;
     writeDraft();
 
     allQuestions.forEach(function (field) {
-        field.addEventListener('input', function () { refreshPreview(); writeDraft(); });
+        field.addEventListener('input', function () {
+            if (field.dataset.question === 'bride_name' || field.dataset.question === 'groom_name') {
+                updateSuggestedSlug();
+            }
+            refreshPreview();
+            writeDraft();
+        });
         field.addEventListener('change', function () { refreshPreview(); writeDraft(); });
+    });
+
+    slugInput.addEventListener('input', function () {
+        // Keep links simple and copy-friendly while allowing the visitor to customize.
+        const normalized = slugInput.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')
+            .replace(/-+/g, '-').replace(/^-+/g, '').slice(0, 72);
+        if (normalized !== slugInput.value) slugInput.value = normalized;
+        slugWasEdited = slugInput.value.length > 0;
+        if (!slugWasEdited) slugInput.value = suggestSlug();
+        queueSlugCheck();
+        writeDraft();
     });
 
     sectionControls.forEach(function (input) {
@@ -403,6 +509,19 @@
         });
     });
 
+    // Keep preview navigation inside its own scrolling pane, not the builder page.
+    preview.querySelectorAll('a[href^="#wedding-"]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            const target = preview.querySelector(link.getAttribute('href'));
+            if (!target || target.hidden) return;
+            event.preventDefault();
+            const pane = document.getElementById('preview-scroll');
+            const destination = target.getBoundingClientRect().top -
+                pane.getBoundingClientRect().top + pane.scrollTop - 15;
+            pane.scrollTo({top: destination, behavior: 'smooth'});
+        });
+    });
+
     document.getElementById('mobile-edit').addEventListener('click', function () { setMobileView('edit'); });
     document.getElementById('mobile-preview').addEventListener('click', function () { setMobileView('preview'); });
 
@@ -414,6 +533,13 @@
         if (stage !== 'publish') {
             event.preventDefault();
             goToStage('publish');
+            return;
+        }
+        if (!slugInput.checkValidity()) {
+            event.preventDefault();
+            setMobileView('edit');
+            slugInput.focus();
+            slugInput.reportValidity();
             return;
         }
         // Never clear here. A guest can still need to register or log in.
