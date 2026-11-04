@@ -4,6 +4,8 @@
         <a href="{{ route('home') }}" class="wwyt-auth-home-link">← Back to home</a>
     </div>
 
+    <img class="wwyt-login-seal" src="{{ asset('branding/wwyt-icon-3d.svg') }}" alt="We Want You There wax seal" width="70" height="70">
+
     <h2 class="wwyt-auth-tagline">
         {{ request()->is('app/register') ? 'A beautiful beginning.' : 'Your celebration continues here.' }}
     </h2>
