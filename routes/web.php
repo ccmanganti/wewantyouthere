@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
 Route::get('/templates/wedding/{slug}', [WeddingBuilderController::class, 'editor'])->name('wedding.editor');
+Route::post('/templates/wedding/{slug}/cancel', [WeddingBuilderController::class, 'cancel'])->name('wedding.cancel');
 Route::post('/templates/wedding/{slug}/publish', [WeddingBuilderController::class, 'publish'])
     ->middleware('throttle:12,1')->name('wedding.publish');
 
