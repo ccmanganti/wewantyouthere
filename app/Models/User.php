@@ -10,6 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -42,10 +43,18 @@ class User extends Authenticatable implements FilamentUser
      *
      * @return array<string, string>
      */
+    public function invitationWebsites(): HasMany
+    {
+        return $this->hasMany(InvitationWebsite::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'admin'
-            && $this->hasRole('Superadmin');
+        return match ($panel->getId()) {
+            'admin' => $this->hasRole('Superadmin'),
+            'app' => true,
+            default => false,
+        };
     }
 
     protected function casts(): array
