@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Support\InvitationAccounts;
 use App\Support\InvitationWebsiteManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,7 +70,17 @@ class WeddingBuilderController extends Controller
         $draft = session('wedding_builder_draft', []);
         $draft = ($draft['template_id'] ?? null) === $template->id ? $draft : [];
 
-        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions'));
+
+        $photoSlots = config('wedding_photos', []);
+        $photos = session('wedding_uploads.' . $template->id, []);
+        $photoUrls = [];
+        foreach ($photos as $slot => $item) {
+            if (isset($photoSlots[$slot], $item['path']) && Storage::disk('local')->exists($item['path'])) {
+                $photoUrls[$slot] = route('wedding.photos.draft', ['slug' => $template->slug, 'slot' => $slot]);
+            }
+        }
+
+        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls'));
     }
 
     /**
@@ -190,6 +202,12 @@ class WeddingBuilderController extends Controller
             }
         }
 
+
+        $mediaKey = 'wedding_uploads.' . $template->id;
+        foreach ($request->session()->get($mediaKey, []) as $photo) {
+            if (isset($photo['path'])) Storage::disk('local')->delete($photo['path']);
+        }
+        $request->session()->forget($mediaKey);
         $request->session()->forget('pending_wedding_attempted');
 
         return redirect()->route('home')
@@ -237,7 +255,7 @@ class WeddingBuilderController extends Controller
                     ]);
                 }
 
-                return InvitationWebsite::create([
+                $website = InvitationWebsite::create([
                     'user_id' => $owner->id,
                     'invitation_template_id' => $template->id,
                     'name' => $title,
@@ -248,6 +266,28 @@ class WeddingBuilderController extends Controller
                     ),
                     'status' => 'published',
                 ]);
+
+                // Copy private session photos into owner-scoped permanent storage.
+                // If a file cannot be copied, rollback the database publication.
+                $draftPhotos = $request->session()->get('wedding_uploads.' . $template->id, []);
+                $manifest = [];
+                foreach (config('wedding_photos', []) as $slot => $definition) {
+                    $photo = $draftPhotos[$slot] ?? null;
+                    if (! $photo) continue;
+                    if (! isset($photo['path'], $photo['mime']) || ! Storage::disk('local')->exists($photo['path'])) {
+                        throw new RuntimeException('An invitation photo is missing. Please re-upload it.');
+                    }
+                    $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$photo['mime']] ?? null;
+                    if (! $extension) throw new RuntimeException('Unsupported invitation image type.');
+                    $destination = 'wedding-sites/' . $website->id . '/' . $slot . '.' . $extension;
+                    if (! Storage::disk('local')->copy($photo['path'], $destination)) {
+                        throw new RuntimeException('Unable to save a wedding photograph. Please try again.');
+                    }
+                    $manifest[$slot] = ['path' => $destination, 'mime' => $photo['mime']];
+                }
+                if ($manifest) $website->update(['media' => $manifest]);
+
+                return $website;
             });
         } catch (ValidationException $error) {
             $destination = isset($error->errors()['account'])
@@ -257,6 +297,12 @@ class WeddingBuilderController extends Controller
             return redirect($destination)->withErrors($error->errors());
         }
 
+
+        $mediaKey = 'wedding_uploads.' . $template->id;
+        foreach ($request->session()->get($mediaKey, []) as $photo) {
+            if (isset($photo['path'])) Storage::disk('local')->delete($photo['path']);
+        }
+        $request->session()->forget($mediaKey);
         $request->session()->forget(['pending_wedding', 'wedding_builder_draft', 'pending_wedding_attempted']);
         return redirect()->route('wedding.show', $website->slug)
             ->with('status', 'Your free wedding website is live!')
@@ -283,7 +329,16 @@ class WeddingBuilderController extends Controller
             404,
         );
 
+        $photoUrls = [];
+        foreach ($website->media ?? [] as $slot => $photo) {
+            if (array_key_exists($slot, config('wedding_photos', []))) {
+                $photoUrls[$slot] = route('wedding.photos.site', ['slug' => $website->slug, 'slot' => $slot]);
+            }
+        }
+
         return view('weddings.show', [
+            'photoUrls' => $photoUrls,
+            'template' => $website->template,
             'website' => $website,
             'answers' => $website->answers ?? [],
             'sections' => ($website->answers ?? [])['_sections'] ?? [],
