@@ -21,7 +21,7 @@ class InvitationTemplateResource extends Resource {
  TextInput::make('name')->required(),
  TextInput::make('slug')->required()->unique(ignoreRecord:true),
  Select::make('event_type_id')->relationship('eventType','name')->required(),
- FileUpload::make('code_path')->label('HTML template source')->disk('local')->directory('invitation-templates')->acceptedFileTypes(['text/html','text/plain'])->required()->helperText('Upload a static .html template using {{event_title}} placeholders. Scripts and PHP are not supported.'),
+ FileUpload::make('code_path')->label('HTML template source')->disk('local')->directory('invitation-templates')->acceptedFileTypes(['text/html','text/plain'])->required(fn (string $operation): bool => $operation === 'create')->helperText('Upload a static .html template using {{event_title}} placeholders. Scripts and PHP are not supported.'),
  FileUpload::make('thumbnail_path')->image()->disk('public')->directory('template-thumbnails'),
  Select::make('status')->options(['draft'=>'Draft','published'=>'Published','archived'=>'Archived'])->required()->default('draft'),
  Toggle::make('is_premium'),
