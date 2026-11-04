@@ -1,7 +1,7 @@
 @extends('layouts.wwyt')
 @section('body_class', 'invitation-page')
 @section('robots', 'noindex,nofollow')
-@section('title', ($answers['bride_name'] ?? 'Our') . ' & ' . ($answers['groom_name'] ?? 'Wedding') . ' | Wedding Invitation')
+@section('title', e(($answers['bride_name'] ?? 'Our') . ' & ' . ($answers['groom_name'] ?? 'Wedding') . ' | Wedding Invitation'))
 @section('meta_description', 'You are invited to our wedding celebration. Browse our ceremony, reception, entourage, program and wedding details.')
 
 @push('styles')
