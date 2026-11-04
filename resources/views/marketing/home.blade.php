@@ -39,7 +39,7 @@
                 <div class="mkt-hero-orb" aria-hidden="true"></div>
                 <div class="mkt-floating-words" aria-hidden="true">YOU'RE INVITED</div>
                 <div class="mkt-pulse" aria-hidden="true"></div>
-                <img class="mkt-hero-brandseal" src="{{ asset('branding/wwyt-icon-3d.svg') }}" width="115" height="115" alt="" aria-hidden="true">
+                <img class="mkt-hero-brandseal" src="{{ asset('brand/wwyt/seal-3d.png') }}" width="115" height="115" alt="" aria-hidden="true">
                 <div class="mkt-mock-screen">
                     <div class="mkt-mock-browser">
                         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -111,7 +111,7 @@
                 <div class="mkt-kicker red">MORE THAN A PRETTY INVITATION</div>
                 <h2 style="font-size:clamp(41px,5.7vw,73px);margin:14px 0 24px">Every detail.<br><span class="mkt-serif">Thoughtfully included.</span></h2>
                 <p style="max-width:565px;font-size:14px;color:#6f625c;line-height:1.85">Your celebration is unique, so your invitation should be too. Make a mobile-friendly wedding website that guests can return to for the details they need.</p>
-                <img src="{{ asset('branding/wwyt-horizontal-dark.svg') }}" alt="" loading="lazy" width="250" height="59" style="max-width:220px;height:auto;margin:4px 0 2px;opacity:.84" aria-hidden="true">
+                <img src="{{ asset('brand/wwyt/logo-black.png') }}" alt="" loading="lazy" width="250" height="59" style="max-width:220px;height:auto;margin:4px 0 2px;opacity:.84" aria-hidden="true">
                 <div class="mkt-feature-list">
                     <div class="mkt-feature"><span class="icon" aria-hidden="true">✧</span><div><h3>Complete Filipino wedding details</h3><p>Ceremony, reception, entourage, principal sponsors, ninong and ninang, program and FAQs.</p></div></div>
                     <div class="mkt-feature"><span class="icon" aria-hidden="true">↔</span><div><h3>Live editor and website preview</h3><p>Answer one section at a time, show or hide parts and see edits reflected as you type.</p></div></div>
