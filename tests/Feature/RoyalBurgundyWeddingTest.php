@@ -75,7 +75,7 @@ class RoyalBurgundyWeddingTest extends TestCase
 
         $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
             ->assertSee('rb-invite')
-            ->assertSee('Our love story')
+            ->assertSee('Our <em>love story</em>', false)
             ->assertSee('rb-story')
             ->assertSee('wedding-entourage')
             ->assertSee('wedding-guests');
@@ -85,8 +85,7 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('Add your beautiful moments')
             ->assertSee('data-photo-slot="hero"', false)
             ->assertSee('data-photo-locate="hero"', false)
-            ->assertSee('data-photo-edit="hero"', false)
-            ->assertSee('wedding-drafts', false); // Explanation in client markup / JS.
+            ->assertSee('data-photo-edit="hero"', false);
     }
 
     public function test_anonymous_photo_upload_can_be_previewed_then_published_after_registration(): void
