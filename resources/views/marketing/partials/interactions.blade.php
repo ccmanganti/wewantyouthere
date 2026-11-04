@@ -17,6 +17,16 @@
         root.querySelectorAll('.mkt-reveal').forEach(node => node.classList.add('is-revealed'));
     }
 
+    root.querySelectorAll('[data-draft-resume]').forEach(function(link) {
+        try {
+            const key = 'wwyt:wedding:draft:v2:' + link.dataset.draftResume;
+            const draft = JSON.parse(localStorage.getItem(key) || 'null');
+            if (draft && draft.version === 2 && draft.template === link.dataset.draftResume) {
+                link.hidden = false;
+            }
+        } catch (error) { /* Storage can be blocked, or the draft can be invalid. */ }
+    });
+
     const dialog = root.querySelector('[data-template-dialog]');
     const frame = root.querySelector('[data-dialog-frame]');
     let opener = null;
