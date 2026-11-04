@@ -7,6 +7,7 @@
 @push('styles')
 @include('weddings.partials.editor-styles')
 @include('weddings.partials.invitation-theme-styles')
+@include('weddings.partials.editor-uri-styles')
 @endpush
 
 @section('content')
