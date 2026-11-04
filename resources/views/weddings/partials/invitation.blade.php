@@ -23,6 +23,9 @@
         return $value;
     };
 @endphp
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+    @include('weddings.themes.royal-burgundy')
+@else
 <div class="wedding-invite" id="wedding-invite">
     <nav class="invite-site-nav" aria-label="Wedding website sections">
         <a href="#wedding-home" class="invite-logo">
@@ -205,3 +208,4 @@
         <a href="#wedding-home" class="invite-top-link">↑ Back to the top</a>
     </footer>
 </div>
+@endif
