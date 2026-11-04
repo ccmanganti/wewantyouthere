@@ -161,6 +161,7 @@ class WeddingBuilderController extends Controller
             'website' => $website,
             'answers' => $website->answers ?? [],
             'sections' => ($website->answers ?? [])['_sections'] ?? [],
+            'questions' => $website->template->eventType->questions()->where('is_enabled', true)->orderBy('sort_order')->get()->groupBy('group_key'),
         ]);
     }
 }
