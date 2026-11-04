@@ -57,7 +57,29 @@
         widget.setAttribute('aria-label', 'Wedding day '+monthName+' '+day+', '+year);
         widget.dataset.date = raw;
     }
-    window.addEventListener('wwyt:preview-updated', updateCalendar);
+    function updateMapLinks() {
+        for (const link of invitation.querySelectorAll('[data-rb-map]')) {
+            const input = document.querySelector('#wedding-form [data-question="' + link.dataset.rbMap + '"]');
+            if (!input) continue;
+            const value = input.value.trim();
+            let safe = null;
+            if (/^https?:\/\//i.test(value)) {
+                try {
+                    const url = new URL(value);
+                    if (['https:', 'http:'].includes(url.protocol)) safe = url.href;
+                } catch (error) { /* Invalid URL: keep directions button hidden. */ }
+            }
+            link.hidden = !safe;
+            if (safe) link.href = safe;
+            else link.removeAttribute('href');
+        }
+    }
+    window.addEventListener('wwyt:preview-updated', () => {
+        updateCalendar();
+        updateMapLinks();
+    });
+    updateCalendar();
+    updateMapLinks();
 
     // An actual image-layer envelope animation (WebP), never an SVG stroke.
     const intro = invitation.querySelector('[data-envelope-intro]');
