@@ -30,7 +30,9 @@ class CustomerPanelProvider extends PanelProvider
         return $panel
             ->id('app')
             ->path('app')
-            ->brandName('we want you there.')
+            ->brandName('We Want You There')
+            ->brandLogo(asset('branding/wwyt-horizontal-light.svg'))
+            ->brandLogoHeight('2.7rem')
             ->login(CustomerLogin::class)
             ->registration(CustomerRegister::class)
             ->passwordReset()
@@ -50,6 +52,9 @@ class CustomerPanelProvider extends PanelProvider
                 WelcomeWidget::class,
             ])
             ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('filament.customer.brand'))
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn () => view('filament.customer.auth.navigation'))
+            ->renderHook(PanelsRenderHook::TOPBAR_LOGO_AFTER, fn () => view('filament.customer.navigation.topbar'))
+            ->renderHook(PanelsRenderHook::SIDEBAR_FOOTER, fn () => view('filament.customer.navigation.sidebar-footer'))
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, fn () => view('filament.customer.auth.google-button'))
             ->renderHook(PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE, fn () => view('filament.customer.auth.google-button'))
             ->middleware([
