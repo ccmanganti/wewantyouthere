@@ -14,8 +14,8 @@
             <h1 class="mkt-display">FIND YOUR <span class="mkt-serif" style="text-transform:none">forever</span> DESIGN.</h1>
             <p>Explore online wedding invitation website templates built for beautiful celebrations in the Philippines. Open a full-page preview, choose the design you love, and make it uniquely yours.</p>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:25px">
-                <a class="mkt-button light" href="#catalogue">Explore wedding designs ↓</a>
-                <a class="mkt-button ghost-light" href="{{ route('home') }}#how-it-works">How it works →</a>
+                <a class="mkt-button light" href="#catalogue">Explore wedding designs <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+                <a class="mkt-button ghost-light" href="{{ route('home') }}#how-it-works">How it works <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             </div>
         </div>
     </section>
@@ -45,7 +45,7 @@
         </div>
     </section>
     <section class="mkt-last"><div class="mkt-wrap"><div><div class="mkt-kicker">CREATE SOMETHING MEANINGFUL</div><h2>THE DETAILS ARE <span class="mkt-serif">all yours.</span></h2><p>Pick the layout. Tell your story. Share one beautifully simple link.</p></div>
-        <a class="mkt-button light" href="{{ route('home') }}#how-it-works">See how it works →</a>
+        <a class="mkt-button light" href="{{ route('home') }}#how-it-works">See how it works <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </div></section>
     @include('marketing.partials.preview-dialog')
 </div>
