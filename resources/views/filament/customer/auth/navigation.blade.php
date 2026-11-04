@@ -1,6 +1,6 @@
 <header class="wwyt-auth-global-nav">
     <a href="{{ route('home') }}" class="wwyt-auth-nav-brand" aria-label="We Want You There homepage">
-        <img src="{{ asset('branding/wwyt-horizontal-light.svg') }}" width="220" height="55" alt="We Want You There — Digital Invitations & RSVP">
+        <img src="{{ asset('brand/wwyt/logo-white.png') }}" width="220" height="55" alt="We Want You There — Digital Invitations & RSVP">
     </a>
     <nav aria-label="Account page navigation" class="wwyt-auth-nav-links">
         <a href="{{ route('home') }}">Home</a>
