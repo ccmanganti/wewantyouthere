@@ -28,7 +28,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('we want you there.')
+            ->brandName('We Want You There')
+            ->brandLogo(asset('branding/wwyt-horizontal-color.svg'))
+            ->brandLogoHeight('2.7rem')
+            ->favicon(asset('branding/wwyt-icon-color.svg'))
             ->colors([
                 'primary' => Color::hex('#810100'),
             ])
