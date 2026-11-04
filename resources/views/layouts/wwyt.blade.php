@@ -8,6 +8,7 @@
     <meta name="description" content="@yield('meta_description', 'Create elegant wedding invitation websites in minutes. Choose a template, customize every detail and publish your wedding invitation for free.')">
     <title>@yield('title', 'We Want You There — Wedding Invitation Websites & RSVP')</title>
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="We Want You There">
     <meta property="og:title" content="@yield('title', 'We Want You There — Digital Invitation Websites')">
