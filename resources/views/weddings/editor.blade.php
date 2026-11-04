@@ -19,7 +19,9 @@
 @php
     $defaultSelections = [
         'couple' => true, 'ceremony' => true, 'reception' => true,
-        'entourage' => false, 'program' => false, 'guests' => true, 'details' => true,
+        'entourage' => false,
+        'program' => (($template->settings['theme'] ?? '') === 'royal_burgundy'),
+        'guests' => true, 'details' => true,
     ];
     $currentSectionSelection = [];
     foreach ($groups as $key => $group) {
