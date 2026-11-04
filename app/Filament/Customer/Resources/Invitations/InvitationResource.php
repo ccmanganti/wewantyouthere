@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class InvitationResource extends Resource
 {
@@ -134,6 +135,11 @@ class InvitationResource extends Resource
                             $data['status'],
                         );
                     }),
+                Action::make('managePhotos')
+                    ->label('Manage photos')
+                    ->icon('heroicon-s-photo')
+                    ->url(fn (InvitationWebsite $record): string => route('wedding.photos.manage', $record))
+                    ->visible(fn (InvitationWebsite $record): bool => ($record->template->settings['theme'] ?? '') === 'royal_burgundy'),
                 Action::make('editContent')
                     ->label('Edit details')
                     ->icon('heroicon-s-document-text')
@@ -174,7 +180,10 @@ class InvitationResource extends Resource
                     ->label('Delete')
                     ->modalHeading('Permanently delete this invitation?')
                     ->modalDescription('Your website and QR link will stop working. This action cannot be undone. Deleting your site frees your free-plan slot.')
-                    ->requiresConfirmation(),
+                    ->requiresConfirmation()
+                    ->after(function (InvitationWebsite $record): void {
+                        Storage::disk('local')->deleteDirectory('wedding-sites/' . $record->id);
+                    }),
             ])
             ->defaultSort('updated_at', 'desc')
             ->emptyStateHeading('Your first invitation starts here')
