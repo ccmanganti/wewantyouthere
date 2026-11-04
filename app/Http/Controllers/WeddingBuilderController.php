@@ -30,6 +30,7 @@ class WeddingBuilderController extends Controller
         $templates = InvitationTemplate::query()
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->where('status', 'published')
+            ->where('settings->renderer', 'builtin_wedding')
             ->orderBy('name')
             ->get();
 
@@ -47,6 +48,7 @@ class WeddingBuilderController extends Controller
         $template = InvitationTemplate::query()
             ->where('slug', $slug)
             ->where('status', 'published')
+            ->where('settings->renderer', 'builtin_wedding')
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->firstOrFail();
 
@@ -118,6 +120,7 @@ class WeddingBuilderController extends Controller
 
         $template = InvitationTemplate::query()
             ->where('slug', $slug)->where('status', 'published')->where('is_premium', false)
+            ->where('settings->renderer', 'builtin_wedding')
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->firstOrFail();
 
