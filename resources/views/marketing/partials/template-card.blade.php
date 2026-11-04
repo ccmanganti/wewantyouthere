@@ -1,5 +1,6 @@
 <article class="mkt-template-card mkt-reveal" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' wedding elegant ivory invitation website') }}">
     <div class="mkt-template-cover">
+        <img class="mkt-template-stamp" src="{{ asset('branding/wwyt-icon-color.svg') }}" width="43" height="43" loading="lazy" alt="" aria-hidden="true">
         <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM' : 'FREE WEBSITE' }}</span>
         <div class="mini-poster" aria-hidden="true">
             <span class="overline">TOGETHER WITH OUR FAMILIES</span>
