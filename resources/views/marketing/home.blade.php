@@ -24,6 +24,10 @@
                         <a class="mkt-button light" href="{{ route('marketing.templates') }}">Browse wedding templates <span aria-hidden="true">↗</span></a>
                     @endif
                     <a class="mkt-button ghost-light" href="{{ route('marketing.templates') }}">See all templates <span aria-hidden="true">→</span></a>
+                    @if($featured && $canCreate)
+                        <a class="mkt-button ghost-light" href="{{ route('wedding.editor', $featured->slug) }}"
+                            data-draft-resume="{{ $featured->slug }}" hidden>Continue my draft ↗</a>
+                    @endif
                 </div>
                 <div class="mkt-proof" aria-label="Platform highlights">
                     <span>Free to publish</span>
