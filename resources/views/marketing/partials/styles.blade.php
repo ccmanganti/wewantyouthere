@@ -228,4 +228,21 @@ filter:blur(9px)}
   .mkt *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .mkt .mkt-reveal{opacity:1;transform:none}
 }
+
+/* Decorative brand stamp and low-cost, intersection-triggered line drawing. */
+.mkt .mkt-hero-brandseal{width:clamp(78px,9vw,122px);height:auto;position:absolute;z-index:5;top:2%;right:-7%;transform:rotate(-18deg);filter:drop-shadow(0 9px 13px #1b17176b)}
+.mkt .mkt-template-stamp{position:absolute;z-index:4;top:15px;right:17px;width:43px;height:43px;filter:drop-shadow(0 5px 8px #1b17172d)}
+.mkt .mkt-section-head{position:relative;padding-bottom:20px}
+.mkt .mkt-section-head:after{content:"";position:absolute;bottom:0;left:0;width:min(320px,56%);height:2px;background:linear-gradient(90deg,#810100 0%,#B89B72 67%,transparent 100%);transform-origin:left center;transform:scaleX(1)}
+.mkt .mkt-process .mkt-section-head:after{background:linear-gradient(90deg,#b99a69 0%,transparent)}
+.js-motion .mkt .mkt-section-head:after{transform:scaleX(0);transition:transform 1.2s cubic-bezier(.2,.7,.2,1) .2s}
+.js-motion .mkt .mkt-section-head.is-revealed:after{transform:scaleX(1)}
+.mkt .mkt-journey-line{width:100%;height:48px;display:block;margin-top:24px;overflow:visible}
+.mkt .mkt-journey-line path{stroke-dasharray:12 10;stroke-dashoffset:0;opacity:.9}
+.js-motion .mkt .mkt-journey-line path{stroke-dasharray:1110;stroke-dashoffset:1110;transition:stroke-dashoffset 1.8s ease-out}
+.js-motion .mkt .mkt-journey-line.is-drawn path{stroke-dashoffset:0}
+@media(max-width:960px){.mkt .mkt-hero-brandseal{right:2%;top:4%}}
+@media(max-width:680px){.mkt .mkt-hero-brandseal{right:1%;top:7%;width:84px}.mkt .mkt-journey-line{height:28px}}
+@media(prefers-reduced-motion:reduce){.mkt .mkt-section-head:after{transform:scaleX(1)!important;transition:none!important}.mkt .mkt-journey-line path{stroke-dashoffset:0!important;transition:none!important}}
+
 </style>
