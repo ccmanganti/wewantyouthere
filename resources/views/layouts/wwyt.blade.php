@@ -8,7 +8,7 @@
     <meta name="description" content="@yield('meta_description', 'Create elegant wedding invitation websites in minutes. Choose a template, customize every detail and publish your wedding invitation for free.')">
     <title>@yield('title', 'We Want You There — Wedding Invitation Websites & RSVP')</title>
     <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('branding/wwyt-icon-color.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('brand/wwyt/favicon.png') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="We Want You There">
     <meta property="og:title" content="@yield('title', 'We Want You There — Digital Invitation Websites')">
@@ -16,6 +16,8 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta name="twitter:card" content="summary">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
@@ -35,6 +37,11 @@
         .foot{padding:28px 0;border-top:1px solid #352c30;background:#171417;color:#c2b9b5;font-size:12px;margin-top:70px}.foot .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         input:not([type=checkbox]):not([type=radio]),textarea,select{border:1px solid #dce1d8;background:#fff;border-radius:10px;padding:11px 13px;outline:none;width:100%;color:var(--ink)}
         input:focus,textarea:focus,select:focus{border-color:#6f9278;box-shadow:0 0 0 3px #6f927820}
+        .fa-solid,.fa-brands{font-size:.95em;flex:none}
+        .wwyt-brand-mark img{height:55px;width:auto;max-width:min(252px,39vw);object-fit:contain}
+        .wwyt-foot-brand img{height:53px;width:auto;max-width:215px;object-fit:contain}
+        @media(max-width:700px){.wwyt-brand-mark img{height:43px;max-width:155px}}
+        @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
         label.field-label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field{margin-bottom:14px}.field-error{font-size:12px;color:#9b433c;margin-top:5px}
         .tiny{font-size:12px}.danger{color:#a1463c}.text-center{text-align:center}
         @media(max-width:700px){.topbar{height:70px}.brand{font-size:20px}.nav{gap:10px}.nav .hide-mobile{display:none}.nav .btn{padding:10px 14px}.wrap{width:min(100% - 28px,1190px)}.section{padding:52px 0}}
@@ -53,17 +60,17 @@
 <body class="@yield('body_class')">
 <header class="topbar"><div class="wrap topbar-inner">
     <a class="brand wwyt-brand-mark" href="{{ route('home') }}" aria-label="We Want You There homepage">
-        <img src="{{ asset('branding/wwyt-horizontal-light.svg') }}" alt="We Want You There — Digital Invitations &amp; RSVP" width="215" height="50">
+        <img src="{{ asset('brand/wwyt/logo-white.png') }}" alt="We Want You There — Digital Invitations &amp; RSVP" width="215" height="50">
     </a>
     <nav class="nav" aria-label="Main">
         <a class="hide-mobile" href="{{ route('marketing.templates') }}">Templates</a>
         <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
         @auth
             <a class="hide-mobile" href="{{ url('/app/invitations') }}">My invitations</a>
-            <a class="btn" href="{{ url('/app') }}">My dashboard</a>
+            <a class="btn" href="{{ url('/app') }}">My dashboard <i class="fa-solid fa-gauge-high" aria-hidden="true"></i></a>
         @else
             <a class="hide-mobile" href="{{ url('/app/login') }}">Log in</a>
-            <a class="btn" href="{{ route('home') }}#templates">Create invitation</a>
+            <a class="btn" href="{{ route('home') }}#templates">Create invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         @endauth
     </nav>
 </div></header>
@@ -71,7 +78,7 @@
 <main>@yield('content')</main>
 <footer class="foot"><div class="wrap">
     <div class="wwyt-foot-brand">
-        <a href="{{ route('home') }}" aria-label="We Want You There home"><img src="{{ asset('branding/wwyt-horizontal-light.svg') }}" width="190" height="44" loading="lazy" alt="We Want You There"></a>
+        <a href="{{ route('home') }}" aria-label="We Want You There home"><img src="{{ asset('brand/wwyt/logo-white.png') }}" width="190" height="44" loading="lazy" alt="We Want You There"></a>
         <span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span>
     </div>
     <span><a href="{{ route('marketing.templates') }}">Templates</a> · <a href="{{ route('marketing.privacy') }}">Privacy</a> · <a href="{{ route('marketing.terms') }}">Terms</a></span>
