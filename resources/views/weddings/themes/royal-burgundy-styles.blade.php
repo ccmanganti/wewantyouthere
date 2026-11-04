@@ -136,4 +136,13 @@
  .rb-invite .rb-gallery-photo:nth-child(4){grid-column:span 2}
 }
 @media(prefers-reduced-motion:reduce){.rb-invite .rb-reveal,.rb-invite.rb-motion-ready .rb-reveal{opacity:1!important;transform:none!important;transition:none!important}.rb-invite .rb-photo img{transition:none}}
+
+.rb-invite .rb-intro-grid--no-photos{grid-template-columns:1fr;max-width:750px;margin:auto;text-align:center}
+.rb-invite .rb-intro-grid--no-photos .rb-intro-copy{max-width:650px;margin:auto}
+.rb-invite .rb-gallery-few{display:flex;justify-content:center;align-items:stretch;gap:15px}
+.rb-invite .rb-gallery-few .rb-gallery-photo{width:min(340px,100%);aspect-ratio:4/5;grid-column:auto!important;grid-row:auto!important}
+.rb-invite .rb-rsvp-grid--no-photo{grid-template-columns:1fr;max-width:770px;text-align:center}
+.rb-invite .rb-rsvp-grid--no-photo .rb-rsvp-copy{max-width:720px;margin:auto}
+.rb-invite .rb-story-item:not(:has(.rb-story-photo)) .rb-story-copy{max-width:400px}
+@media(max-width:620px){.rb-invite .rb-gallery-few{flex-wrap:wrap}.rb-invite .rb-gallery-few .rb-gallery-photo{width:min(44%,250px);min-width:145px}}
 </style>
