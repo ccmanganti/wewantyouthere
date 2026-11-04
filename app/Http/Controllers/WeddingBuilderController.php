@@ -163,11 +163,12 @@ class WeddingBuilderController extends Controller
         ];
 
         $request->session()->put('pending_wedding', $pending);
+        $request->session()->forget('pending_wedding_attempted');
         $request->session()->put('wedding_builder_draft', $pending);
 
         return Auth::check()
             ? $this->complete($request)
-            : redirect()->route('wedding.register')->with('status', 'Create your free account to publish your invitation.');
+            : redirect('/app/register')->with('status', 'Create your free account to publish your invitation.');
     }
 
     public function cancel(Request $request, string $slug): RedirectResponse
@@ -179,6 +180,8 @@ class WeddingBuilderController extends Controller
                 $request->session()->forget($key);
             }
         }
+
+        $request->session()->forget('pending_wedding_attempted');
 
         return redirect()->route('home')
             ->with('clear_wedding_draft', $template->slug)
@@ -245,7 +248,7 @@ class WeddingBuilderController extends Controller
             return redirect($destination)->withErrors($error->errors());
         }
 
-        $request->session()->forget(['pending_wedding', 'wedding_builder_draft']);
+        $request->session()->forget(['pending_wedding', 'wedding_builder_draft', 'pending_wedding_attempted']);
         return redirect()->route('wedding.show', $website->slug)
             ->with('status', 'Your free wedding website is live!')
             ->with('clear_wedding_draft', $template->slug);
