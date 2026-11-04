@@ -25,7 +25,7 @@
 <div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit">
     <div class="builder-utility">
         <div class="builder-title">
-            <a class="builder-back" href="{{ route('home') }}#templates" title="Back to templates">← Templates</a>
+            <a class="builder-back" href="{{ route('home') }}#templates" title="Back to templates"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Templates</a>
             <span aria-hidden="true" style="color:#67575b">/</span>
             <div><strong>{{ $template->name }}</strong><small>Your wedding invitation workspace</small></div>
         </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="stage-scroll">
                     <div class="selector-intro">
-                        <span class="selector-icon" aria-hidden="true">✦</span>
+                        <span class="selector-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
                         <div><strong>Start with the essentials.</strong><p>The couple and ceremony are always included. Add only what feels right for your celebration.</p></div>
                     </div>
                     <div class="section-choice-grid">
@@ -110,7 +110,7 @@
                 </div>
                 <div class="stage-footer">
                     <p id="section-selection-count">Choose your sections to continue.</p>
-                    <button type="button" class="btn" id="sections-next">Continue to details →</button>
+                    <button type="button" class="btn" id="sections-next">Continue to details <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                 </div>
             </section>
 
@@ -152,8 +152,8 @@
                     @endforeach
                 </div>
                 <div class="stage-footer">
-                    <button type="button" class="back-btn" id="details-previous">← Back</button>
-                    <button type="button" class="btn" id="details-next">Next section →</button>
+                    <button type="button" class="back-btn" id="details-previous"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+                    <button type="button" class="btn" id="details-next">Next section <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                 </div>
             </section>
 
@@ -215,8 +215,8 @@
                     <div class="launch-note"><strong>No checkout yet.</strong> The premium features above are planned, not available for purchase. The button below publishes the free website only. If you aren't signed in, we'll ask you to create an account first.</div>
                 </div>
                 <div class="stage-footer">
-                    <button type="button" class="back-btn" id="publish-back">← Edit details</button>
-                    <button type="submit" class="btn" id="publish-free">Publish free invitation →</button>
+                    <button type="button" class="back-btn" id="publish-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Edit details</button>
+                    <button type="submit" class="btn" id="publish-free">Publish free invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                 </div>
             </section>
         </div>
@@ -241,10 +241,10 @@
                     </div>
                 </div>
                 <div id="preview-paper" hidden>
-                    <div class="preview-locked"><div><span class="icon">✉</span><h3>Printed invitations</h3><p>Print-ready paper invitations are a planned premium format. Editing and exports will be added in a later phase.</p><span class="pill">Coming soon</span></div></div>
+                    <div class="preview-locked"><div><span class="icon" aria-hidden="true"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i></span><h3>Printed invitations</h3><p>Print-ready paper invitations are a planned premium format. Editing and exports will be added in a later phase.</p><span class="pill">Coming soon</span></div></div>
                 </div>
                 <div id="preview-animated" hidden>
-                    <div class="preview-locked"><div><span class="icon">✧</span><h3>Animated & video invitations</h3><p>Photo animations and personalized video invitations are planned premium formats, not yet available to export.</p><span class="pill">Coming soon</span></div></div>
+                    <div class="preview-locked"><div><span class="icon" aria-hidden="true"><i class="fa-solid fa-film" aria-hidden="true"></i></span><h3>Animated & video invitations</h3><p>Photo animations and personalized video invitations are planned premium formats, not yet available to export.</p><span class="pill">Coming soon</span></div></div>
                 </div>
             </div>
             <div class="preview-bottom">
