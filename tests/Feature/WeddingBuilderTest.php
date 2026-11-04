@@ -6,6 +6,7 @@ use App\Models\EventQuestion;
 use App\Models\EventType;
 use App\Models\InvitationTemplate;
 use App\Models\InvitationWebsite;
+use App\Models\User;
 use Database\Seeders\WeddingBuilderSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -110,6 +111,102 @@ class WeddingBuilderTest extends TestCase
             ->assertSee('Coming soon');
 
         $this->assertGuest();
+    }
+
+    public function test_custom_uri_is_kept_when_published_and_site_is_full_width(): void
+    {
+        $user = User::create([
+            'name' => 'Andrea Santos',
+            'email' => 'andrea-custom@example.test',
+            'password' => 'secure-password-123',
+        ]);
+
+        $this->actingAs($user)->post('/templates/wedding/ever-after-classic/publish', [
+            'slug' => 'andrea-and-miguel',
+            'answers' => [
+                'bride_name' => 'Andrea',
+                'groom_name' => 'Miguel',
+                'event_title' => 'Andrea & Miguel',
+                'event_date' => '2027-12-12',
+                'venue_name' => 'The Glass Garden',
+            ],
+            'sections' => ['reception' => '1', 'entourage' => '0'],
+        ])->assertRedirect('/i/andrea-and-miguel');
+
+        $this->assertDatabaseHas('invitation_websites', [
+            'slug' => 'andrea-and-miguel',
+            'user_id' => $user->id,
+        ]);
+
+        $this->get('/i/andrea-and-miguel')->assertOk()
+            ->assertSee('public-wedding')
+            ->assertSee('invite-site-nav')
+            ->assertSee('wedding-ceremony')
+            ->assertSee('Download QR (SVG)')
+            ->assertSee('noindex,nofollow')
+            ->assertDontSee('class="public-invite"', false);
+    }
+
+    public function test_server_generates_qr_for_published_site_with_download(): void
+    {
+        $user = User::create([
+            'name' => 'Wedding Host', 'email' => 'qr@example.test',
+            'password' => 'secure-password-123',
+        ]);
+
+        $website = InvitationWebsite::create([
+            'user_id' => $user->id,
+            'invitation_template_id' => InvitationTemplate::where('slug', 'ever-after-classic')->firstOrFail()->id,
+            'name' => 'Our wedding', 'slug' => 'test-wedding-qr',
+            'status' => 'published', 'answers' => ['bride_name' => 'Andrea'],
+        ]);
+
+        $this->get('/i/test-wedding-qr/qr.svg')->assertOk()
+            ->assertHeader('Content-Type', 'image/svg+xml; charset=UTF-8')
+            ->assertSee('<svg', false);
+
+        $this->get('/i/test-wedding-qr/qr.svg?download=1')->assertOk()
+            ->assertHeader('Content-Disposition', 'attachment; filename="test-wedding-qr-qr.svg"');
+
+        $website->update(['status' => 'draft']);
+        $this->get('/i/test-wedding-qr/qr.svg')->assertNotFound();
+    }
+
+    public function test_custom_slug_availability_and_validation(): void
+    {
+        $this->get('/invitation-slug-availability?slug=andrea-and-miguel')
+            ->assertOk()->assertJson(['available' => true]);
+
+        $user = User::create([
+            'name' => 'Existing User', 'email' => 'existing@example.test',
+            'password' => 'secure-password-123',
+        ]);
+
+        InvitationWebsite::create([
+            'user_id' => $user->id,
+            'invitation_template_id' => InvitationTemplate::where('slug', 'ever-after-classic')->firstOrFail()->id,
+            'name' => 'First wedding', 'slug' => 'andrea-and-miguel',
+            'status' => 'published', 'answers' => [],
+        ]);
+
+        $this->get('/invitation-slug-availability?slug=andrea-and-miguel')
+            ->assertOk()->assertJson(['available' => false]);
+
+        $answers = [
+            'bride_name' => 'Andrea', 'groom_name' => 'Miguel',
+            'event_title' => 'Wedding', 'event_date' => '2027-12-12',
+            'venue_name' => 'The Glass Garden',
+        ];
+
+        $this->post('/templates/wedding/ever-after-classic/publish', [
+            'slug' => 'andrea-and-miguel', 'answers' => $answers,
+        ])->assertSessionHasErrors('slug');
+
+        $this->post('/templates/wedding/ever-after-classic/publish', [
+            'slug' => 'My Wedding!', 'answers' => $answers,
+        ])->assertSessionHasErrors('slug');
+
+        $this->assertDatabaseCount('invitation_websites', 1);
     }
 
     public function test_website_cannot_publish_without_required_questions(): void
