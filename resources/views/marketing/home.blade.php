@@ -17,16 +17,16 @@
                 <p><strong>Make your wedding invitation website for free.</strong> Choose an elegant design, tell your story, add your ceremony and entourage details, and share everything through one memorable link.</p>
                 <div class="mkt-hero-actions">
                     @if(!$canCreate)
-                        <a class="mkt-button light" href="{{ url('/app/invitations') }}">Manage my invitation <span aria-hidden="true">↗</span></a>
+                        <a class="mkt-button light" href="{{ url('/app/invitations') }}">Manage my invitation <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                     @elseif($featured)
-                        <a class="mkt-button light" href="{{ route('wedding.editor', $featured->slug) }}">Make my invitation <span aria-hidden="true">↗</span></a>
+                        <a class="mkt-button light" href="{{ route('wedding.editor', $featured->slug) }}">Make my invitation <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                     @else
-                        <a class="mkt-button light" href="{{ route('marketing.templates') }}">Browse wedding templates <span aria-hidden="true">↗</span></a>
+                        <a class="mkt-button light" href="{{ route('marketing.templates') }}">Browse wedding templates <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                     @endif
-                    <a class="mkt-button ghost-light" href="{{ route('marketing.templates') }}">See all templates <span aria-hidden="true">→</span></a>
+                    <a class="mkt-button ghost-light" href="{{ route('marketing.templates') }}">See all templates <span aria-hidden="true"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span></a>
                     @if($featured && $canCreate)
                         <a class="mkt-button ghost-light" href="{{ route('wedding.editor', $featured->slug) }}"
-                            data-draft-resume="{{ $featured->slug }}" hidden>Continue my draft ↗</a>
+                            data-draft-resume="{{ $featured->slug }}" hidden>Continue my draft <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                     @endif
                 </div>
                 <div class="mkt-proof" aria-label="Platform highlights">
@@ -73,7 +73,7 @@
                 </div>
                 <div>
                     <p>Explore actual wedding website templates. Open the full preview before you decide, then personalize each section in the guided builder.</p>
-                    <a href="{{ route('marketing.templates') }}" style="display:inline-block;margin-top:16px;color:#810100;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:4px">Explore all wedding invitation templates ↗</a>
+                    <a href="{{ route('marketing.templates') }}" style="display:inline-block;margin-top:16px;color:#810100;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:4px">Explore all wedding invitation templates <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div class="mkt-template-grid">
@@ -113,10 +113,10 @@
                 <p style="max-width:565px;font-size:14px;color:#6f625c;line-height:1.85">Your celebration is unique, so your invitation should be too. Make a mobile-friendly wedding website that guests can return to for the details they need.</p>
                 <img src="{{ asset('brand/wwyt/logo-black.png') }}" alt="" loading="lazy" width="250" height="59" style="max-width:220px;height:auto;margin:4px 0 2px;opacity:.84" aria-hidden="true">
                 <div class="mkt-feature-list">
-                    <div class="mkt-feature"><span class="icon" aria-hidden="true">✧</span><div><h3>Complete Filipino wedding details</h3><p>Ceremony, reception, entourage, principal sponsors, ninong and ninang, program and FAQs.</p></div></div>
-                    <div class="mkt-feature"><span class="icon" aria-hidden="true">↔</span><div><h3>Live editor and website preview</h3><p>Answer one section at a time, show or hide parts and see edits reflected as you type.</p></div></div>
-                    <div class="mkt-feature"><span class="icon" aria-hidden="true">↗</span><div><h3>One shareable URL and QR code</h3><p>Pick your own invitation link and download a QR code for sharing or printing.</p></div></div>
-                    <div class="mkt-feature"><span class="icon" aria-hidden="true">◷</span><div><h3>Save progress and manage later</h3><p>Continue a draft in the same browser, then edit your published website from your account.</p></div></div>
+                    <div class="mkt-feature"><span class="icon" aria-hidden="true"><i class="fa-solid fa-people-group" aria-hidden="true"></i></span><div><h3>Complete Filipino wedding details</h3><p>Ceremony, reception, entourage, principal sponsors, ninong and ninang, program and FAQs.</p></div></div>
+                    <div class="mkt-feature"><span class="icon" aria-hidden="true"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i></span><div><h3>Live editor and website preview</h3><p>Answer one section at a time, show or hide parts and see edits reflected as you type.</p></div></div>
+                    <div class="mkt-feature"><span class="icon" aria-hidden="true"><i class="fa-solid fa-qrcode" aria-hidden="true"></i></span><div><h3>One shareable URL and QR code</h3><p>Pick your own invitation link and download a QR code for sharing or printing.</p></div></div>
+                    <div class="mkt-feature"><span class="icon" aria-hidden="true"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i></span><div><h3>Save progress and manage later</h3><p>Continue a draft in the same browser, then edit your published website from your account.</p></div></div>
                 </div>
             </div>
             <div class="mkt-feature-visual mkt-reveal" aria-label="Illustration of the guided wedding invitation questionnaire">
@@ -128,7 +128,7 @@
                     <div class="fake-input">Wedding date &nbsp; — &nbsp; December 12, 2027</div>
                     <div class="fake-input">Ceremony & entourage &nbsp; ✓</div>
                     <div class="fake-input">Reception & dress code &nbsp; ✓</div>
-                    <div class="fake-btn">Preview my website →</div>
+                    <div class="fake-btn">Preview my website <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></div>
                 </div>
             </div>
         </div>
@@ -141,10 +141,10 @@
                 <p>We're starting with weddings and growing into more event invitation websites for Filipino families and celebrations.</p>
             </div>
             <div class="mkt-event-row">
-                <a class="mkt-event mkt-reveal" href="{{ route('marketing.templates') }}"><span class="event-glyph">♥</span><div><h3>Weddings</h3><p>Explore designs now ↗</p></div></a>
-                <div class="mkt-event soon mkt-reveal"><span class="event-glyph">✷</span><div><h3>Debuts</h3><p>18 roses, candles and treasures</p><span class="soon-label">COMING SOON</span></div></div>
-                <div class="mkt-event soon mkt-reveal"><span class="event-glyph">✦</span><div><h3>Birthdays</h3><p>Every age, every milestone</p><span class="soon-label">COMING SOON</span></div></div>
-                <div class="mkt-event soon mkt-reveal"><span class="event-glyph">✤</span><div><h3>Christenings</h3><p>Families, ninong and ninang</p><span class="soon-label">COMING SOON</span></div></div>
+                <a class="mkt-event mkt-reveal" href="{{ route('marketing.templates') }}"><span class="event-glyph" aria-hidden="true"><i class="fa-solid fa-heart" aria-hidden="true"></i></span><div><h3>Weddings</h3><p>Explore designs now <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></p></div></a>
+                <div class="mkt-event soon mkt-reveal"><span class="event-glyph" aria-hidden="true"><i class="fa-solid fa-crown" aria-hidden="true"></i></span><div><h3>Debuts</h3><p>18 roses, candles and treasures</p><span class="soon-label">COMING SOON</span></div></div>
+                <div class="mkt-event soon mkt-reveal"><span class="event-glyph" aria-hidden="true"><i class="fa-solid fa-cake-candles" aria-hidden="true"></i></span><div><h3>Birthdays</h3><p>Every age, every milestone</p><span class="soon-label">COMING SOON</span></div></div>
+                <div class="mkt-event soon mkt-reveal"><span class="event-glyph" aria-hidden="true"><i class="fa-solid fa-baby" aria-hidden="true"></i></span><div><h3>Christenings</h3><p>Families, ninong and ninang</p><span class="soon-label">COMING SOON</span></div></div>
             </div>
         </div>
     </section>
@@ -167,11 +167,11 @@
                     <li>Manage and update your wedding details later</li>
                 </ul>
                 @if(!$canCreate)
-                    <a class="mkt-button" href="{{ url('/app/invitations') }}">Manage my website →</a>
+                    <a class="mkt-button" href="{{ url('/app/invitations') }}">Manage my website <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                 @elseif($featured)
-                    <a class="mkt-button" href="{{ route('wedding.editor', $featured->slug) }}">Start creating free →</a>
+                    <a class="mkt-button" href="{{ route('wedding.editor', $featured->slug) }}">Start creating free <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                 @else
-                    <a class="mkt-button" href="{{ route('marketing.templates') }}">Browse wedding templates →</a>
+                    <a class="mkt-button" href="{{ route('marketing.templates') }}">Browse wedding templates <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                 @endif
                 <div style="margin-top:15px;font-size:11px;color:#796c65">Premium RSVP dashboards, personalized guest QR codes, printed and video invitations are being developed.</div>
             </div>
@@ -198,7 +198,7 @@
                 <h2>BIG MOMENTS. <span class="mkt-serif">one beautiful link.</span></h2>
                 <p>Let's make a wedding invitation your guests will be excited to open.</p>
             </div>
-            <a class="mkt-button light" href="{{ !$canCreate ? url('/app/invitations') : route('marketing.templates') }}">{{ !$canCreate ? 'Manage my invitation' : 'Explore invitation templates' }} →</a>
+            <a class="mkt-button light" href="{{ !$canCreate ? url('/app/invitations') : route('marketing.templates') }}">{{ !$canCreate ? 'Manage my invitation' : 'Explore invitation templates' }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </section>
     @include('marketing.partials.preview-dialog')
