@@ -104,13 +104,15 @@
             <h1>YOUR MOMENT, <em>beautifully invited.</em></h1>
             <p>Build a website invitation that feels unmistakably yours. Choose a design, select what you want to share, see your edits instantly, and publish for free.</p>
             <div class="hero-ctas">
-                @if($featured)
+                @if(!$canCreate)
+                    <a class="btn" href="{{ url('/app/invitations') }}">Manage my invitation ↗</a>
+                @elseif($featured)
                     <a class="btn" href="{{ route('wedding.editor', $featured->slug) }}">Create my invitation ↗</a>
                 @else
                     <a class="btn" href="#templates">Explore wedding templates ↗</a>
                 @endif
                 <a href="#templates" class="btn btn-line">Browse templates</a>
-                @if($featured)
+                @if($featured && $canCreate)
                 <a href="{{ route('wedding.editor', $featured->slug) }}" class="btn btn-line" id="hero-resume" hidden>Continue my draft →</a>
                 @endif
             </div>
@@ -149,8 +151,12 @@
                         <span class="pill">{{ $template->is_premium ? 'Premium template' : 'Free website' }}</span>
                         <h3>{{ $template->name }}</h3>
                         <p>{{ data_get($template->settings, 'description', 'Create a timeless wedding invitation in just a few steps.') }}</p>
-                        <a class="btn" href="{{ route('wedding.editor', $template->slug) }}">Customize template →</a>
-                        <a class="draft-link" data-resume-template="{{ $template->slug }}" href="{{ route('wedding.editor', $template->slug) }}" aria-label="Continue draft for {{ $template->name }}">Continue draft ↗</a>
+                        @if($canCreate)
+                            <a class="btn" href="{{ route('wedding.editor', $template->slug) }}">Customize template →</a>
+                            <a class="draft-link" data-resume-template="{{ $template->slug }}" href="{{ route('wedding.editor', $template->slug) }}" aria-label="Continue draft for {{ $template->name }}">Continue draft ↗</a>
+                        @else
+                            <a class="btn" href="{{ url('/app/invitations') }}">Manage my invitation →</a>
+                        @endif
                     </div>
                 </article>
             @empty
@@ -208,7 +214,9 @@
 
 <section class="final-banner"><div class="wrap">
     <div><span class="eyebrow" style="color:#f7d2ad">Start something beautiful</span><h2>Make the invitation as memorable as the moment.</h2><p>Your beautiful free wedding website starts with a template.</p></div>
-    @if($featured)
+    @if(!$canCreate)
+    <a class="btn" href="{{ url('/app/invitations') }}">Manage my invitation →</a>
+    @elseif($featured)
     <a class="btn" href="{{ route('wedding.editor', $featured->slug) }}">Create my invitation →</a>
     @else
     <a class="btn" href="#templates">Explore templates →</a>
@@ -218,7 +226,7 @@
 @endsection
 
 @push('scripts')
-@if($featured)
+@if($featured && $canCreate)
 <script>
 (function () {
     try {
