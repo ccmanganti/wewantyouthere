@@ -58,7 +58,7 @@ class WeddingBuilderTest extends TestCase
                 'best_man' => 'Jose',
             ],
             'sections' => ['entourage' => '0', 'reception' => '1'],
-        ])->assertRedirect('/register')
+         ])->assertRedirect('/app/register')
             ->assertSessionHas('pending_wedding');
 
         $this->post('/register', [
