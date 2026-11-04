@@ -17,13 +17,13 @@
             @foreach([
                 ['wedding-home', 'Opening cover', 'fa-envelope-open-text'],
                 ['wedding-ceremony', 'Ceremony', 'fa-church'],
-                ['wedding-date', 'Wedding date', 'fa-calendar-heart'],
+                ['wedding-date', 'Wedding date', 'fa-calendar-days'],
                 ['wedding-program', 'Timing & program', 'fa-clock'],
                 ['wedding-reception', 'Venues', 'fa-location-dot'],
                 ['wedding-details', 'Dress code & details', 'fa-user-tie'],
                 ['wedding-story', 'Our story', 'fa-heart'],
                 ['wedding-entourage', 'Family & entourage', 'fa-people-group'],
-                ['wedding-guests', 'Guests & RSVP', 'fa-envelope-circle-check'],
+                ['wedding-guests', 'Guests & RSVP', 'fa-envelope-open-text'],
             ] as [$target, $label, $icon])
                 <button type="button" class="rb-refine-jump" data-refine-section="{{ $target }}">
                     <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
