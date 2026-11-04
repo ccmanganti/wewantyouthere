@@ -8,6 +8,8 @@
 @include('weddings.partials.invitation-theme-styles')
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-burgundy-styles')
+<link rel="preload" href="{{ asset('wedding/royal-burgundy/envelope-front.webp') }}" as="image" type="image/webp">
+<link rel="preload" href="{{ asset('wedding/royal-burgundy/envelope-flap.webp') }}" as="image" type="image/webp">
 @endif
 <style>
     body.invitation-page{background:#fbf8f1}
