@@ -58,7 +58,6 @@
 @if(session('status'))<div class="wrap"><div class="alert" role="status">{{ session('status') }}</div></div>@endif
 <main>@yield('content')</main>
 <footer class="foot"><div class="wrap"><span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span><span>Digital invitations made for meaningful moments.</span></div></footer>
-@stack('scripts')
 @if(session()->has('clear_wedding_draft'))
 <script>
 try {
@@ -66,4 +65,5 @@ try {
 } catch (error) { /* Some browsers disable local storage. */ }
 </script>
 @endif
+@stack('scripts')
 </body></html>
