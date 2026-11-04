@@ -99,12 +99,12 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
             <p>{{ $hasSite ? 'Your invitation website is part of something special. Keep your wedding details up to date, share your link and make every guest feel invited.' : 'Every great celebration begins with one invitation. Choose your design, make it yours and share your story with the people who matter most.' }}</p>
             <div class="wwyt-dash-hero-actions">
                 @if($site)
-                    <a class="wwyt-dash-button primary" href="{{ url('/app/invitations') }}">Manage my website <span aria-hidden="true">↗</span></a>
+                    <a class="wwyt-dash-button primary" href="{{ url('/app/invitations') }}">Manage my website <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                     @if($site->status === 'published')
-                        <a class="wwyt-dash-button ghost" href="{{ route('wedding.show', $site->slug) }}" target="_blank" rel="noopener">View live website <span aria-hidden="true">↗</span></a>
+                        <a class="wwyt-dash-button ghost" href="{{ route('wedding.show', $site->slug) }}" target="_blank" rel="noopener">View live website <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                     @endif
                 @elseif($remaining === null || $remaining > 0)
-                    <a class="wwyt-dash-button primary" href="{{ route('marketing.templates') }}">Explore templates <span aria-hidden="true">↗</span></a>
+                    <a class="wwyt-dash-button primary" href="{{ route('marketing.templates') }}">Explore templates <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
                 @endif
             </div>
         </div>
@@ -121,7 +121,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
         <section class="wwyt-dash-panel">
             <div class="wwyt-dash-panel-head">
                 <div><span class="wwyt-dash-kicker">YOUR WEBSITE</span><h3>{{ $hasSite ? 'Your invitation, ready to share.' : 'Create something beautiful.' }}</h3></div>
-                <a href="{{ $hasSite ? url('/app/invitations') : route('marketing.templates') }}">View {{ $hasSite ? 'my invitations' : 'templates' }} →</a>
+                <a href="{{ $hasSite ? url('/app/invitations') : route('marketing.templates') }}">View {{ $hasSite ? 'my invitations' : 'templates' }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             </div>
             @if($site)
                 <div class="wwyt-dash-invitation">
@@ -136,9 +136,9 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
                         <h4>{{ $site->name }}</h4>
                         <p>wewantyouthere.com/i/{{ $site->slug }}</p>
                         <div class="links">
-                            <a href="{{ url('/app/invitations') }}">Edit & manage →</a>
+                            <a href="{{ url('/app/invitations') }}">Edit & manage <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                             @if($site->status === 'published')
-                                <a href="{{ route('wedding.show', $site->slug) }}" target="_blank" rel="noopener">Open website ↗</a>
+                                <a href="{{ route('wedding.show', $site->slug) }}" target="_blank" rel="noopener">Open website <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                             @endif
                         </div>
                     </div>
@@ -148,7 +148,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
                     <img src="{{ asset('brand/wwyt/seal-outline.png') }}" width="85" height="85" alt="">
                     <h4>Your first invitation starts here.</h4>
                     <p>Explore the wedding template collection and create your website in a guided step-by-step builder.</p>
-                    <a href="{{ route('marketing.templates') }}" class="wwyt-dash-button primary">Browse wedding templates →</a>
+                    <a href="{{ route('marketing.templates') }}" class="wwyt-dash-button primary">Browse wedding templates <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             @endif
         </section>
@@ -156,11 +156,11 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
         <aside class="wwyt-dash-panel">
             <div class="wwyt-dash-panel-head"><div><span class="wwyt-dash-kicker">EASY ACCESS</span><h3>Quick actions.</h3></div></div>
             <div class="wwyt-dash-quick">
-                <a href="{{ url('/app/invitations') }}"><span><strong>My Invitations</strong><small>Edit, view or remove your website</small></span><span class="arrow">↗</span></a>
-                <a href="{{ route('marketing.templates') }}"><span><strong>Explore Designs</strong><small>Browse all available templates</small></span><span class="arrow">↗</span></a>
-                <a href="{{ url('/app/profile') }}"><span><strong>Profile Settings</strong><small>Manage your account information</small></span><span class="arrow">↗</span></a>
-                <a href="{{ url('/app/billing') }}"><span><strong>Plan & Billing</strong><small>See your current website allowance</small></span><span class="arrow">↗</span></a>
-                <a href="{{ route('home') }}"><span><strong>Back to Website</strong><small>Return to We Want You There</small></span><span class="arrow">↗</span></a>
+                <a href="{{ url('/app/invitations') }}"><span><strong>My Invitations</strong><small>Edit, view or remove your website</small></span><span class="arrow"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span></a>
+                <a href="{{ route('marketing.templates') }}"><span><strong>Explore Designs</strong><small>Browse all available templates</small></span><span class="arrow"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span></a>
+                <a href="{{ url('/app/profile') }}"><span><strong>Profile Settings</strong><small>Manage your account information</small></span><span class="arrow"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span></a>
+                <a href="{{ url('/app/billing') }}"><span><strong>Plan & Billing</strong><small>See your current website allowance</small></span><span class="arrow"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span></a>
+                <a href="{{ route('home') }}"><span><strong>Back to Website</strong><small>Return to We Want You There</small></span><span class="arrow"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span></a>
             </div>
         </aside>
     </div>
@@ -168,7 +168,7 @@ color:#EDEBDD;padding:clamp(27px,4.5vw,55px);min-height:315px;display:flex;align
     <div class="wwyt-dash-bottom">
         <img src="{{ asset('brand/wwyt/seal-outline.png') }}" alt="" width="43" height="43">
         <div><strong>The best moments are shared.</strong><p>A little invitation can bring everyone together. Made with love, We Want You There.</p></div>
-        <a href="{{ route('marketing.templates') }}">Discover designs →</a>
+        <a href="{{ route('marketing.templates') }}">Discover designs <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </div>
 </div>
 </x-filament-widgets::widget>
