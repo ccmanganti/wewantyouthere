@@ -33,8 +33,8 @@
                     <li>Visible sections and invitation wording</li>
                     <li>Personalized shareable URL and downloadable QR code</li>
                     @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-                        <li>Eleven secure photo placements, with scroll-to-position highlighting and editing after publishing</li>
-                        <li>A three-chapter love story, detailed wedding roles and complete program sections</li>
+                        <li>Thirteen secure photo placements, with guided highlighting and editing after publishing</li>
+                        <li>A romantic opening envelope, wedding calendar, editorial love story and complete event programs</li>
                     @endif
                 </ul>
                 <div style="display:flex;gap:10px;flex-wrap:wrap">
