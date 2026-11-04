@@ -7,9 +7,9 @@
         <a href="{{ route('marketing.templates') }}">Templates</a>
         <a href="{{ route('home') }}#how-it-works" class="wwyt-hide-mobile">How it works</a>
         @if(request()->is('app/register'))
-            <a class="wwyt-auth-nav-cta" href="{{ url('/app/login') }}">Log in →</a>
+            <a class="wwyt-auth-nav-cta" href="{{ url('/app/login') }}">Log in <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         @else
-            <a class="wwyt-auth-nav-cta" href="{{ url('/app/register') }}">Get started →</a>
+            <a class="wwyt-auth-nav-cta" href="{{ url('/app/register') }}">Get started <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         @endif
     </nav>
 </header>
