@@ -6,6 +6,11 @@ use App\Models\EventQuestion;
 use App\Models\EventType;
 use App\Models\InvitationTemplate;
 use App\Models\InvitationWebsite;
+use App\Models\InvitationSlugRedirect;
+use App\Models\User;
+use App\Support\InvitationAccounts;
+use App\Support\InvitationWebsiteManager;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +74,7 @@ class WeddingBuilderController extends Controller
         ]);
 
         return response()->json([
-            'available' => ! InvitationWebsite::query()->where('slug', $data['slug'])->exists(),
+            'available' => ! InvitationWebsiteManager::slugTaken($data['slug']),
         ]);
     }
 
@@ -100,6 +105,11 @@ class WeddingBuilderController extends Controller
 
     public function publish(Request $request, string $slug): RedirectResponse
     {
+        if (Auth::check() && ! InvitationAccounts::canCreateWebsite($request->user())) {
+            return redirect('/app/invitations')
+                ->withErrors(['account' => 'Your free account already has one website. Manage or delete it before creating another.']);
+        }
+
         $template = InvitationTemplate::query()
             ->where('slug', $slug)->where('status', 'published')->where('is_premium', false)
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
@@ -111,6 +121,10 @@ class WeddingBuilderController extends Controller
             'sections' => ['nullable', 'array'],
             'sections.*' => ['nullable', Rule::in(['0', '1', 0, 1])],
         ]);
+
+        if (isset($base['slug']) && InvitationWebsiteManager::slugTaken($base['slug'])) {
+            return back()->withErrors(['slug' => 'This invitation link is already reserved. Choose another one.'])->withInput();
+        }
 
         $allowedGroups = config('wedding_builder.groups');
         $sections = [];
@@ -191,24 +205,45 @@ class WeddingBuilderController extends Controller
         $title = $names !== '' ? $names . ' — Wedding Invitation' : 'Our Wedding Invitation';
         $requestedSlug = $pending['slug'] ?? null;
 
-        if ($requestedSlug && InvitationWebsite::query()->where('slug', $requestedSlug)->exists()) {
-            return redirect()->route('wedding.editor', $template->slug)
-                ->withErrors(['slug' => 'This invitation link was taken while you signed up. Please choose a different link.']);
-        }
-
         $slug = $requestedSlug ?: Str::slug(($names ?: 'our-wedding')) . '-' . Str::lower(Str::random(8));
 
-        $website = InvitationWebsite::create([
-            'user_id' => $request->user()->id,
-            'invitation_template_id' => $template->id,
-            'name' => $title,
-            'slug' => $slug,
-            'answers' => array_merge(
-                $pending['answers'],
-                ['_sections' => $pending['sections']],
-            ),
-            'status' => 'published',
-        ]);
+        try {
+            // Locking the owner row serializes concurrent publish requests from the same
+            // free account. A client-side disabled button cannot enforce the quota.
+            $website = DB::transaction(function () use ($request, $template, $pending, $title, $slug) {
+                $owner = User::query()->lockForUpdate()->findOrFail($request->user()->id);
+
+                if (! InvitationAccounts::canCreateWebsite($owner)) {
+                    throw ValidationException::withMessages([
+                        'account' => 'Your free plan allows one website. Delete your existing invitation before creating another.',
+                    ]);
+                }
+
+                if (InvitationWebsiteManager::slugTaken($slug)) {
+                    throw ValidationException::withMessages([
+                        'slug' => 'This link is no longer available. Please choose a different one.',
+                    ]);
+                }
+
+                return InvitationWebsite::create([
+                    'user_id' => $owner->id,
+                    'invitation_template_id' => $template->id,
+                    'name' => $title,
+                    'slug' => $slug,
+                    'answers' => array_merge(
+                        $pending['answers'],
+                        ['_sections' => $pending['sections']],
+                    ),
+                    'status' => 'published',
+                ]);
+            });
+        } catch (ValidationException $error) {
+            $destination = isset($error->errors()['account'])
+                ? '/app/invitations'
+                : route('wedding.editor', $template->slug);
+
+            return redirect($destination)->withErrors($error->errors());
+        }
 
         $request->session()->forget(['pending_wedding', 'wedding_builder_draft']);
         return redirect()->route('wedding.show', $website->slug)
@@ -216,10 +251,19 @@ class WeddingBuilderController extends Controller
             ->with('clear_wedding_draft', $template->slug);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View | RedirectResponse
     {
         $website = InvitationWebsite::with('template.eventType')
-            ->where('slug', $slug)->where('status', 'published')->firstOrFail();
+            ->where('slug', $slug)->where('status', 'published')->first();
+
+        if (! $website) {
+            $redirect = InvitationSlugRedirect::query()->with('website')
+                ->where('slug', $slug)->firstOrFail();
+
+            abort_unless($redirect->website?->status === 'published', 404);
+
+            return redirect()->route('wedding.show', ['slug' => $redirect->website->slug], 301);
+        }
 
         abort_unless(
             $website->template?->eventType?->slug === 'wedding'
