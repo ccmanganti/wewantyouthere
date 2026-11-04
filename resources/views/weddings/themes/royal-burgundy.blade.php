@@ -57,7 +57,7 @@
                 @else
                     <div class="rb-image-placeholder rb-placeholder-hero">
                         <img src="{{ asset($assetBase . 'grand-doors.webp') }}" alt="" loading="eager">
-                        <span>YOUR FAVORITE PORTRAIT</span>
+                        @if($isPreview)<span>YOUR FAVORITE PORTRAIT</span>@endif
                     </div>
                 @endif
                 @if($isPreview)<button type="button" class="rb-image-edit" data-photo-edit="hero"><i class="fa-solid fa-camera" aria-hidden="true"></i> Cover photo</button>@endif
@@ -140,14 +140,14 @@
                 @if($photo('venue_ceremony'))
                     <img src="{{ $photo('venue_ceremony') }}" alt="Wedding ceremony venue" loading="lazy" data-slot-img="venue_ceremony">
                 @else
-                    <div class="rb-image-placeholder rb-placeholder-venue"><img src="{{ asset($assetBase.'grand-doors.webp') }}" alt="" loading="lazy"><span>CEREMONY LOCATION</span></div>
+                    <div class="rb-image-placeholder rb-placeholder-venue"><img src="{{ asset($assetBase.'grand-doors.webp') }}" alt="" loading="lazy">@if($isPreview)<span>CEREMONY LOCATION</span>@endif</div>
                 @endif
                 @if($isPreview)<button type="button" class="rb-image-edit" data-photo-edit="venue_ceremony"><i class="fa-solid fa-camera" aria-hidden="true"></i> Ceremony photo</button>@endif
             </figure>
             <h3 class="rb-location-name" data-field="ceremony_venue" data-fallback="Our ceremony venue">{{ $display('ceremony_venue','Our ceremony venue') }}</h3>
             <p class="rb-location-address rb-preserve" data-field="ceremony_address" data-fallback="Ceremony address">{{ $display('ceremony_address','Ceremony address') }}</p>
             <p class="rb-venue-time" data-field="event_time" data-fallback="3:00 PM">{{ $display('event_time','3:00 PM') }}</p>
-            @if($safeMap('ceremony_map_url'))<a href="{{ $safeMap('ceremony_map_url') }}" class="rb-venue-link" target="_blank" rel="noopener noreferrer">View on map <i class="fa-solid fa-location-arrow" aria-hidden="true"></i></a>@endif
+            @if($isPreview || $safeMap('ceremony_map_url'))<a data-rb-map="ceremony_map_url" href="{{ $safeMap('ceremony_map_url') ?? '#' }}" class="rb-venue-link" target="_blank" rel="noopener noreferrer" @if(!$safeMap('ceremony_map_url')) hidden @endif>View on map <i class="fa-solid fa-location-arrow" aria-hidden="true"></i></a>@endif
             @include('weddings.partials.extras', ['group' => 'ceremony'])
         </section>
 
@@ -158,14 +158,14 @@
                 @if($photo('venue_reception'))
                     <img src="{{ $photo('venue_reception') }}" alt="Wedding reception location" loading="lazy" data-slot-img="venue_reception">
                 @else
-                    <div class="rb-image-placeholder rb-placeholder-venue rb-placeholder-reception"><img src="{{ asset($assetBase.'grand-doors.webp') }}" alt="" loading="lazy"><span>RECEPTION LOCATION</span></div>
+                    <div class="rb-image-placeholder rb-placeholder-venue rb-placeholder-reception"><img src="{{ asset($assetBase.'grand-doors.webp') }}" alt="" loading="lazy">@if($isPreview)<span>RECEPTION LOCATION</span>@endif</div>
                 @endif
                 @if($isPreview)<button type="button" class="rb-image-edit" data-photo-edit="venue_reception"><i class="fa-solid fa-camera" aria-hidden="true"></i> Reception photo</button>@endif
             </figure>
             <h3 class="rb-location-name" data-field="reception_venue" data-fallback="Our reception venue">{{ $display('reception_venue','Our reception venue') }}</h3>
             <p class="rb-location-address rb-preserve" data-field="reception_address" data-fallback="Reception venue address">{{ $display('reception_address','Reception venue address') }}</p>
             <p class="rb-venue-time" data-field="reception_time" data-fallback="6:00 PM">{{ $display('reception_time','6:00 PM') }}</p>
-            @if($safeMap('reception_map_url'))<a href="{{ $safeMap('reception_map_url') }}" class="rb-venue-link rb-venue-link-light" target="_blank" rel="noopener noreferrer">View on map <i class="fa-solid fa-location-arrow" aria-hidden="true"></i></a>@endif
+            @if($isPreview || $safeMap('reception_map_url'))<a data-rb-map="reception_map_url" href="{{ $safeMap('reception_map_url') ?? '#' }}" class="rb-venue-link rb-venue-link-light" target="_blank" rel="noopener noreferrer" @if(!$safeMap('reception_map_url')) hidden @endif>View on map <i class="fa-solid fa-location-arrow" aria-hidden="true"></i></a>@endif
             @include('weddings.partials.extras', ['group' => 'reception'])
         </section>
 
