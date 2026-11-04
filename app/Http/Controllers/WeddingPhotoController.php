@@ -98,7 +98,7 @@ class WeddingPhotoController extends Controller
         return response()->json(['slot' => $slot, 'removed' => true]);
     }
 
-    public function publicPhoto(string $slug, string $slot): Response
+    public function publicPhoto(string $slug, string $slot): BinaryFileResponse
     {
         $this->validSlot($slot);
         $website = InvitationWebsite::query()->where('slug', $slug)->firstOrFail();
@@ -156,7 +156,7 @@ class WeddingPhotoController extends Controller
         return back()->with('status', 'Photo removed from your invitation.');
     }
 
-    private function privateImage(array $entry, bool $published = false): Response
+    private function privateImage(array $entry, bool $published = false): BinaryFileResponse
     {
         // Paths are generated internally, never supplied by request parameters.
         abort_unless(str_starts_with($entry['path'], $published ? 'wedding-sites/' : 'wedding-drafts/'), 404);
