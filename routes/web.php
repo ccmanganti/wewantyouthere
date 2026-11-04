@@ -16,4 +16,8 @@ Route::get('/login', [WeddingAuthController::class, 'loginForm'])->name('login')
 Route::post('/login', [WeddingAuthController::class, 'login'])->middleware('throttle:6,1')->name('wedding.login.submit');
 Route::post('/logout', [WeddingAuthController::class, 'logout'])->middleware('auth')->name('wedding.logout');
 
+Route::get('/invitation-slug-availability', [WeddingBuilderController::class, 'slugAvailability'])
+    ->middleware('throttle:30,1')->name('wedding.slugAvailability');
+Route::get('/i/{slug}/qr.svg', [WeddingBuilderController::class, 'qrCode'])
+    ->middleware('throttle:90,1')->name('wedding.qr');
 Route::get('/i/{slug}', [WeddingBuilderController::class, 'show'])->name('wedding.show');
