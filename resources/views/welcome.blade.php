@@ -178,6 +178,7 @@
             <li>Choose sections before answering questions</li>
             <li>Pick up your draft after refreshing or reopening the browser</li>
             <li>Keep your editor and live preview in one screen</li>
+            <li>Choose your own link and download an invitation QR code</li>
             <li>Start free and publish without entering payment details</li>
         </ul>
     </div>
