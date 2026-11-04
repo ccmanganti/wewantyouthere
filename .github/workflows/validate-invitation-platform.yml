@@ -22,6 +22,9 @@ on:
       - 'database/migrations/**'
       - 'database/seeders/**'
       - '.github/workflows/validate-invitation-platform.yml'
+concurrency:
+  group: invitation-platform-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
