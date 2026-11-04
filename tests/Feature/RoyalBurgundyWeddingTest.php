@@ -138,6 +138,26 @@ class RoyalBurgundyWeddingTest extends TestCase
         $this->get('/templates/wedding/royal-burgundy-wedding/photos/hero')->assertNotFound();
     }
 
+    public function test_template_art_uses_real_local_webp_assets_instead_of_svg_animations(): void
+    {
+        foreach ([
+            'paper-texture.webp',
+            'grand-doors.webp',
+            'botanical-engraving.webp',
+            'dress-swatches.webp',
+            'envelope-back.webp',
+            'envelope-front.webp',
+            'envelope-flap.webp',
+            'envelope-letter.webp',
+            'wax-seal.webp',
+        ] as $filename) {
+            $path = public_path('wedding/royal-burgundy/' . $filename);
+            $this->assertFileExists($path);
+            $this->assertGreaterThan(1000, filesize($path));
+            $this->assertSame(IMAGETYPE_WEBP, getimagesize($path)[2]);
+        }
+    }
+
     public function test_venue_photos_are_uploadable_into_the_late_photo_step(): void
     {
         $this->postJson('/templates/wedding/royal-burgundy-wedding/photos', [
