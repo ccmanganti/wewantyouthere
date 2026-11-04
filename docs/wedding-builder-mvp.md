@@ -63,3 +63,26 @@ Only templates with \`is_premium = false\` may be published via the public free 
 - Do not clear drafts in the wizard form submit event: guests may be redirected to registration/login before the invitation is actually published.
 - Home page shows a Continue draft link whenever local data exists for a template; visitors do not need to register before starting.
 - The CI workflow compiles/lints all Blade templates, checks JavaScript syntax and runs `WeddingBuilderTest` to cover cancellation, signup, publishing, required-field validation and seeder behavior.
+
+## Custom links, QR codes and true full-page wedding website (November 4)
+
+- The final publishing step now lets visitors choose a custom **path slug**, e.g. `https://wewantyouthere.com/i/andrea-and-miguel`. This is separate from a future custom domain feature.
+- Slugs must be lowercase ASCII with digits and hyphens only, 3–72 characters. The database unique constraint and `publish()` validation are authoritative. A rate-limited availability endpoint supports live checking but does not reserve the slug before publishing.
+- The slug, whether user-customized, and editing progress are retained in the existing `wwyt:wedding:draft:v2:{templateSlug}` browser draft.
+- On signup/publish the exact requested slug is used if still free. If it is claimed between checking and signup, the user returns to the editor with an error instead of silently receiving an unwanted URL.
+- Published invitation pages now use a full-width responsive wedding-site template, with internal site navigation, a full-viewport hero, and individual ceremony, reception, entourage, program, guest and finishing-detail sections. The same Blade partial is used in the editor.
+- Published pages hide the general platform chrome and default to `noindex,nofollow` for the guests' privacy.
+- Share & QR appears on the published site. `GET /i/{slug}/qr.svg` generates a self-hosted SVG QR using the **existing locked dependency** `chillerlan/php-qrcode 5.0.5`; `?download=1` downloads the image. Only published invitations have QR endpoints.
+- Basic **shared invitation QR** is free. Guest-specific personalized QR codes, RSVP tracking and attendance verification remain future premium features. Do not confuse them in sales copy.
+- QR data uses the canonical `APP_URL` from Laravel configuration; **production must have `APP_URL=https://wewantyouthere.com`**. If the app URL is wrong the QR will encode the wrong hostname.
+- Existing published slugs are unchanged; old invitations still resolve at `/i/{slug}`.
+
+### Deployment
+
+No new migrations or frontend build:
+```bash
+git pull origin main
+php artisan optimize:clear
+```
+
+After deployment, verify a newly customized slug, QR scan and SVG download on the real production domain.
