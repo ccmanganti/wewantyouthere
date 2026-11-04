@@ -6,6 +6,9 @@
 
 @push('styles')
 @include('weddings.partials.invitation-theme-styles')
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-burgundy-styles')
+@endif
 <style>
     body.invitation-page{background:#fbf8f1}
     body.invitation-page .topbar,body.invitation-page .foot{display:none}
@@ -46,6 +49,8 @@
         'sections' => $sections,
         'questions' => $questions,
         'isPreview' => false,
+        'template' => $template,
+        'photoUrls' => $photoUrls ?? [],
     ])
 </div>
 
@@ -78,6 +83,9 @@
 @endsection
 
 @push('scripts')
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-burgundy-script')
+@endif
 <script>
 (function () {
     const button = document.getElementById('copy-invitation-link');
