@@ -54,6 +54,13 @@ class WeddingBuilderController extends Controller
         return view('weddings.editor', compact('template', 'groups', 'draft', 'questions'));
     }
 
+    public function cancelDraft(Request $request): RedirectResponse
+    {
+        $request->session()->forget(['wedding_builder_draft', 'pending_wedding']);
+
+        return redirect()->route('home')->with('status', 'Your unfinished invitation has been discarded.');
+    }
+
     public function publish(Request $request, string $slug): RedirectResponse
     {
         $template = InvitationTemplate::query()
@@ -143,7 +150,9 @@ class WeddingBuilderController extends Controller
         ]);
 
         $request->session()->forget(['pending_wedding', 'wedding_builder_draft']);
-        return redirect()->route('wedding.show', $website->slug)->with('status', 'Your free wedding website is live!');
+        return redirect()->route('wedding.show', $website->slug)
+            ->with('status', 'Your free wedding website is live!')
+            ->with('clear_wedding_draft_slug', $template->slug);
     }
 
     public function show(string $slug): View
