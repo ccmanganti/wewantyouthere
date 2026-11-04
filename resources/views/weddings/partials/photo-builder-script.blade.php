@@ -131,7 +131,7 @@
             canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .84));
             if (!blob || blob.type !== 'image/webp' || blob.size >= file.size) return file;
-            return new File([blob], file.name.replace(/\\.[^.]+$/, '') + '.webp', {type:'image/webp'});
+            return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', {type:'image/webp'});
         } catch (error) {
             return file; // Older browsers can send the original validated file.
         } finally {
