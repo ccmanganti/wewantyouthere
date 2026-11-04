@@ -19,4 +19,92 @@
     .fi-section, .fi-ta-ctn {animation:wwytAppear .28s ease-out both}
     @keyframes wwytAppear {from{opacity:.85;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 }
+
+/* Customer authentication: an editorial split screen, native Filament form intact. */
+body:has(.wwyt-auth-intro){background:#EDEBDD!important}
+body:has(.wwyt-auth-intro) .fi-simple-layout{
+    min-height:100dvh!important;
+    background:linear-gradient(90deg,#1B1717 0%,#1B1717 46%,#EDEBDD 46%,#EDEBDD 100%);
+    position:relative;
+    padding:35px 30px 35px 48%!important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+body:has(.wwyt-auth-intro) .fi-simple-layout::before{
+    content:"YOUR BIGGEST MOMENTS.\A BEAUTIFULLY INVITED.";
+    position:fixed;
+    z-index:0;
+    left:clamp(34px,6vw,100px);
+    top:25%;
+    width:35%;
+    white-space:pre-line;
+    font:600 clamp(34px,4.4vw,65px)/1.07 'DM Sans',Arial,sans-serif;
+    letter-spacing:-.075em;
+    color:#EDEBDD;
+    pointer-events:none;
+}
+body:has(.wwyt-auth-intro) .fi-simple-layout::after{
+    content:"ONE LINK. EVERY DETAIL. EVERY MOMENT.";
+    position:fixed;
+    z-index:0;
+    left:clamp(34px,6vw,100px);
+    bottom:17%;
+    color:#d7baa0;
+    font:700 10px 'DM Sans',Arial,sans-serif;
+    letter-spacing:.17em;
+    pointer-events:none;
+}
+body:has(.wwyt-auth-intro) .fi-simple-main{
+    position:relative;
+    z-index:1;
+    max-width:500px;
+    width:100%;
+    background:#fffefa;
+    border:1px solid #d8c5ba;
+    border-radius:14px;
+    padding:clamp(22px,3.2vw,44px);
+    box-shadow:0 17px 58px #1d121028;
+}
+body:has(.wwyt-auth-intro) .fi-simple-header{margin-bottom:18px}
+body:has(.wwyt-auth-intro) .fi-simple-header-heading{font-family:Georgia,serif;letter-spacing:-.04em}
+.wwyt-auth-intro{max-width:440px}
+.wwyt-auth-top{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap;margin-bottom:19px}
+.wwyt-auth-mini-label{letter-spacing:.13em;font-size:9px;color:#810100;font-weight:800}
+.wwyt-auth-mini-label span{color:#ba9c72;margin:0 3px}
+.wwyt-auth-home-link{font-size:10px!important;color:#675554!important;text-decoration:underline}
+.wwyt-auth-tagline{font:italic 35px/1.08 Georgia,serif;letter-spacing:-.05em;color:#1B1717;margin:0 0 11px}
+.wwyt-auth-text{font-size:12px;color:#72645e;line-height:1.8;margin:0 0 21px}
+.wwyt-google-button{
+    display:flex;justify-content:center;align-items:center;gap:12px;
+    min-height:49px;border:1px solid #bdada5;border-radius:8px;
+    background:#fff;color:#2c2626!important;text-decoration:none!important;
+    font-size:13px;font-weight:800;
+    transition:background .2s,border-color .2s,transform .2s;
+}
+.wwyt-google-button:hover{background:#f8eee9;border-color:#810100;transform:translateY(-1px)}
+.wwyt-auth-google-note{font-size:11px;line-height:1.5;background:#f7f0e9;color:#6e5c55;border:1px solid #e1d3cb;padding:11px 12px;border-radius:7px;margin:0}
+.wwyt-auth-divider{display:flex;align-items:center;gap:11px;color:#98817b;font-size:9px;letter-spacing:.1em;font-weight:800;margin:21px 0 4px}
+.wwyt-auth-divider::before,.wwyt-auth-divider::after{content:'';height:1px;background:#d8c7bd;flex:1}
+.wwyt-auth-error{padding:11px 13px;border-radius:7px;border:1px solid #d5a1a0;background:#fff0ee;color:#720b09;font-size:12px;margin:0 0 15px}
+body:has(.wwyt-auth-intro) .fi-btn-primary{background:#810100!important}
+body:has(.wwyt-auth-intro) .fi-btn-primary:hover{background:#630000!important}
+body:has(.wwyt-auth-intro) input:focus-visible,body:has(.wwyt-auth-intro) a:focus-visible{outline:2px solid #a88458;outline-offset:3px}
+@media(max-width:980px){
+    body:has(.wwyt-auth-intro) .fi-simple-layout{
+        background:#EDEBDD!important;padding:35px 20px!important;
+    }
+    body:has(.wwyt-auth-intro) .fi-simple-layout::before,
+    body:has(.wwyt-auth-intro) .fi-simple-layout::after{display:none}
+    body:has(.wwyt-auth-intro) .fi-simple-main{max-width:520px;margin:auto}
+}
+@media(max-width:520px){
+    body:has(.wwyt-auth-intro) .fi-simple-layout{padding:18px 12px!important}
+    body:has(.wwyt-auth-intro) .fi-simple-main{padding:24px 20px;border-radius:11px}
+    .wwyt-auth-tagline{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){
+    .wwyt-google-button{transition:none}
+}
+
 </style>
