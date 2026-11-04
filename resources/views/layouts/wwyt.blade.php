@@ -8,7 +8,7 @@
     <meta name="description" content="@yield('meta_description', 'Create elegant wedding invitation websites in minutes. Choose a template, customize every detail and publish your wedding invitation for free.')">
     <title>@yield('title', 'We Want You There — Wedding Invitation Websites & RSVP')</title>
     <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('branding/wwyt-icon-color.svg') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="We Want You There">
     <meta property="og:title" content="@yield('title', 'We Want You There — Digital Invitation Websites')">
@@ -52,7 +52,9 @@
 </head>
 <body class="@yield('body_class')">
 <header class="topbar"><div class="wrap topbar-inner">
-    <a class="brand" href="{{ route('home') }}" aria-label="We Want You There homepage">we want <span>you there.</span></a>
+    <a class="brand wwyt-brand-mark" href="{{ route('home') }}" aria-label="We Want You There homepage">
+        <img src="{{ asset('branding/wwyt-horizontal-light.svg') }}" alt="We Want You There — Digital Invitations &amp; RSVP" width="215" height="50">
+    </a>
     <nav class="nav" aria-label="Main">
         <a class="hide-mobile" href="{{ route('marketing.templates') }}">Templates</a>
         <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
@@ -67,7 +69,13 @@
 </div></header>
 @if(session('status'))<div class="wrap"><div class="alert" role="status">{{ session('status') }}</div></div>@endif
 <main>@yield('content')</main>
-<footer class="foot"><div class="wrap"><span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span><span><a href="{{ route('marketing.templates') }}">Templates</a> · <a href="{{ route('marketing.privacy') }}">Privacy</a> · <a href="{{ route('marketing.terms') }}">Terms</a> · Digital invitations for meaningful moments.</span></div></footer>
+<footer class="foot"><div class="wrap">
+    <div class="wwyt-foot-brand">
+        <a href="{{ route('home') }}" aria-label="We Want You There home"><img src="{{ asset('branding/wwyt-horizontal-light.svg') }}" width="190" height="44" loading="lazy" alt="We Want You There"></a>
+        <span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span>
+    </div>
+    <span><a href="{{ route('marketing.templates') }}">Templates</a> · <a href="{{ route('marketing.privacy') }}">Privacy</a> · <a href="{{ route('marketing.terms') }}">Terms</a></span>
+</div></footer>
 @if(session()->has('clear_wedding_draft'))
 <script>
 try {
