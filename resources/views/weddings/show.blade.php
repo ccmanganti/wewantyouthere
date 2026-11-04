@@ -66,6 +66,13 @@
             <button type="button" id="copy-invitation-link" class="share-primary">Copy link</button>
             <a class="share-secondary" href="{{ route('wedding.qr', ['slug' => $website->slug, 'download' => 1]) }}">Download QR (SVG)</a>
         </div>
+        @auth
+            @if((int) auth()->id() === (int) $website->user_id)
+                <div style="margin-top:16px;border-top:1px solid #d8d1c6;padding-top:13px">
+                    <a href="{{ url('/app/invitations') }}" style="font-size:12px;font-weight:700;color:#810100;text-decoration:underline">Manage my invitation →</a>
+                </div>
+            @endif
+        @endauth
     </div>
 </details>
 @endsection
