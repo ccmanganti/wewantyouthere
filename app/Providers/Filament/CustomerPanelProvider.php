@@ -33,7 +33,7 @@ class CustomerPanelProvider extends PanelProvider
             ->brandName('We Want You There')
             ->brandLogo(fn () => view('filament.customer.navigation.brand-logo'))
             ->brandLogoHeight('2.7rem')
-            ->favicon(asset('branding/wwyt-icon-color.svg'))
+            ->favicon(asset('brand/wwyt/favicon.png'))
             ->login(CustomerLogin::class)
             ->registration(CustomerRegister::class)
             ->passwordReset()
