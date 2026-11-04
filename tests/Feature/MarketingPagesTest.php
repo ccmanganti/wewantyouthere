@@ -23,7 +23,7 @@ class MarketingPagesTest extends TestCase
         $this->get('/')->assertOk()
             ->assertSee('Free Wedding Invitation Website Maker Philippines')
             ->assertSee('YOUR BIGGEST MOMENTS.')
-            ->assertSee('Make your invitation')
+            ->assertSee('Make my invitation')
             ->assertSee('wedding-invitation-templates')
             ->assertSee('Ever After')
             ->assertSee('application/ld+json')
