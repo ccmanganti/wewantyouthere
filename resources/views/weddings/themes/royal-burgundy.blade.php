@@ -2,7 +2,9 @@
     $photoUrls = $photoUrls ?? [];
     $photo = fn (string $slot) => $photoUrls[$slot] ?? null;
     $visible = fn (string $group) => $sections[$group] ?? true;
-    $parts = fn (string $value) => collect(preg_split('/\r?\n/', $value))->map(fn ($line) => trim($line))->filter();
+    $hasIntroPhotos = (bool) ($photo('portrait_one') || $photo('portrait_two'));
+    $galleryCount = collect(['gallery_one','gallery_two','gallery_three','gallery_four'])->filter(fn ($slot) => (bool) $photo($slot))->count();
+    $hasRsvpPhoto = (bool) $photo('rsvp_portrait');
 @endphp
 <div class="wedding-invite rb-invite" id="wedding-invite">
     <nav class="invite-site-nav rb-nav" aria-label="Wedding website sections">
@@ -41,7 +43,7 @@
     <section class="rb-section rb-paper" id="wedding-ceremony" data-preview-section="ceremony">
         <div class="rb-container">
             <header class="rb-heading rb-reveal"><span class="rb-kicker">THE BEGINNING OF FOREVER</span><h2>With all our hearts, <em>you're invited.</em></h2></header>
-            <div class="rb-intro-grid">
+            <div class="rb-intro-grid {{ !$isPreview && !$hasIntroPhotos ? 'rb-intro-grid--no-photos' : '' }}">
                 <div class="rb-intro-copy rb-reveal">
                     <p class="rb-script-small">A celebration of love</p>
                     <p class="rb-big-date" data-field="event_date" data-fallback="December 12, 2027">{{ $display('event_date','December 12, 2027') }}</p>
@@ -50,14 +52,18 @@
                     <div class="rb-detail"><span>RECEPTION</span><strong data-field="reception_venue" data-fallback="The Grand Garden">{{ $display('reception_venue','The Grand Garden') }}</strong><p data-field="reception_time" data-fallback="6:00 PM">{{ $display('reception_time','6:00 PM') }}</p></div>
                     @include('weddings.partials.extras', ['group' => 'ceremony'])
                 </div>
+                @if($isPreview || $hasIntroPhotos)
                 <div class="rb-photo-pair">
                     @foreach(['portrait_one','portrait_two'] as $slot)
+                        @if($isPreview || $photo($slot))
                         <figure class="rb-photo rb-reveal" data-photo-slot="{{ $slot }}">
                             @if($photo($slot))<img src="{{ $photo($slot) }}" alt="Wedding portrait" loading="lazy" data-slot-img="{{ $slot }}">@else<div class="rb-photo-empty"><span aria-hidden="true">✦</span><small>A beautiful memory belongs here</small></div>@endif
                             @if($isPreview)<button type="button" data-photo-edit="{{ $slot }}" class="rb-photo-edit"><i class="fa-solid fa-camera" aria-hidden="true"></i> Add photo</button>@endif
                         </figure>
+                        @endif
                     @endforeach
                 </div>
+                @endif
             </div>
         </div>
     </section>
@@ -69,10 +75,12 @@
                 @foreach(['story_one' => ['01','How it began','love_story_start','The day our paths first crossed.'], 'story_two' => ['02','Growing together','love_story_growing','The little moments that became our favorite memories.'], 'story_three' => ['03','The promise','love_story_proposal','The beginning of a beautiful new chapter.']] as $slot => [$number,$title,$key,$fallback])
                     <li class="rb-story-item rb-reveal">
                         <span class="rb-story-marker" aria-hidden="true">{{ $number }}</span>
+                        @if($isPreview || $photo($slot))
                         <figure class="rb-photo rb-story-photo" data-photo-slot="{{ $slot }}">
                             @if($photo($slot))<img src="{{ $photo($slot) }}" alt="{{ $title }}" loading="lazy" data-slot-img="{{ $slot }}">@else<div class="rb-photo-empty"><span aria-hidden="true">✦</span><small>{{ $title }}</small></div>@endif
                             @if($isPreview)<button type="button" data-photo-edit="{{ $slot }}" class="rb-photo-edit"><i class="fa-solid fa-camera" aria-hidden="true"></i> Add photo</button>@endif
                         </figure>
+                        @endif
                         <div class="rb-story-copy"><span class="rb-kicker">CHAPTER {{ $number }}</span><h3>{{ $title }}</h3><p class="rb-preline" data-field="{{ $key }}" data-fallback="{{ $fallback }}">{{ $display($key, $fallback) }}</p></div>
                     </li>
                 @endforeach
@@ -143,26 +151,32 @@
         </div>
     </section>
 
+    @if($isPreview || $galleryCount > 0)
     <section class="rb-section rb-paper" id="wedding-moments" data-preview-section="couple">
         <div class="rb-container">
             <header class="rb-heading rb-reveal"><span class="rb-kicker">A FEW FAVORITE MOMENTS</span><h2>Our <em>memories.</em></h2></header>
-            <div class="rb-gallery">
+            <div class="rb-gallery {{ !$isPreview && $galleryCount < 4 ? 'rb-gallery-few' : '' }}">
                 @foreach(['gallery_one','gallery_two','gallery_three','gallery_four'] as $slot)
+                    @if($isPreview || $photo($slot))
                     <figure class="rb-photo rb-gallery-photo rb-reveal" data-photo-slot="{{ $slot }}">
                         @if($photo($slot))<img src="{{ $photo($slot) }}" alt="A favorite wedding memory" loading="lazy" data-slot-img="{{ $slot }}">@else<div class="rb-photo-empty"><span aria-hidden="true">✦</span><small>Our favorite moments</small></div>@endif
                         @if($isPreview)<button type="button" data-photo-edit="{{ $slot }}" class="rb-photo-edit"><i class="fa-solid fa-camera" aria-hidden="true"></i> Add photo</button>@endif
                     </figure>
+                    @endif
                 @endforeach
             </div>
         </div>
     </section>
+    @endif
 
     <section class="rb-section rb-noir" id="wedding-guests" data-preview-section="guests" @if(!$visible('guests')) hidden @endif>
-        <div class="rb-container rb-rsvp-grid">
+        <div class="rb-container rb-rsvp-grid {{ !$isPreview && !$hasRsvpPhoto ? 'rb-rsvp-grid--no-photo' : '' }}">
+            @if($isPreview || $hasRsvpPhoto)
             <figure class="rb-photo rb-rsvp-photo rb-reveal" data-photo-slot="rsvp_portrait">
                 @if($photo('rsvp_portrait'))<img src="{{ $photo('rsvp_portrait') }}" alt="The happy couple" loading="lazy" data-slot-img="rsvp_portrait">@else<div class="rb-photo-empty"><span aria-hidden="true">✦</span><small>With love</small></div>@endif
                 @if($isPreview)<button type="button" data-photo-edit="rsvp_portrait" class="rb-photo-edit"><i class="fa-solid fa-camera" aria-hidden="true"></i> Add photo</button>@endif
             </figure>
+            @endif
             <div class="rb-rsvp-copy rb-reveal">
                 <span class="rb-kicker">WE CAN'T WAIT TO SEE YOU</span>
                 <h2>Will you <em>join us?</em></h2>
