@@ -103,8 +103,6 @@
         <p class="rbv-copy" data-field="entourage_intro">{{ $copy('entourage_intro','We are surrounded by so much love, and these are the people standing beside us on our special day.') }}</p>
         <div class="rbv-entourage">
         @foreach([
-            ['PARENTS OF THE BRIDE','bride_parents','Parents of the bride'],
-            ['PARENTS OF THE GROOM','groom_parents','Parents of the groom'],
             ['PRINCIPAL SPONSORS · NINONG & NINANG','principal_sponsors','Our beloved sponsors'],
             ['MAID / MATRON OF HONOR','maid_of_honor','Maid of Honor'],
             ['BEST MAN','best_man','Best Man'],
