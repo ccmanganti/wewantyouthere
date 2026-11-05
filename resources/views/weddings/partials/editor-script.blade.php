@@ -298,6 +298,125 @@
         window.dispatchEvent(new Event('wwyt:preview-updated'));
     }
 
+    // Linked-preview spotlight. All navigation stays inside the preview pane,
+    // never scrolls the editor out of view, and does not interrupt typing.
+    const spotlightPane = document.getElementById('preview-scroll');
+    const spotlightStatus = document.getElementById('preview-highlight-status');
+    const spotlightReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const spotlightIds = {
+        couple: 'cover', ceremony: 'the-date', reception: 'venue-photo-story',
+        entourage: 'our-people', program: 'the-timeline',
+        guests: 'rsvp', details: 'dress-information'
+    };
+    let spotlightTarget = null;
+    let spotlightPendingScroll = null;
+    let removedPreviewTimer = null;
+    let removedPreviewNode = null;
+    let removedPreviewGroup = null;
+
+    function clearRemovedPreview() {
+        if (removedPreviewTimer !== null) clearTimeout(removedPreviewTimer);
+        removedPreviewTimer = null;
+        if (removedPreviewNode) {
+            removedPreviewNode.classList.remove('wwyt-preview-removed');
+            if (!selected(removedPreviewGroup)) removedPreviewNode.hidden = true;
+        }
+        removedPreviewNode = null;
+        removedPreviewGroup = null;
+    }
+
+    function groupPreviewTarget(groupKey) {
+        const preferred = preview.querySelector('#' + (spotlightIds[groupKey] || ('wedding-' + groupKey)));
+        if (preferred) return preferred;
+        const matches = Array.from(preview.querySelectorAll('[data-preview-section]'))
+            .filter(function (node) { return node.dataset.previewSection === groupKey; });
+        return matches.find(function (node) { return !node.closest('[hidden]'); }) || matches[0] || null;
+    }
+
+    function scrollSpotlightIntoView(target) {
+        if (!target || !spotlightPane) return;
+        if (window.innerWidth <= 850 && app.dataset.mobileView !== 'preview') {
+            // Keep the form visible on phones; honor the highlight once Preview is tapped.
+            spotlightPendingScroll = target;
+            return;
+        }
+        const box = spotlightPane.getBoundingClientRect();
+        const selectedBox = target.getBoundingClientRect();
+        const offset = Math.max(14, Math.min(90, spotlightPane.clientHeight * .18));
+        spotlightPane.scrollTo({
+            top: Math.max(0, spotlightPane.scrollTop + selectedBox.top - box.top - offset),
+            behavior: spotlightReducedMotion.matches ? 'auto' : 'smooth'
+        });
+        spotlightPendingScroll = null;
+    }
+
+    function spotlightElement(target, message, moveToTarget) {
+        if (!target) return;
+        const websiteTab = app.querySelector('[data-preview-format="website"]');
+        if (websiteTab && websiteTab.getAttribute('aria-selected') !== 'true') websiteTab.click();
+        const parentSection = target.matches('section, [data-preview-section]')
+            ? target : (target.closest('section, [data-preview-section]') || target);
+        const previousSection = preview.querySelector('.wwyt-preview-section-active');
+        const previousField = preview.querySelector('.wwyt-preview-field-active');
+        if (previousSection !== parentSection) {
+            previousSection?.classList.remove('wwyt-preview-section-active');
+            parentSection.classList.add('wwyt-preview-section-active');
+        }
+        if (previousField && previousField !== target) {
+            previousField.classList.remove('wwyt-preview-field-active');
+        }
+        if (target !== parentSection) target.classList.add('wwyt-preview-field-active');
+        spotlightTarget = target;
+        if (spotlightStatus && message) spotlightStatus.textContent = message;
+        if (moveToTarget) scrollSpotlightIntoView(target);
+    }
+
+    function spotlightSection(groupKey) {
+        clearRemovedPreview();
+        const target = groupPreviewTarget(groupKey);
+        if (!target) return;
+        const tab = app.querySelector('[data-group-tab="' + groupKey + '"]');
+        const label = tab?.textContent.trim() || groupKey;
+        if (!selected(groupKey)) {
+            // A removed section is briefly revealed in a muted state so the
+            // user sees exactly what their selection has removed.
+            target.hidden = false;
+            target.classList.add('wwyt-preview-removed');
+            removedPreviewNode = target;
+            removedPreviewGroup = groupKey;
+            spotlightElement(target, label + ' removed from your invitation', true);
+            removedPreviewTimer = window.setTimeout(function () {
+                target.classList.remove('wwyt-preview-removed', 'wwyt-preview-section-active');
+                if (!selected(groupKey)) target.hidden = true;
+                if (removedPreviewNode === target) {
+                    removedPreviewNode = null;
+                    removedPreviewGroup = null;
+                }
+                removedPreviewTimer = null;
+            }, spotlightReducedMotion.matches ? 800 : 1750);
+        } else {
+            spotlightElement(target, label + ' highlighted in your live invitation', true);
+        }
+    }
+
+    function spotlightQuestion(field, shouldScroll) {
+        if (!field) return;
+        clearRemovedPreview();
+        const key = field.dataset.question;
+        const groupKey = field.closest('[data-question-group]')?.dataset.questionGroup || 'couple';
+        const candidates = Array.from(preview.querySelectorAll('[data-field]'))
+            .filter(function (node) {
+                return node.dataset.field === key && !node.closest('#rbv-intro') && !node.closest('[hidden]');
+            });
+        const preferred = candidates.find(function (node) {
+            return !!node.closest('.rbv-grand,.rbv-info,[data-preview-section],.wedding-section');
+        });
+        const target = preferred || candidates[0] || groupPreviewTarget(groupKey);
+        const fieldLabel = field.closest('.field')?.querySelector('label')?.textContent.trim()
+            || key.replace(/_/g, ' ');
+        spotlightElement(target, 'Editing: ' + fieldLabel + ' · Highlighted in preview', shouldScroll);
+    }
+
     function renderGroup() {
         const enabled = activeGroups();
         if (!enabled.length) return;
@@ -324,6 +443,7 @@
             index === 0 ? '← Choose sections' : '← Previous section';
         const detailScroll = document.getElementById('detail-scroll');
         detailScroll.scrollTop = 0;
+        if (stage === 'details') spotlightSection(currentGroup);
     }
 
     function renderReview() {
@@ -374,6 +494,12 @@
         app.dataset.mobileView = mode;
         document.getElementById('mobile-edit').setAttribute('aria-pressed', mode === 'edit' ? 'true' : 'false');
         document.getElementById('mobile-preview').setAttribute('aria-pressed', mode === 'preview' ? 'true' : 'false');
+        if (mode === 'preview' && spotlightPendingScroll) {
+            // Wait until the pane is visible before measuring its position.
+            window.requestAnimationFrame(function () {
+                if (spotlightPendingScroll) scrollSpotlightIntoView(spotlightPendingScroll);
+            });
+        }
     }
 
     function validateGroup(key) {
@@ -434,14 +560,21 @@
     writeDraft();
 
     allQuestions.forEach(function (field) {
+        field.addEventListener('focus', function () { spotlightQuestion(field, true); });
+        field.addEventListener('click', function () { spotlightQuestion(field, true); });
         field.addEventListener('input', function () {
             if (field.dataset.question === 'bride_name' || field.dataset.question === 'groom_name') {
                 updateSuggestedSlug();
             }
             refreshPreview();
+            spotlightQuestion(field, false);
             writeDraft();
         });
-        field.addEventListener('change', function () { refreshPreview(); writeDraft(); });
+        field.addEventListener('change', function () {
+            refreshPreview();
+            spotlightQuestion(field, false);
+            writeDraft();
+        });
     });
 
     slugInput.addEventListener('input', function () {
@@ -460,7 +593,13 @@
             refreshSections();
             refreshPreview();
             renderGroup();
+            spotlightSection(input.dataset.sectionToggle);
             writeDraft();
+        });
+    });
+    app.querySelectorAll('[data-choice-card][data-required="true"]').forEach(function (card) {
+        card.addEventListener('click', function () {
+            spotlightSection(card.dataset.choiceCard);
         });
     });
 
@@ -504,12 +643,8 @@
                 const section = button.dataset.refineSection;
                 const destination = preview.querySelector('#' + section);
                 if (!destination || destination.hidden) return;
-                const pane = document.getElementById('preview-scroll');
-                const top = destination.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop - 12;
-                const websiteTab = app.querySelector('[data-preview-format="website"]');
-                if (websiteTab?.getAttribute('aria-selected') !== 'true') websiteTab?.click();
-                pane.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
                 setMobileView('preview');
+                spotlightElement(destination, 'Reviewing: ' + button.textContent.trim(), true);
             });
         });
         document.getElementById('photos-back')?.addEventListener('click', function () {
