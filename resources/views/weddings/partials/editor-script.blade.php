@@ -91,6 +91,8 @@
         groups.forEach(function (key) {
             sections[key] = selected(key);
         });
+        sections.maps = selected('maps');
+        sections.ceremony_details = selected('ceremony_details');
         return sections;
     }
 
@@ -279,6 +281,10 @@
         preview.querySelectorAll('[data-nav-section]').forEach(function (link) {
             link.hidden = !selected(link.dataset.navSection);
         });
+        preview.querySelectorAll('[data-premium-section]').forEach(function (node) {
+            node.hidden = !selected(node.dataset.premiumSection)
+                || (node.dataset.previewSection === 'reception' && !selected('reception'));
+        });
         const counter = document.getElementById('section-selection-count');
         counter.textContent = enabled.length + ' sections selected · Change them anytime';
         if (!enabled.includes(currentGroup)) currentGroup = enabled[0] || groups[0];
@@ -361,7 +367,7 @@
     const spotlightReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const spotlightIds = {
         couple: 'cover', ceremony: 'the-date', reception: 'venue-photo-story',
-        entourage: 'our-people', program: 'the-timeline',
+        entourage: 'our-people', program: 'the-timeline', video: 'wedding-video',
         guests: 'rsvp', details: 'dress-information'
     };
     let spotlightTarget = null;
@@ -855,6 +861,40 @@
     });
     app.querySelectorAll('[data-fine-tune-group]').forEach(function (panel) {
         panel.addEventListener('toggle', writeDraft);
+    });
+
+    // A locked card is a clear upgrade action, not a disabled checkbox that
+    // silently fails. Keep the local draft intact through login and checkout.
+    const premiumDialog = document.getElementById('premium-unlock-dialog');
+    app.querySelectorAll('[data-locked-feature]').forEach(function (card) {
+        const open = function (event) {
+            if (event) event.preventDefault();
+            const feature = card.dataset.lockedFeature;
+            const labels = {
+                maps:'Google Maps for your church and reception',
+                rsvp:'RSVP tracking with email notifications',
+                video:'Your prenup or video message',
+                program:'Your wedding programme',
+                entourage:'Ninong, ninang and entourage',
+                ceremony:'Extended ceremony details',
+            };
+            const description = document.getElementById('premium-modal-description');
+            if (description) description.textContent =
+                (labels[feature] || 'Premium invitation features')
+                + ' is available with a one-time template upgrade. Your free draft stays saved.';
+            writeDraft();
+            premiumDialog?.showModal();
+        };
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') open(event);
+        });
+    });
+    app.querySelectorAll('[data-premium-close]').forEach(function (button) {
+        button.addEventListener('click', function () { premiumDialog?.close(); });
+    });
+    premiumDialog?.addEventListener('click', function (event) {
+        if (event.target === premiumDialog) premiumDialog.close();
     });
 
     sectionControls.forEach(function (input) {
