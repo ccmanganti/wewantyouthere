@@ -494,6 +494,74 @@
             li.append(label, status);
             list.appendChild(li);
         });
+
+        const values = currentAnswers();
+        const essentials = document.getElementById('review-essentials');
+        if (essentials) {
+            essentials.replaceChildren();
+            const rows = [
+                ['Couple', [values.bride_name, values.groom_name].filter(Boolean).join(' & ')],
+                ['Wedding date', dateFormat(values.event_date)],
+                ['Ceremony', values.ceremony_venue || values.venue_name],
+                ['Reception', selected('reception') ? values.reception_venue : 'Not included'],
+                ['Program', selected('program') ? (values.event_schedule ? 'Your wedding timeline is ready' : 'Optional timeline not added') : 'Not included'],
+                ['Parents', document.getElementById('include-parents')?.checked
+                    ? ['bride_mother','bride_father','groom_mother','groom_father']
+                        .filter(key => String(values[key] || '').trim()).length + ' name(s) included'
+                    : 'Omitted (optional)'],
+                ['Entourage', selected('entourage') ? 'Included' : 'Not included'],
+                ['RSVP', selected('guests') ? 'Included' : 'Not included']
+            ];
+            rows.forEach(function ([label, value]) {
+                const row = document.createElement('div');
+                row.className = 'final-review-row';
+                const key = document.createElement('span');
+                key.textContent = label;
+                const result = document.createElement('strong');
+                result.textContent = String(value || 'Not provided yet');
+                row.append(key, result);
+                essentials.append(row);
+            });
+        }
+
+        const messages = document.getElementById('review-messages');
+        if (messages) {
+            messages.replaceChildren();
+            const keys = [
+                ['host_message', 'Invitation message'],
+                ['couple_story', 'Love story'],
+                ['hero_quote', 'Favorite quote'],
+                ['editorial_quote', 'Editorial quote'],
+                ['rsvp_message', 'RSVP wording'],
+                ['gift_message', 'Gift note'],
+                ['closing_quote', 'Closing quote'],
+                ['closing_message', 'Final message']
+            ];
+            keys.forEach(function ([key, label]) {
+                const field = fieldFor(key);
+                if (!field || field.disabled) return;
+                // Show the wording guests actually see, including the
+                // template default when the optional field is blank.
+                const displayed = String(
+                    values[key] || preview.querySelector('[data-field="' + key + '"]')?.textContent || ''
+                ).trim();
+                if (!displayed) return;
+                const row = document.createElement('div');
+                row.className = 'review-message-entry';
+                const name = document.createElement('strong');
+                name.textContent = label;
+                const message = document.createElement('p');
+                message.textContent = displayed;
+                row.append(name, message);
+                messages.append(row);
+            });
+            if (!messages.childElementCount) {
+                const empty = document.createElement('p');
+                empty.className = 'review-empty';
+                empty.textContent = 'No additional messages entered yet. You can still publish or add personal wording.';
+                messages.append(empty);
+            }
+        }
     }
 
     function renderStage() {
@@ -805,6 +873,23 @@
     });
     document.getElementById('publish-back').addEventListener('click', function () {
         goToStage(app.dataset.photosEnabled === '1' ? 'photos' : 'details');
+    });
+    app.querySelectorAll('[data-review-edit]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const destination = button.dataset.reviewEdit;
+            if (!stageNames.includes(destination)) return;
+            goToStage(destination);
+            setMobileView('edit');
+        });
+    });
+    document.getElementById('review-open-preview')?.addEventListener('click', function () {
+        const websiteTab = app.querySelector('[data-preview-format="website"]');
+        if (websiteTab?.getAttribute('aria-selected') !== 'true') websiteTab?.click();
+        setMobileView('preview');
+        if (window.innerWidth > 850 && app.dataset.previewExpanded !== 'true') {
+            document.getElementById('preview-expand')?.click();
+        }
+        document.getElementById('preview-scroll').scrollTop = 0;
     });
     if (app.dataset.photosEnabled === '1') {
         document.getElementById('refine-back')?.addEventListener('click', function () {
