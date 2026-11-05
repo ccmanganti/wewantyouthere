@@ -14,7 +14,8 @@ $structured = [
       '@id' => $siteBase . '/#website',
       'url' => $siteBase,
       'name' => 'We Want You There',
-      'description' => 'An online wedding invitation website maker for Filipino celebrations.',
+      'alternateName' => 'WWYT',
+      'description' => 'Free wedding invitation website maker in the Philippines with optional premium features.',
     ],
     [
       '@type' => 'SoftwareApplication',
