@@ -391,4 +391,49 @@ body.builder-page > main{min-height:0}
  .builder-app[data-preview-expanded="true"][data-mobile-view="preview"] .preview-pane{display:flex}
 }
 
+
+/* Make the form calm: four prominent questions first, everything else under
+   a small optional-details expander; suggestion controls are unobtrusive. */
+.builder-app .field-heading{display:flex;align-items:center;justify-content:space-between;
+    gap:10px;min-width:0;margin-bottom:6px}
+.builder-app .field-heading .field-label{margin:0;min-width:0;flex:1}
+.builder-app .field-suggestion-actions{display:flex;gap:5px;align-items:center;flex:none}
+.builder-app .field-generate-btn,.builder-app .field-undo-btn{
+    border:1px solid #d8b9ad;border-radius:8px;background:#fffaf5;
+    color:#8c303b;padding:5px 8px;font:700 10px/1.25 'DM Sans',sans-serif;
+    display:inline-flex;align-items:center;justify-content:center;gap:5px
+}
+.builder-app .field-generate-btn:hover,.builder-app .field-generate-btn:focus-visible,
+.builder-app .field-undo-btn:hover,.builder-app .field-undo-btn:focus-visible{
+    background:#f3e1dc;border-color:#a85157;outline-offset:2px
+}
+.builder-app .field-generate-btn:disabled{opacity:.6;cursor:wait}
+.builder-app .field-undo-btn{color:#594d48;border-color:#ded1c6}
+.builder-app .generate-feedback{font:500 10px/1.5 'DM Sans',sans-serif;color:#7e5360;margin-top:5px}
+.builder-app .generate-feedback:empty{display:none}
+.builder-app .preview-canvas .wwyt-preview-editable{
+    cursor:pointer;text-decoration-thickness:1px;
+    transition:background-color .15s ease,outline-color .15s ease
+}
+.builder-app .preview-canvas .wwyt-preview-editable:hover,
+.builder-app .preview-canvas .wwyt-preview-editable:focus-visible{
+    outline:2px dashed #be8e53;outline-offset:3px;
+    background-color:rgba(255,226,155,.30);
+    border-radius:3px;
+}
+.builder-app .preview-canvas [data-photo-slot]:hover{
+    cursor:pointer;
+}
+.builder-app .expand-questions{
+    border:1px solid #d8c7c1;background:#fffdfa;
+    color:#772f3b;padding:10px 13px;font-size:11px
+}
+.builder-app .expand-questions:hover{background:#f8eae6}
+.builder-app .preview-link-tip{font-weight:500;line-height:1.5}
+.builder-app .preview-link-tip strong{font-weight:800}
+@media(max-width:560px){
+ .builder-app .field-heading{gap:6px}
+ .builder-app .field-generate-btn,.builder-app .field-undo-btn{font-size:10px;padding:5px 6px}
+}
+
 </style>
