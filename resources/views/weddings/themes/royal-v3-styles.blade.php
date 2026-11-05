@@ -259,25 +259,52 @@
     filter:drop-shadow(0 7px 11px #21030d88);
     transition:opacity .32s ease,transform .35s ease;
 }
+/* A true LANDSCAPE invitation: one clean paper layer, not text layered on
+   top of the old preprinted portrait WebP. The front flap masks the paper. */
 .rb-v3 .rbv-letter{
-    position:absolute;z-index:2;left:25%;top:8%;width:50%;
-    aspect-ratio:610/740;opacity:0;pointer-events:none;
-    transform:translateY(4%) scale(.84);
-    filter:drop-shadow(0 13px 12px #1a041063);
-    transition:transform 1.12s cubic-bezier(.18,.73,.2,1) .86s,
-               opacity .22s linear .94s;
+    position:absolute;z-index:2;left:11%;top:17%;width:78%;
+    aspect-ratio:1.68 / 1;overflow:hidden;display:grid;
+    grid-template-columns:44% minmax(0,1fr);align-items:stretch;
+    background:#f8f0e2 url('/wedding/royal-burgundy/paper-texture.webp') center/cover;
+    border:2px solid #e5cda6;border-radius:2px;opacity:0;pointer-events:none;
+    transform:translateY(17%) scale(.9);transform-origin:50% 60%;
+    box-shadow:0 3px 0 #b78a5c,0 13px 26px #16040f78;
+    transition:transform 1.12s cubic-bezier(.18,.73,.2,1) .83s,
+               opacity .24s linear .86s;
 }
-.rb-v3 .rbv-letter>img{position:relative;display:block;width:100%;height:100%}
+.rb-v3 .rbv-letter::after{
+    content:"";position:absolute;z-index:3;inset:5px;
+    border:1px solid #c69b6b;pointer-events:none;
+}
+.rb-v3 .rbv-letter-photo{position:relative;min-width:0;height:100%;
+    overflow:hidden;background:linear-gradient(145deg,#8e4556,#d8ad91)}
+.rb-v3 .rbv-letter-photo>img{display:block;width:100%;height:100%;
+    object-fit:cover;object-position:center;filter:saturate(.9) sepia(.08)}
+.rb-v3 .rbv-letter-monogram{display:grid;place-items:center;height:100%;
+    color:#f6dbc5;font:55px 'Cormorant Garamond',serif}
 .rb-v3 .rbv-letter-copy{
-    position:absolute;left:5%;right:5%;top:23%;
-    display:flex;flex-direction:column;align-items:center;gap:clamp(4px,1.2vw,11px);
-    text-align:center;color:#72232c;
+    position:relative;min-width:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:clamp(3px,.65vw,7px);
+    padding:clamp(9px,1.8vw,21px) clamp(8px,1.3vw,17px);
+    text-align:center;color:#71232e;
 }
-.rb-v3 .rbv-letter-copy small,.rb-v3 .rbv-letter-copy span,.rb-v3 .rbv-letter-copy b{
-    font:700 clamp(6px,1vw,10px) 'DM Sans',sans-serif;letter-spacing:.07em
+.rb-v3 .rbv-letter-copy small{
+    display:block;font:700 clamp(7px,.9vw,10px)/1.3 'DM Sans',sans-serif;
+    letter-spacing:.12em;
 }
 .rb-v3 .rbv-letter-copy strong{
-    font:italic clamp(16px,3vw,29px)/1.08 'Cormorant Garamond',serif
+    display:block;max-width:100%;font:italic 600 clamp(14px,2.15vw,27px)/1.12
+    'Cormorant Garamond',serif;overflow-wrap:anywhere;text-wrap:balance;
+}
+.rb-v3 .rbv-letter-copy strong span{font:inherit;letter-spacing:inherit}
+.rb-v3 .rbv-letter-copy strong i{font:inherit;font-size:.7em}
+.rb-v3 .rbv-letter-copy .rbv-letter-divider{
+    color:#b58a5c;font:14px/1 Georgia,serif;
+}
+.rb-v3 .rbv-letter-copy .rbv-letter-invite,
+.rb-v3 .rbv-letter-copy>b{
+    display:block;font:700 clamp(7px,.85vw,10px)/1.35 'DM Sans',sans-serif;
+    letter-spacing:.055em;
 }
 .rb-v3 .rbv-envelope.is-opening{
     animation:none;transform:translate3d(0,0,0);cursor:default;pointer-events:none;
@@ -289,7 +316,7 @@
     transform:rotateX(-177deg)
 }
 .rb-v3 .rbv-envelope.is-opening .rbv-letter{
-    opacity:1;transform:translateY(-25%) scale(1)
+    opacity:1;transform:translateY(-47%) scale(1)
 }
 .rb-v3 .rbv-intro.is-fading{opacity:0;visibility:hidden;pointer-events:none}
 .rb-v3 .rbv-intro.is-fading .rbv-intro-stage{
