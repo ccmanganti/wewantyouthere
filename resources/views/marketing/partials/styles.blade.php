@@ -284,4 +284,22 @@ filter:blur(9px)}
 .mkt .mkt-template-couple-photo{display:block;position:relative;z-index:1;width:100%;max-width:240px;height:125px;object-fit:cover;object-position:center;border:3px solid #fff9f0;box-shadow:0 8px 20px #2f18222a;margin:0 auto 13px}
 .mkt .rb-catalogue-poster img{height:154px;object-position:center}
 @media(max-width:620px){.mkt .mkt-hero-copy h1{font-size:clamp(40px,9.2vw,57px)}.mkt .mkt-hero-couple-photo{height:125px;width:230px}.mkt .mkt-template-couple-photo{height:110px}}
+
+/* Sample photos are real licensed stock photography, not fabricated screenshots
+   or unverified client testimonials. They link to the working website preview. */
+.mkt .mkt-sample-showcase{background:#f9f5ec}
+.mkt .mkt-sample-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.mkt .mkt-sample-photo-card{overflow:hidden;border:1px solid #dbcabc;border-radius:13px;background:#fffdf8;box-shadow:0 12px 30px #3013190c}
+.mkt .mkt-sample-photo-frame{position:relative;overflow:hidden;aspect-ratio:1.36;background:#dac7bb}
+.mkt .mkt-sample-photo-frame img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .45s ease}
+.mkt .mkt-sample-photo-card:hover .mkt-sample-photo-frame img{transform:scale(1.035)}
+.mkt .mkt-sample-photo-frame span{position:absolute;left:12px;bottom:12px;background:#24161bce;padding:7px 9px;border:1px solid #ffffff30;border-radius:5px;color:#fff6e9;font:700 9px 'DM Sans',sans-serif;letter-spacing:.08em}
+.mkt .mkt-sample-photo-copy{padding:17px 18px 20px}
+.mkt .mkt-sample-photo-copy h3{font-size:24px;margin:0 0 7px}
+.mkt .mkt-sample-photo-copy p{font-size:12px;line-height:1.75;color:#786762;margin:0 0 13px}
+.mkt .mkt-sample-photo-copy button{font:800 11px 'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:4px;color:#86252f;border:0;background:transparent;padding:3px 0;text-align:left}
+.mkt .mkt-sample-photo-copy button:hover{color:#550a15}
+@media(max-width:920px){.mkt .mkt-sample-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.mkt .mkt-sample-photo-grid{grid-template-columns:1fr}.mkt .mkt-sample-photo-frame{aspect-ratio:1.65}}
+
 </style>
