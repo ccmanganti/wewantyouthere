@@ -4,7 +4,7 @@
 // are offered later under optional "Fine-tune template" accordions.
 // Keys stay compatible with existing wedding answer records.
 return [
-    'couple' => ['event_title', 'bride_name', 'groom_name', 'host_message', 'couple_story',
+    'couple' => ['event_title', 'bride_name', 'groom_name', 'host_message', 'couple_story', 'hero_quote',
         'bride_mother', 'bride_father', 'groom_mother', 'groom_father'],
     'ceremony' => ['event_date', 'event_time', 'ceremony_venue', 'venue_name', 'ceremony_address'],
     'reception' => ['reception_venue', 'reception_time', 'reception_address'],
