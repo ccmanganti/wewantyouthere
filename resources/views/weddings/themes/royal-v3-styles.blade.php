@@ -69,6 +69,9 @@
 .rb-v3 .rbv-cover-photo{max-width:500px;margin:17px auto;border:9px solid #481520;background:#481520;box-shadow:0 13px 35px #4c101846}
 .rb-v3 .rbv-cover-photo>img{height:auto;max-height:360px;aspect-ratio:1.8/1}
 .rb-v3 .rbv-cover-photo figcaption{color:#ffebd0;font:700 9px 'DM Sans',sans-serif;letter-spacing:.15em;padding:10px}
+.rb-v3 .rbv-event-title{max-width:520px;margin:19px auto 6px;
+    font:600 11px/1.5 'DM Sans',sans-serif;letter-spacing:.10em;text-transform:uppercase;
+    overflow-wrap:anywhere;color:#8b454b}
 .rb-v3 .rbv-names{font:400 clamp(43px,6.4vw,73px)/1.1 'Great Vibes',cursive;color:#811f2d;margin:19px 0 8px}
 .rb-v3 .rbv-names b{font:400 19px Georgia,serif;margin:0 10px;color:#a73948}
 .rb-v3 .rbv-date-text{font:700 11px 'DM Sans',sans-serif;letter-spacing:.17em;text-transform:uppercase;margin:12px 0 19px}
