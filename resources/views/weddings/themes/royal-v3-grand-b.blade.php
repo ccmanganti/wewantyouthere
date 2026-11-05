@@ -38,6 +38,7 @@
 @endif
 
 {{-- 11 GRAND: milestone timeline, no SVG or curving line intersection --}}
+@if($visible('program') || $isSample || $isPreview)
 <section class="rbv-grand rbv-timeline" id="the-timeline" data-preview-section="program" @if(!$visible('program')) hidden @endif>
     <span class="rbv-eyebrow">THE FLOW OF OUR CELEBRATION</span>
     <h2 class="rbv-title" data-field="timeline_heading">{{ $copy('timeline_heading','Wedding day program') }}</h2>
@@ -67,7 +68,10 @@
     @include('weddings.partials.extras', ['group' => 'program'])
 </section>
 
+@endif
+
 {{-- 12 INFO: full program for guests --}}
+@if($visible('program') || $isSample || $isPreview)
 <section class="rbv-info" id="program-details" data-preview-section="program" @if(!$visible('program')) hidden @endif>
     <div class="rbv-inner"><span class="rbv-eyebrow">A LITTLE GUIDE TO OUR DAY</span>
         <h2 class="rbv-title" data-field="program_details_heading">{{ $copy('program_details_heading','What to expect') }}</h2>
@@ -96,6 +100,8 @@
     </div>
 </section>
 
+@endif
+
 @php
     $entourageFields = [
         'principal_sponsors','maid_of_honor','matron_of_honor','best_man',
@@ -106,6 +112,7 @@
     $hasEntourage = collect($entourageFields)->contains(fn ($key) => filled($answers[$key] ?? null));
 @endphp
 {{-- 13 GRAND: couple collage acknowledging family and friends --}}
+@if($visible('entourage') || $isSample || $isPreview)
 <section class="rbv-grand rbv-family-art" id="people-art" data-preview-section="entourage" @if(!$visible('entourage') || (!$isSample && !$isPreview && !$hasEntourage)) hidden @endif>
     <span class="rbv-eyebrow">THE PEOPLE WHO HAVE LOVED US ALL ALONG</span>
     <h2 class="rbv-title" data-field="people_art_heading">{{ $copy('people_art_heading','In good company.') }}</h2>
@@ -120,7 +127,10 @@
     <p class="rbv-quote" data-field="people_quote">{{ $copy('people_quote','“Our forever is sweeter with you beside us.”') }}</p>
 </section>
 
+@endif
+
 {{-- 14 INFO: every wedding role from the shared event questions --}}
+@if($visible('entourage') || $isSample || $isPreview)
 <section class="rbv-info" id="our-people" data-preview-section="entourage" @if(!$visible('entourage') || (!$isSample && !$isPreview && !$hasEntourage)) hidden @endif>
     <div class="rbv-inner rbv-inner-wide"><span class="rbv-eyebrow">WITH THE BLESSINGS OF OUR FAMILIES</span>
         <h2 class="rbv-title" data-field="entourage_heading">{{ $copy('entourage_heading','Our dearest people.') }}</h2>
@@ -153,6 +163,8 @@
         @include('weddings.partials.extras', ['group' => 'entourage'])
     </div>
 </section>
+
+@endif
 
 {{-- 15 GRAND: painterly dress-code art --}}
 <section class="rbv-grand rbv-dress-art" id="dress-art" data-preview-section="details" @if(!$visible('details')) hidden @endif>
