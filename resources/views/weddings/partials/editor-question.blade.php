@@ -2,7 +2,7 @@
     $current = old('answers.'.$question->key, $draft['answers'][$question->key] ?? '');
     $type = in_array($question->type, ['date', 'time', 'number', 'email', 'url'], true) ? $question->type : 'text';
     $isLong = $question->type === 'textarea';
-    $canGenerate = isset(config('wedding_message_fields', [])[$question->key]) && ($isLong || $type === 'text');
+    $canGenerate = array_key_exists($question->key, config('wedding_message_fields', [])) && ($isLong || $type === 'text');
 @endphp
 <div class="field {{ $isLong ? 'full' : '' }}">
     <div class="field-heading">
