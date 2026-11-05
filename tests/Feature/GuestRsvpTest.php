@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\InvitationWebsite;
 use App\Models\InvitationTemplate;
 use App\Models\InvitationRsvp;
+use App\Models\InvitationTemplatePurchase;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Database\Seeders\RoyalBurgundyWeddingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,6 +28,14 @@ class GuestRsvpTest extends TestCase
             'name' => 'Couple Owner', 'email' => 'owner-'.$slug.'@example.test',
             'password' => 'strong-password-123',
         ]);
+        $template = InvitationTemplate::where('slug','royal-burgundy-wedding')->firstOrFail();
+        // Existing RSVP behavior is now exercised with a verified paid license.
+        InvitationTemplatePurchase::create([
+            'user_id' => $user->id, 'invitation_template_id' => $template->id,
+            'amount_cents' => 99900, 'currency' => 'PHP', 'status' => 'paid',
+            'provider' => 'stripe', 'provider_session_id' => 'cs_test_' . $slug,
+            'paid_at' => now(),
+        ]);
         return InvitationWebsite::create([
             'user_id' => $user->id,
             'invitation_template_id' => InvitationTemplate::where('slug','royal-burgundy-wedding')->firstOrFail()->id,
@@ -38,6 +48,22 @@ class GuestRsvpTest extends TestCase
                 'rsvp_deadline' => '2027-11-20',
             ], $answers),
         ]);
+    }
+
+    public function test_unpaid_website_has_no_rsvp_form_and_cannot_accept_submissions(): void
+    {
+        $site = $this->site('unpaid-wedding');
+        InvitationTemplatePurchase::where('user_id', $site->user_id)->delete();
+
+        $this->get('/i/unpaid-wedding')->assertOk()
+            ->assertDontSee('name="guest_name"', false)
+            ->assertDontSee('id="rbv-event-map"', false)
+            ->assertDontSee('id="our-people"', false);
+
+        $this->post('/i/unpaid-wedding/rsvp', [
+            'guest_name' => 'Guest Example', 'attendance' => 'attending', 'party_size' => 1,
+        ])->assertForbidden();
+        $this->assertDatabaseCount('invitation_rsvps', 0);
     }
 
     public function test_public_wedding_displays_real_rsvp_form_not_prototype_controls(): void
