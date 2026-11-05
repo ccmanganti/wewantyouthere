@@ -27,7 +27,7 @@ final class InvitationVideo
 
         if (in_array($host, ['vimeo.com', 'player.vimeo.com'], true)) {
             $id = preg_match('~(?:^|/)video/(\d{6,12})$|^(\d{6,12})$~', $path, $m)
-                ? ($m[1] ?: ($m[2] ?? '')) : null;
+                ? (($m[1] ?? '') ?: ($m[2] ?? '')) : null;
             return $id ? 'https://player.vimeo.com/video/' . $id : null;
         }
         return null;
