@@ -62,4 +62,5 @@ jobs:
           php artisan test --filter=GoogleLoginTest
           php artisan test --filter=BrandingExperienceTest
           php artisan test --filter=RoyalBurgundyWeddingTest
+          php artisan test --filter=WeddingMessageLibraryTest
           php artisan test --filter=GuestRsvpTest
