@@ -549,4 +549,39 @@ body.builder-page > main{min-height:0}
 .premium-dialog-main{display:flex;align-items:center;justify-content:center;gap:12px;background:#850814;color:#fff;text-decoration:none;padding:13px;border-radius:9px;font:800 12px 'DM Sans',sans-serif}
 .premium-dialog-alt,.premium-dialog-skip{display:block;width:100%;font:700 12px 'DM Sans',sans-serif;padding:12px;color:#712b3b;text-align:center}
 .premium-dialog-skip{background:transparent;border:0;text-decoration:underline;text-underline-offset:3px}
+
+/* A small set of expandable topics replaces a wall of fine-tune fields. */
+.builder-app .fine-tune-categories{gap:8px;margin:0 0 15px}
+.builder-app .fine-tune-category{background:#fffdf9}
+.builder-app .fine-tune-category>summary{padding:12px 14px}
+.builder-app .fine-tune-scenes{padding:10px 12px 12px;display:grid;gap:7px}
+.builder-app .fine-tune-subsection{border:1px solid #e8dbd4;border-radius:8px;background:#fcf8f4}
+.builder-app .fine-tune-subsection>summary{display:flex;align-items:center;gap:10px;
+    list-style:none;cursor:pointer;padding:11px 12px;font:700 11px/1.5 'DM Sans',sans-serif;color:#64333a}
+.builder-app .fine-tune-subsection>summary::-webkit-details-marker{display:none}
+.builder-app .fine-tune-subsection>summary small{font-weight:500;color:#8d7770;margin-left:auto}
+.builder-app .fine-tune-subsection>summary i{font-size:10px;transition:transform .15s;color:#8f5557}
+.builder-app .fine-tune-subsection[open]>summary{border-bottom:1px solid #eadbd5}
+.builder-app .fine-tune-subsection[open]>summary i{transform:rotate(180deg)}
+.builder-app .fine-tune-subsection .fine-tune-question-grid{padding:13px 12px 15px}
+.builder-app .fine-tune-envelope{border:1px solid #e3d4ca;border-radius:9px;background:#fff9f2}
+.builder-app .fine-tune-envelope>summary{display:flex;align-items:center;gap:10px;cursor:pointer;
+    padding:12px 14px;list-style:none;font:700 11px 'DM Sans',sans-serif;color:#60333a}
+.builder-app .fine-tune-envelope>summary::-webkit-details-marker{display:none}
+.builder-app .fine-tune-envelope>summary i:last-child{margin-left:auto;font-size:10px}
+.builder-app .fine-tune-envelope[open]>summary i:last-child{transform:rotate(180deg)}
+.builder-app .fine-tune-envelope-inner{padding:0 14px 14px}
+.builder-app .fine-tune-envelope-inner p{margin:0 0 11px;color:#74635e;font-size:11px}
+.builder-app .field-preview-jump{border:1px solid #d8c1b8;border-radius:6px;background:#fff;
+    color:#7e434b;padding:5px 7px;font:700 10px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer}
+.builder-app .field-preview-jump:hover,.builder-app .field-preview-jump:focus-visible{
+    background:#f2ded9;border-color:#a56a6d}
+.builder-app .publish-free-note{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    font:600 11px/1.5 'DM Sans',sans-serif;color:#73584e;padding:10px 0;margin:0}
+.builder-app .publish-free-note a{color:#872e3a;text-decoration:underline}
+.builder-app .publish-free-note i{color:#598360}
+.builder-app .preview-top{min-height:42px}
+.builder-app .preview-highlight-help{font-weight:500}
+.builder-app .editor-stage .stage-top>p,.builder-app .group-headline>p{font-size:11px;line-height:1.55}
+
 </style>
