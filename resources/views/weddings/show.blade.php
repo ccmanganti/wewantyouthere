@@ -7,9 +7,9 @@
 @push('styles')
 @include('weddings.partials.invitation-theme-styles')
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-@include('weddings.themes.royal-burgundy-styles')
-<link rel="preload" href="{{ asset('wedding/royal-burgundy/envelope-front.webp') }}" as="image" type="image/webp">
-<link rel="preload" href="{{ asset('wedding/royal-burgundy/envelope-flap.webp') }}" as="image" type="image/webp">
+@include('weddings.themes.royal-v3-styles')
+<link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-front.webp') }}" as="image" type="image/webp">
+<link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-flap.webp') }}" as="image" type="image/webp">
 @endif
 <style>
     body.invitation-page{background:#fbf8f1}
@@ -94,7 +94,7 @@
 
 @push('scripts')
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-@include('weddings.themes.royal-burgundy-script')
+@include('weddings.themes.royal-v3-script')
 @endif
 <script>
 (function () {
