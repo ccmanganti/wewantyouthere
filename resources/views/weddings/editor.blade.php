@@ -47,25 +47,25 @@
             <div class="builder-title"><strong title="{{ $template->name }}">{{ $template->name }}</strong></div>
         </div>
         <nav class="wizard-strip" aria-label="Invitation creation steps">
-            <button type="button" class="wizard-step is-current" data-step-navigation="sections" aria-current="step">
+            <button type="button" class="wizard-step is-current" data-step-navigation="sections" title="Choose sections" aria-label="Choose sections" aria-current="step">
                 <span class="step-dot">1</span> <span class="wizard-step-label">Choose sections</span>
             </button>
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="details" disabled>
+            <button type="button" class="wizard-step" data-step-navigation="details" title="Add your details" aria-label="Add your details" disabled>
                 <span class="step-dot">2</span> <span class="wizard-step-label">Add your details</span>
             </button>
             @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="refine" disabled>
+            <button type="button" class="wizard-step" data-step-navigation="refine" title="Preview and refine" aria-label="Preview and refine" disabled>
                 <span class="step-dot">3</span> <span class="wizard-step-label">Preview & refine</span>
             </button>
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="photos" disabled>
+            <button type="button" class="wizard-step" data-step-navigation="photos" title="Add your photos" aria-label="Add your photos" disabled>
                 <span class="step-dot">4</span> <span class="wizard-step-label">Add your photos</span>
             </button>
             @endif
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="publish" disabled>
+            <button type="button" class="wizard-step" data-step-navigation="publish" title="Publish" aria-label="Publish" disabled>
                 <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> <span class="wizard-step-label">Publish</span>
             </button>
         </nav>
@@ -264,6 +264,11 @@
                     <button type="button" role="tab" aria-selected="false" data-preview-format="paper">Paper ◇</button>
                     <button type="button" role="tab" aria-selected="false" data-preview-format="animated">Animated / Video ◇</button>
                 </div>
+                <button type="button" class="preview-expand-btn" id="preview-expand"
+                    aria-pressed="false" title="Use the full workspace to inspect the invitation">
+                    <i class="fa-solid fa-expand" aria-hidden="true"></i>
+                    <span>Expand</span>
+                </button>
             </div>
             <div class="preview-highlight-help" id="preview-highlight-help" role="status" aria-live="polite">
                 <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
