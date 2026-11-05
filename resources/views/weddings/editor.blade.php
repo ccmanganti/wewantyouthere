@@ -86,6 +86,7 @@
                     <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '01 / 05' : '01 / 03' }} · Make it personal</span>
                     <h1 id="section-stage-title">What would you like to include?</h1>
                     <p>Select the sections that belong in your wedding invitation. You can change this later without losing what you've typed.</p>
+                    <div class="preview-link-tip"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Select a section to highlight exactly where it appears in your live preview.</div>
                 </div>
                 <div class="stage-scroll">
                     <div class="selector-intro">
@@ -136,6 +137,7 @@
                     <span class="group-count" id="group-counter">Your details</span>
                     <h2 id="detail-stage-title">The happy couple</h2>
                     <p id="group-subtitle">Only the questions for this section are shown.</p>
+                    <div class="preview-link-tip"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> Click or type in a field to spotlight its location in the preview.</div>
                 </div>
                 <div class="group-tabs" id="group-tabs" aria-label="Question sections">
                     @foreach($groups as $key => $group)
@@ -251,6 +253,10 @@
                     <button type="button" role="tab" aria-selected="false" data-preview-format="paper">Paper ◇</button>
                     <button type="button" role="tab" aria-selected="false" data-preview-format="animated">Animated / Video ◇</button>
                 </div>
+            </div>
+            <div class="preview-highlight-help" id="preview-highlight-help" role="status" aria-live="polite">
+                <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
+                <span id="preview-highlight-status">Select any section or field to see where it appears.</span>
             </div>
             <div class="preview-scroll" id="preview-scroll">
                 <div id="preview-website">
