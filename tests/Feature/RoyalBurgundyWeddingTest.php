@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\EventQuestion;
 use App\Models\EventType;
 use App\Models\InvitationTemplate;
+use App\Models\InvitationTemplatePurchase;
 use App\Models\InvitationWebsite;
 use App\Models\User;
 use Database\Seeders\RoyalBurgundyWeddingSeeder;
@@ -101,7 +102,7 @@ class RoyalBurgundyWeddingTest extends TestCase
 
         $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
             ->assertSee('Step 04 / 05')
-            ->assertSee('Add your beautiful moments')
+            ->assertSee('Your photos.')
             ->assertSee('data-photo-slot="hero"', false)
             ->assertSee('data-photo-locate="hero"', false)
             ->assertSee('data-photo-edit="hero"', false)
@@ -110,12 +111,54 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('data-step-navigation="refine"', false)
             ->assertSee('data-step-navigation="photos"', false)
             ->assertSee('preview-highlight-status')
-            ->assertSee('Select a section to highlight exactly where it appears')
-            ->assertSee('data-refine-section="cover"', false)
-            ->assertSee('data-refine-section="rsvp"', false)
+            ->assertSee('Choose a section, then edit only what you need.')
+            ->assertSee('data-fine-tune-subsection', false)
+            ->assertSee('data-preview-target="our-story"', false)
+            ->assertSee('data-envelope-hero-image', false)
+            ->assertSee('photo-upload-spinner', false)
+            ->assertDontSee('id="preview-comparison"', false)
+            ->assertDontSee('id="preview-paper"', false)
             ->assertSee('data-photo-slot="venue_ceremony"', false)
             ->assertSee('data-photo-slot="venue_reception"', false)
             ->assertSee('preview-envelope-intro', false);
+    }
+
+    public function test_free_fine_tuning_and_photo_editor_hide_locked_features(): void
+    {
+        $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
+            ->assertSee('data-fine-tune-group="couple"', false)
+            ->assertSee('data-fine-tune-subsection', false)
+            ->assertDontSee('data-fine-tune-group="entourage"', false)
+            ->assertDontSee('data-fine-tune-group="program"', false)
+            ->assertDontSee('data-fine-tune-group="guests"', false)
+            ->assertDontSee('data-fine-tune-group="video"', false)
+            ->assertDontSee('data-question="ceremony_notes"', false)
+            ->assertDontSee('data-question="reception_map_url"', false)
+            ->assertDontSee('data-photo-card="guest_art_portrait"', false)
+            ->assertDontSee('data-photo-card="rsvp_portrait"', false)
+            ->assertDontSee('data-photo-card="closing_portrait"', false);
+    }
+
+    public function test_premium_owner_can_fine_tune_and_upload_premium_section_photos(): void
+    {
+        $user = $this->owner('premium-photo-owner@example.test');
+        InvitationTemplatePurchase::create([
+            'user_id' => $user->id,
+            'invitation_template_id' => $this->royal()->id,
+            'amount_cents' => 99900,
+            'currency' => 'PHP',
+            'status' => 'paid',
+            'provider_session_id' => 'cs_paid_photo_editor',
+            'paid_at' => now(),
+        ]);
+
+        $this->actingAs($user)->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
+            ->assertSee('data-fine-tune-group="program"', false)
+            ->assertSee('data-fine-tune-group="entourage"', false)
+            ->assertSee('data-fine-tune-group="guests"', false)
+            ->assertSee('data-question="ceremony_notes"', false)
+            ->assertSee('data-photo-card="guest_art_portrait"', false)
+            ->assertSee('data-photo-card="rsvp_portrait"', false);
     }
 
     public function test_editor_has_clear_wedding_names_optional_parents_and_separate_fine_tune_and_final_review(): void
