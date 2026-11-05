@@ -36,9 +36,9 @@
             <div class="rb-refine-feature-copy">
                 <span class="rb-refine-headline">GUEST FIRST IMPRESSION</span>
                 <h3>Open it like a real invitation.</h3>
-                <p>Preview the beautiful burgundy envelope opening, complete with paper textures and a wax seal. The published website plays this intro once per visit, with a Skip option.</p>
-                <button type="button" class="rb-refine-replay" id="replay-envelope-intro">
-                    <i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i> Play envelope opening
+                <p>Preview the beautiful burgundy envelope opening, complete with paper textures and a wax seal. The published invitation begins with a closed envelope; guests click Open Invitation to reveal the page.</p>
+                <button type="button" class="rb-refine-replay" id="preview-envelope-intro">
+                    <i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i> Preview envelope
                 </button>
             </div>
             <img src="{{ asset('wedding/royal-burgundy/envelope-front.webp') }}"
