@@ -384,4 +384,5 @@ body.rbv-intro-locked{overflow:hidden}
 .rb-v3 .rbv-family-name-card p{font:500 clamp(16px,2vw,21px)/1.3 'Cormorant Garamond',Georgia,serif;color:#621e2c;margin:7px 0 0;overflow-wrap:anywhere}
 @media(max-width:520px){.rb-v3 .rbv-family-name-grid{grid-template-columns:1fr}}
 
+.rb-v3 .rbv-schedule-text{white-space:pre-line;text-align:left;max-width:620px;margin:16px auto 24px;overflow-wrap:anywhere}
 </style>
