@@ -88,6 +88,10 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('our-people')
             ->assertSee('id="rsvp"', false)
             ->assertSee('data-intro-click-only="true"', false)
+            ->assertSee('data-rbv-landscape-letter="true"', false)
+            ->assertSee('rbv-letter-photo')
+            ->assertSee('images.unsplash.com/photo-1617202000199-15fab1b09935')
+            ->assertDontSee('rbv-letter>img')
             ->assertDontSee('device-option')
             ->assertDontSee('replay-button');
 
@@ -97,6 +101,8 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('data-photo-slot="hero"', false)
             ->assertSee('data-photo-locate="hero"', false)
             ->assertSee('data-photo-edit="hero"', false)
+            ->assertSee('images.unsplash.com/photo-1617202000199-15fab1b09935')
+            ->assertSee('data-rbv-landscape-letter="true"', false)
             ->assertSee('data-step-navigation="refine"', false)
             ->assertSee('data-step-navigation="photos"', false)
             ->assertSee('data-photo-slot="venue_ceremony"', false)
@@ -135,6 +141,7 @@ class RoyalBurgundyWeddingTest extends TestCase
         $this->get('/i/andrea-miguel-royal')->assertOk()
             ->assertSee('rb-invite')
             ->assertSee('/i/andrea-miguel-royal/photos/hero')
+            ->assertDontSee('images.unsplash.com/photo-')
             ->assertSee('We met in the library');
 
         $this->get('/i/andrea-miguel-royal/photos/hero')->assertOk()
