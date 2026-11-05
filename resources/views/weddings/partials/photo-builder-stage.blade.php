@@ -1,18 +1,19 @@
 <section class="editor-stage" data-stage="photos" aria-labelledby="photo-stage-title">
     <div class="stage-top photo-stage-head">
         <span class="stage-kicker">Step 04 / 05 · Your images</span>
-        <h2 id="photo-stage-title">Add your beautiful moments.</h2>
-        <p>Select a photo placement below. The live website preview will scroll to that area and highlight it. Upload or replace photos without leaving the builder.</p>
+        <h2 id="photo-stage-title">Your photos.</h2>
+        <p>Upload a photo and find its place in the preview.</p>
     </div>
     <div class="stage-scroll photo-stage-scroll">
-        <div class="photo-editor-hint"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
-            <div><strong>Know exactly where each photo goes.</strong><span>Choose a slot or click the camera button inside the website preview. Photos are saved privately while you build.</span></div>
-        </div>
         <div class="photo-slot-grid" id="photo-slot-grid">
             @foreach($photoSlots as $key => $definition)
-            @php $uploaded = !empty($photoUrls[$key]); @endphp
+            @php
+                $uploaded = !empty($photoUrls[$key]);
+                $premiumOnlyPhoto = \App\Support\InvitationPremium::lockedGroup($definition['section']);
+            @endphp
+            @continue($premiumOnlyPhoto && !$hasPremium)
             <article class="photo-slot-card" data-photo-card="{{ $key }}" data-photo-section="{{ $definition['section'] }}">
-                <div class="photo-slot-image" data-photo-card-preview="{{ $key }}" style="aspect-ratio:{{ $definition['ratio'] }}">
+                <div class="photo-slot-image" data-photo-card-preview="{{ $key }}" style="aspect-ratio:{{ $definition['ratio'] }}"><span class="photo-upload-spinner" aria-hidden="true"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
                     @if($uploaded)
                     <img src="{{ $photoUrls[$key] }}" alt="Your {{ $definition['label'] }} photo" loading="lazy">
                     @else
@@ -35,7 +36,7 @@
             @endforeach
         </div>
         <div class="photo-security-note"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            JPEG, PNG or WebP · Up to 5 MB and 6000 × 6000 pixels per photo. Images are private while you're building. You can skip photos now and add them after publishing.
+            JPEG, PNG or WebP · Max 5 MB each. You can add photos later.
         </div>
     </div>
     <div class="stage-footer">
