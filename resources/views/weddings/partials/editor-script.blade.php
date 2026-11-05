@@ -316,6 +316,9 @@
             const key = target.dataset.field;
             const input = fieldFor(key);
             let value = values[key] || '';
+            // One venue entry in the basics form populates both the venue
+            // showcase and ceremony location unless separately overridden.
+            if (key === 'ceremony_venue' && !value) value = values.venue_name || '';
             if (input && input.type === 'date') value = dateFormat(value);
             if (input && input.type === 'time') value = timeFormat(value);
             target.textContent = value || target.dataset.fallback || '';
