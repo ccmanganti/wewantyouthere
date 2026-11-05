@@ -6,7 +6,7 @@
 return [
     'couple' => ['event_title', 'bride_name', 'groom_name', 'host_message', 'couple_story', 'hero_quote',
         'bride_mother', 'bride_father', 'groom_mother', 'groom_father'],
-    'ceremony' => ['event_date', 'event_time', 'ceremony_venue', 'venue_name', 'ceremony_address'],
+    'ceremony' => ['event_date', 'event_time', 'venue_name', 'ceremony_address'],
     'reception' => ['reception_venue', 'reception_time', 'reception_address'],
     'entourage' => ['principal_sponsors', 'maid_of_honor', 'best_man', 'bridesmaids', 'groomsmen'],
     'program' => ['event_schedule', 'ceremony_program', 'reception_program'],
