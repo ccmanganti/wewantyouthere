@@ -10,8 +10,9 @@
     </div>
 </section>
 
-{{-- 10 INFO: actual ceremony/reception map links and embedded locations --}}
-<section class="rbv-info rbv-map-section" id="location-map" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
+{{-- 10 INFO: premium ceremony/reception Google Maps embed --}}
+@if($visible('maps') || ($isPreview && $premiumAccess) || $isSample)
+<section class="rbv-info rbv-map-section" id="location-map" data-preview-section="reception" data-premium-section="maps" @if(!$visible('maps') || !$visible('reception')) hidden @endif>
     <div class="rbv-inner"><span class="rbv-eyebrow">SO YOU CAN FIND US EASILY</span>
         <h2 class="rbv-title" data-field="map_heading">{{ $copy('map_heading','Find your way.') }}</h2>
         <p class="rbv-copy" data-field="map_intro">{{ $copy('map_intro','We have saved you a spot. Here is a little help getting there.') }}</p>
@@ -34,6 +35,7 @@
         @if($isPreview)<p class="rbv-hint">Maps update from the wedding ceremony and reception address fields.</p>@endif
     </div>
 </section>
+@endif
 
 {{-- 11 GRAND: milestone timeline, no SVG or curving line intersection --}}
 <section class="rbv-grand rbv-timeline" id="the-timeline" data-preview-section="program" @if(!$visible('program')) hidden @endif>
