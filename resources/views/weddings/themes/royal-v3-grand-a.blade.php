@@ -150,7 +150,7 @@
             <h3 data-field="ceremony_venue">{{ $copy('ceremony_venue', $copy('venue_name', 'Our wedding ceremony')) }}</h3>
             <p data-field="ceremony_address">{{ $personal('ceremony_address','Ceremony address') }}</p>
             <strong data-field="event_time">{{ $personal('event_time','3:00 PM') }}</strong>
-            <a class="rbv-link" data-map-link="ceremony" href="{{ $map('ceremony_map_url') ?: '#' }}" target="_blank" rel="noopener noreferrer" @if(!$map('ceremony_map_url')) hidden @endif>GET DIRECTIONS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            <a class="rbv-link" data-map-link="ceremony" href="{{ $map('ceremony_map_url') ?: '#' }}" target="_blank" rel="noopener noreferrer" @if(!$visible('maps') || !$map('ceremony_map_url')) hidden @endif>GET DIRECTIONS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
         <span class="rbv-divider">✦</span>
         <div class="rbv-location" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
@@ -158,7 +158,24 @@
             <h3 data-field="reception_venue">{{ $personal('reception_venue','Our reception venue') }}</h3>
             <p data-field="reception_address">{{ $personal('reception_address','Reception address') }}</p>
             <strong data-field="reception_time">{{ $personal('reception_time','6:00 PM') }}</strong>
-            <a class="rbv-link" data-map-link="reception" href="{{ $map('reception_map_url') ?: '#' }}" target="_blank" rel="noopener noreferrer" @if(!$map('reception_map_url')) hidden @endif>GET DIRECTIONS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            <a class="rbv-link" data-map-link="reception" href="{{ $map('reception_map_url') ?: '#' }}" target="_blank" rel="noopener noreferrer" @if(!$visible('maps') || !$map('reception_map_url')) hidden @endif>GET DIRECTIONS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
     </div>
 </section>
+
+{{-- Expanded ceremony wording is optional Premium content; basic date and
+     location remain free so a minimal invitation still makes sense. --}}
+@if($visible('ceremony_details'))
+<section class="rbv-info rbv-ceremony-extra" id="ceremony-extra" data-preview-section="ceremony" data-premium-section="ceremony_details">
+    <div class="rbv-inner">
+        <span class="rbv-eyebrow">THE CEREMONY</span>
+        <h2 class="rbv-title">The moment we say yes</h2>
+        @if($isPreview || $isSample || filled($answers['ceremony_type'] ?? null))
+        <p class="rbv-copy" data-field="ceremony_type">{{ $personal('ceremony_type', 'A beautiful celebration of love') }}</p>
+        @endif
+        @if($isPreview || $isSample || filled($answers['ceremony_notes'] ?? null))
+        <p class="rbv-copy" data-field="ceremony_notes">{{ $personal('ceremony_notes', 'A few thoughtful notes for our guests') }}</p>
+        @endif
+    </div>
+</section>
+@endif
