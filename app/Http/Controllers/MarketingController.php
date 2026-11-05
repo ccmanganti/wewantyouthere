@@ -71,6 +71,9 @@ class MarketingController extends Controller
                 'program' => true,
                 'guests' => true,
                 'details' => true,
+                'maps' => true,
+                'ceremony_details' => true,
+                'video' => false,
             ],
             'questions' => $template->eventType->questions()
                 ->where('is_enabled', true)->orderBy('sort_order')->get()->groupBy('group_key'),
