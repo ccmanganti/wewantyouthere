@@ -28,7 +28,7 @@ class InvitationTemplateResource extends Resource {
  Toggle::make('is_premium')->label('Premium-only design')
      ->helperText('Off: basic template is free; advanced features can be upgraded separately. On: the design itself requires a paid upgrade.'),
  TextInput::make('premium_price_cents')->label('One-time premium price (₱)')
-     ->numeric()->prefix('₱')->step(0.01)->minValue(1)->maxValue(100000)->default(999)
+     ->numeric()->prefix('₱')->step(0.01)->minValue(1)->maxValue(100000)->default(99900)
      ->afterStateHydrated(fn (TextInput $component, $state) => $component->state(
          number_format(((int) ($state ?? 99900)) / 100, 2, '.', '')
      ))
