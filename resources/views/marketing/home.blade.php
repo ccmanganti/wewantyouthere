@@ -1,7 +1,7 @@
 @extends('layouts.wwyt')
 @section('body_class', 'marketing-v2')
 @section('title', 'Free Wedding Invitation Website Philippines | We Want You There')
-@section('meta_description', 'Make a free wedding invitation website in the Philippines. Pick a digital invitation template, add your names and photos, and share a custom link and QR code. Optional premium upgrades.')
+@section('meta_description', 'Create a free wedding invitation website in the Philippines. Try online invitation templates with real photo previews, share a custom link and QR code, and unlock optional premium RSVP and maps.')
 @push('styles')
 @include('marketing.partials.styles')
 @endpush
@@ -12,9 +12,9 @@
     <section class="mkt-hero" id="top">
         <div class="mkt-wrap mkt-hero-grid">
             <div class="mkt-hero-copy">
-                <div class="mkt-kicker">WE WANT YOU THERE · THE ONLINE INVITATION MAKER</div>
+                <div class="mkt-kicker">WE WANT YOU THERE · FREE ONLINE INVITATION MAKER PHILIPPINES</div>
                 <h1 class="mkt-display">FREE WEDDING INVITATION WEBSITE. <span class="mkt-serif">Made for your forever.</span></h1>
-                <p><strong>Create a free digital wedding invitation in the Philippines.</strong> Choose a design, enter your names, wedding date and venue, add photos, then publish a mobile-friendly website with a personal link and QR code. Upgrade for RSVP, maps and more only if you want them.</p>
+                <p><strong>Make a free website invitation for your wedding in the Philippines.</strong> Our online wedding invitation maker helps you choose a real-photo design, add names, wedding date, venue and photos, and publish a mobile-friendly digital invitation with a personal link and QR code. No coding, no printing, and no payment to publish a basic invitation. Upgrade only for RSVP email alerts, Google Maps, a wedding programme, entourage or video.</p>
                 <div class="mkt-hero-actions">
                     @if(!$canCreate)
                         <a class="mkt-button light" href="{{ url('/app/invitations') }}">Manage my invitation <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
@@ -63,6 +63,44 @@
         <div class="mkt-ticker-copy"><span>FREE WEDDING WEBSITE PHILIPPINES</span><span>DIGITAL WEDDING INVITATION</span><span>ONLINE INVITATION MAKER</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
         <div class="mkt-ticker-copy"><span>FREE WEDDING WEBSITE PHILIPPINES</span><span>DIGITAL WEDDING INVITATION</span><span>ONLINE INVITATION MAKER</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
     </div></div>
+
+    <section class="mkt-section mkt-sample-showcase" id="sample-invitations" aria-labelledby="sample-invitations-title">
+        <div class="mkt-wrap">
+            <div class="mkt-section-head mkt-reveal">
+                <div>
+                    <div class="mkt-kicker red">ACTUAL PHOTOGRAPHY · INTERACTIVE DESIGN PREVIEWS</div>
+                    <h2 id="sample-invitations-title">See your invitation <span class="mkt-serif">come to life.</span></h2>
+                </div>
+                <p>Explore examples of a digital wedding invitation with photographs, romantic cover sections, and a mobile-friendly layout. These use licensed sample photos—not real customer invitations.</p>
+            </div>
+            <div class="mkt-sample-photo-grid">
+                @foreach([
+                    ['portrait_one', 'The romantic cover', 'A personal website with your names, date and favorite portrait.'],
+                    ['story_one', 'Your story in photos', 'Share engagement and prenup photos as part of your invitation.'],
+                    ['gallery_three', 'Memories worth sharing', 'An elegant invitation guests can revisit from their phone.'],
+                ] as [$slot, $label, $description])
+                    <article class="mkt-sample-photo-card">
+                        <div class="mkt-sample-photo-frame">
+                            <img src="{{ config('wedding_sample_photos.' . $slot) }}" loading="lazy" decoding="async"
+                                alt="{{ $label }} — sample wedding couple photograph in a digital wedding invitation" width="500" height="380">
+                            <span>SAMPLE PHOTO · INVITATION DESIGN</span>
+                        </div>
+                        <div class="mkt-sample-photo-copy">
+                            <h3>{{ $label }}</h3>
+                            <p>{{ $description }}</p>
+                            @if($featured)
+                                <button type="button" data-preview-open
+                                    data-preview-url="{{ route('marketing.templatePreview', $featured->slug) }}"
+                                    data-preview-title="{{ $featured->name }}">
+                                    Open working invitation preview <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                </button>
+                            @endif
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
     <section class="mkt-section" id="templates">
         <div class="mkt-wrap">
