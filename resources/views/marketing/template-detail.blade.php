@@ -93,7 +93,7 @@
                     <div class="mkt-detail-feature"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i> Guest RSVP &amp; invitation link</div>
                 </div>
                 <details class="mkt-detail-more">
-                    <summary>See everything you can customize</summary>
+                    <summary>What you can customize</summary>
                     <ul class="mkt-detail-points">
                         <li>Wedding date, reception and ceremony locations</li>
                         <li>Parents, principal sponsors, ninong &amp; ninang</li>
