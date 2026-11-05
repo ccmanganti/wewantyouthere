@@ -147,7 +147,7 @@
         <h2 class="rbv-title" data-field="venue_intro">{{ $copy('venue_intro','The venues') }}</h2>
         <div class="rbv-location">
             <span class="rbv-eyebrow">THE CEREMONY</span>
-            <h3 data-field="ceremony_venue">{{ $personal('ceremony_venue','Our wedding ceremony') }}</h3>
+            <h3 data-field="ceremony_venue">{{ $copy('ceremony_venue', $copy('venue_name', 'Our wedding ceremony')) }}</h3>
             <p data-field="ceremony_address">{{ $personal('ceremony_address','Ceremony address') }}</p>
             <strong data-field="event_time">{{ $personal('event_time','3:00 PM') }}</strong>
             <a class="rbv-link" data-map-link="ceremony" href="{{ $map('ceremony_map_url') ?: '#' }}" target="_blank" rel="noopener noreferrer" @if(!$map('ceremony_map_url')) hidden @endif>GET DIRECTIONS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
