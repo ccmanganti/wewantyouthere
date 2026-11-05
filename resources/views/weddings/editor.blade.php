@@ -163,19 +163,13 @@
                                 ? config('wedding_editor_basics.'.$key, [])
                                 : $group['questions']->pluck('key')->all();
                             $parentKeys = ['bride_mother','bride_father','groom_mother','groom_father'];
-                            // Every wedding theme uses the same sensible visual
-                            // grouping, regardless of its original question order.
-                            // Unlisted template-specific questions follow in their
-                            // existing order; no questions are added or discarded.
-                            $layoutKeys = config('wedding_editor_layout.'.$key, []);
-                            $coreQuestions = $group['questions']
-                                ->filter(fn ($question) => in_array($question->key, $coreKeys, true) && (!$isRoyalBuilder || !in_array($question->key, $parentKeys, true)))
-                                ->sortBy(function ($question) use ($layoutKeys, $coreKeys) {
-                                    $priority = array_search($question->key, $layoutKeys, true);
-                                    if ($priority !== false) return $priority;
-                                    $originalPosition = array_search($question->key, $coreKeys, true);
-                                    return count($layoutKeys) + ($originalPosition === false ? count($coreKeys) : $originalPosition);
-                                })->values();
+                            // Same ordering engine powers all invitation event types.
+                            $coreQuestions = \App\Support\InvitationFormLayout::orderedQuestions(
+                                $group['questions']
+                                    ->filter(fn ($question) => in_array($question->key, $coreKeys, true) && (!$isRoyalBuilder || !in_array($question->key, $parentKeys, true)))
+                                    ->values(),
+                                $template->eventType->slug,
+                            );
                             $parentQuestions = $isRoyalBuilder && $key === 'couple'
                                 ? $group['questions']->filter(fn ($question) => in_array($question->key, $parentKeys, true))
                                     ->sortBy(fn ($question) => array_search($question->key, $parentKeys))->values()
