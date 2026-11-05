@@ -38,6 +38,25 @@ class InvitationPremium
             && filled(config('services.stripe.webhook_secret'));
     }
 
+    /**
+     * Fields that may not appear in the free fine-tune editor. Basic ceremony
+     * date, time, name and address remain free; extended ceremony and maps do not.
+     */
+    public static function lockedField(string $key): bool
+    {
+        return in_array($key, [
+            'ceremony_type', 'ceremony_notes', 'unplugged_note',
+            'ceremony_map_url', 'reception_map_url', 'venue_map_url',
+            'map_heading', 'map_intro', 'ceremony_program',
+            'reception_program', 'video_embed_url', 'video_heading', 'video_message',
+        ], true) || str_ends_with($key, '_map_url');
+    }
+
+    public static function lockedGroup(string $group): bool
+    {
+        return in_array($group, ['guests', 'program', 'entourage', 'video'], true);
+    }
+
     public static function filterSections(array $sections, bool $hasAccess): array
     {
         if ($hasAccess) return $sections;
