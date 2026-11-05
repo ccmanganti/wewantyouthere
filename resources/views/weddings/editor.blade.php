@@ -20,16 +20,21 @@
     $defaultSelections = [
         'couple' => true, 'ceremony' => true, 'reception' => true,
         'entourage' => false,
-        'program' => (($template->settings['theme'] ?? '') === 'royal_burgundy'),
-        'guests' => true, 'details' => true,
+        'program' => false,
+        'guests' => false, 'video' => false, 'details' => true,
     ];
     $currentSectionSelection = [];
     foreach ($groups as $key => $group) {
         $currentSectionSelection[$key] = !($group['hideable'] ?? false)
             || ($draft['sections'][$key] ?? $defaultSelections[$key] ?? false);
+        if (!$hasPremium && in_array($key, ['entourage','program','guests','video'], true)) {
+            $currentSectionSelection[$key] = false;
+        }
     }
+    $currentSectionSelection['maps'] = $hasPremium && ($draft['sections']['maps'] ?? false);
+    $currentSectionSelection['ceremony_details'] = $hasPremium && ($draft['sections']['ceremony_details'] ?? false);
 @endphp
-<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}" data-generate-url="{{ route('wedding.messages.generate', $template->slug) }}">
+<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-has-premium="{{ $hasPremium ? '1' : '0' }}" data-upgrade-url="{{ route('premium.show', $template->slug) }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}" data-generate-url="{{ route('wedding.messages.generate', $template->slug) }}">
     {{-- The entire workspace uses ONE compact toolbar. The public topbar
          is hidden only on this route, freeing vertical room for both panes. --}}
     <header class="builder-utility" aria-label="Invitation builder toolbar">
@@ -83,6 +88,22 @@
         </div>
     </header>
 
+    <dialog id="premium-unlock-dialog" class="premium-unlock-dialog" aria-labelledby="premium-modal-title">
+      <button type="button" class="premium-modal-close" data-premium-close aria-label="Close upgrade dialog"><i class="fa-solid fa-xmark"></i></button>
+      <div class="premium-dialog-icon"><i class="fa-solid fa-gem"></i></div>
+      <span class="premium-dialog-overline">OPTIONAL PREMIUM UPGRADE</span>
+      <h2 id="premium-modal-title">Make your invitation even more personal.</h2>
+      <p id="premium-modal-description">Unlock premium features for {{ $template->name }}. Your free invitation remains available.</p>
+      <div class="premium-dialog-price">{{ \App\Support\InvitationPremium::price($template) }} <small>one-time payment</small></div>
+      @auth
+        <a class="premium-dialog-main" href="{{ route('premium.show', $template->slug) }}">View upgrade and purchase <i class="fa-solid fa-arrow-right"></i></a>
+      @else
+        <a class="premium-dialog-main" href="{{ url('/app/login') }}">Log in to purchase <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="premium-dialog-alt" href="{{ url('/app/register') }}">Create your free account</a>
+      @endauth
+      <button type="button" class="premium-dialog-skip" data-premium-close>Continue using the free editor</button>
+    </dialog>
+
     @if($errors->any())
     <div class="alert" style="margin:0 14px;border-radius:0;color:#9b282b;background:#fcebe7" role="alert">
         Please check the highlighted fields. {{ $errors->first() }}
@@ -108,6 +129,8 @@
                         @foreach($groups as $key => $group)
                             @php
                                 $fixed = !($group['hideable'] ?? false);
+                                $premiumFeature = ['entourage'=>'entourage','program'=>'program','guests'=>'rsvp','video'=>'video'][$key] ?? null;
+                                $premiumLocked = $premiumFeature && !$hasPremium;
                                 $selected = $currentSectionSelection[$key];
                                 $sectionInfo = [
                                     'couple' => ['01', 'Your names, parents and love story'],
@@ -117,14 +140,17 @@
                                     'program' => ['05', 'Timeline, activities and reception program'],
                                     'guests' => ['06', 'Guest policies, RSVP information and contacts'],
                                     'details' => ['07', 'Dress code, gift preferences and FAQs'],
+                                    'video' => ['08', 'Your prenup, wedding teaser or video message'],
                                 ];
                                 [$number, $description] = $sectionInfo[$key] ?? ['✦', $group['description']];
                             @endphp
-                            <label class="section-choice" data-choice-card="{{ $key }}" data-required="{{ $fixed ? 'true' : 'false' }}">
+                            <label class="section-choice {{ $premiumLocked ? 'premium-locked-card' : '' }}" data-choice-card="{{ $key }}" data-required="{{ $fixed ? 'true' : 'false' }}" @if($premiumLocked) data-locked-feature="{{ $premiumFeature }}" tabindex="0" role="button" @endif>
                                 <span class="choice-top">
                                     <span class="choice-icon" aria-hidden="true">{{ $number }}</span>
                                     @if($fixed)
                                         <input type="checkbox" checked disabled aria-label="{{ $group['title'] }} is always included">
+                                    @elseif($premiumLocked)
+                                        <input type="checkbox" data-section-toggle="{{ $key }}" disabled aria-label="{{ $group['title'] }} requires premium">
                                     @else
                                         <input type="checkbox" data-section-toggle="{{ $key }}" {{ $selected ? 'checked' : '' }} aria-label="Include {{ $group['title'] }}">
                                     @endif
@@ -132,10 +158,32 @@
                                 <strong>{{ $group['title'] }}</strong>
                                 <small>{{ $description }}</small>
                                 @if($fixed)<span class="always">Always included</span>@endif
+                                @if($premiumFeature)
+                                    <span class="premium-feature-tag"><i class="fa-solid {{ $premiumLocked ? 'fa-lock' : 'fa-gem' }}" aria-hidden="true"></i> {{ $premiumLocked ? 'Premium · Unlock' : 'Premium included' }}</span>
+                                @endif
                                 <input type="hidden" data-section-input="{{ $key }}" name="sections[{{ $key }}]" value="{{ $selected ? '1' : '0' }}">
                             </label>
                         @endforeach
+                        @foreach(['maps','ceremony_details'] as $featureKey)
+                            @php
+                                $feature = \App\Support\InvitationPremium::FEATURES[$featureKey === 'ceremony_details' ? 'ceremony' : 'maps'];
+                                $locked = !$hasPremium;
+                            @endphp
+                            <label class="section-choice {{ $locked ? 'premium-locked-card' : '' }}" data-choice-card="{{ $featureKey }}" @if($locked) data-locked-feature="{{ $featureKey === 'ceremony_details' ? 'ceremony' : 'maps' }}" role="button" tabindex="0" @endif>
+                                <span class="choice-top"><span class="choice-icon"><i class="fa-solid {{ $feature['icon'] }}"></i></span>
+                                    <input type="checkbox" data-section-toggle="{{ $featureKey }}" {{ $locked ? 'disabled' : '' }}
+                                        @checked($currentSectionSelection[$featureKey]) aria-label="Include {{ $feature['name'] }}">
+                                </span>
+                                <strong>{{ $feature['name'] }}</strong>
+                                <small>{{ $feature['detail'] }}</small>
+                                <span class="premium-feature-tag"><i class="fa-solid {{ $locked ? 'fa-lock' : 'fa-gem' }}"></i> {{ $locked ? 'Premium · Unlock' : 'Premium included' }}</span>
+                                <input type="hidden" data-section-input="{{ $featureKey }}" name="premium_options[{{ $featureKey }}]" value="{{ $currentSectionSelection[$featureKey] ? '1' : '0' }}">
+                            </label>
+                        @endforeach
                     </div>
+                    @unless($hasPremium)
+                        <p class="premium-selector-note">Your free invitation includes a beautiful website, couple details, venue information, custom link and QR code. Premium sections are optional upgrades.</p>
+                    @endunless
                 </div>
                 <div class="stage-footer">
                     <p id="section-selection-count">Choose your sections to continue.</p>
@@ -277,27 +325,26 @@
                             <ul>
                                 <li>Custom shareable website link</li>
                                 <li>Downloadable invitation QR code</li>
-                                <li>Wedding details & entourage</li>
-                                <li>Venue & event program</li>
+                                <li>Names, date, venue details and photo gallery</li>
+                                <li>Simple invitation messaging and dress code</li>
                                 <li>Mobile-friendly invitation</li>
                                 <li>We Want You There branding</li>
                             </ul>
                         </div>
                         <div class="plan-card premium">
-                            <span class="pill">Coming soon</span>
+                            <span class="pill">Premium upgrade</span>
                             <h3>Premium invitation</h3>
-                            <div class="plan-price">Pricing later</div>
+                            <div class="plan-price">{{ \App\Support\InvitationPremium::price($template) }}</div>
                             <ul>
-                                <li>Guest-specific QR codes & personalized links</li>
-                                <li>Maps and enhanced directions</li>
-                                <li>RSVP dashboard & email alerts</li>
-                                <li>Excel exports and extra editing</li>
-                                <li>Paper, animated & video output</li>
+                                <li>Google Maps for church and reception</li>
+                                <li>RSVP with email notifications</li>
+                                <li>YouTube or Vimeo video embed</li>
+                                <li>Programme, entourage and ceremony details</li>
                             </ul>
                         </div>
                     </div>
                     </details>
-                    <div class="launch-note"><strong>No checkout yet.</strong> The premium features above are planned, not available for purchase. The button below publishes the free website only. If you aren't signed in, we'll ask you to create an account first.</div>
+                    <div class="launch-note"><strong>Start free.</strong> Premium features unlock only after secure payment confirmation. <a href="{{ route('premium.show', $template->slug) }}" target="_blank" rel="noopener">See premium pricing</a>. Free publishing never requires payment.</div>
                 </div>
                 <div class="stage-footer">
                     <button type="button" class="back-btn" id="publish-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to photos</button>
