@@ -5,6 +5,7 @@ namespace App\Filament\Customer\Resources\Invitations;
 use App\Filament\Customer\Resources\Invitations\Pages\ListInvitations;
 use App\Models\InvitationWebsite;
 use App\Support\InvitationAccounts;
+use App\Support\InvitationPremium;
 use App\Support\InvitationFormLayout;
 use App\Support\InvitationWebsiteManager;
 use Filament\Actions\Action;
@@ -102,7 +103,8 @@ class InvitationResource extends Resource
                     ->icon('heroicon-s-arrow-top-right-on-square')
                     ->url(fn (InvitationWebsite $record): string => route('wedding.show', $record->slug))
                     ->openUrlInNewTab()
-                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'),
+                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'
+                        && InvitationPremium::has(Filament::auth()->user(), $record->template)),
                 EditAction::make('quickEdit')
                     ->label('Quick edit')
                     ->icon('heroicon-s-pencil-square')
@@ -136,6 +138,12 @@ class InvitationResource extends Resource
                             $data['status'],
                         );
                     }),
+                Action::make('upgrade')
+                    ->label('Unlock premium')
+                    ->icon('heroicon-s-sparkles')
+                    ->url(fn (InvitationWebsite $record): string => route('premium.show', $record->template->slug))
+                    ->visible(fn (InvitationWebsite $record): bool =>
+                        ! InvitationPremium::has(Filament::auth()->user(), $record->template)),
                 Action::make('manageRsvps')
                     ->label('Guest RSVPs')
                     ->icon('heroicon-s-users')
@@ -177,6 +185,19 @@ class InvitationResource extends Resource
                         foreach ($groupDefs as $key => $def) {
                             $existingSections[$key] = ! ($def['hideable'] ?? false)
                                 || (bool) ($data['sections'][$key] ?? $existingSections[$key] ?? true);
+                        }
+
+                        $hasPremium = InvitationPremium::has($website->user, $website->template);
+                        if ($hasPremium) {
+                            foreach (['maps', 'ceremony_details'] as $extraFeature) {
+                                $existingSections[$extraFeature] =
+                                    (bool) ($data['sections'][$extraFeature] ?? $existingSections[$extraFeature] ?? false);
+                            }
+                        } else {
+                            $answers = InvitationPremium::stripPremiumAnswers($answers);
+                            $existingSections = InvitationPremium::filterSections($existingSections, false);
+                            $existingSections['maps'] = false;
+                            $existingSections['ceremony_details'] = false;
                         }
 
                         $website->update([
@@ -225,13 +246,24 @@ class InvitationResource extends Resource
 
         // Preserve the existing wedding section visibility controls for
         // published websites and drafts, but use the SAME responsive grid.
+        $hasPremium = InvitationPremium::has(Filament::auth()->user(), $record->template);
         foreach (config('wedding_builder.groups', []) as $key => $groupDef) {
+            if (!$hasPremium && in_array($key, ['program','entourage','guests','video'], true)) continue;
             $inputs = [];
             if ($groupDef['hideable'] ?? false) {
                 $inputs[] = Toggle::make('sections.' . $key)
                     ->label('Show this section on my website')
                     ->default(true)
                     ->columnSpanFull();
+            }
+
+            if ($hasPremium && $key === 'ceremony') {
+                $inputs[] = Toggle::make('sections.ceremony_details')
+                    ->label('Show extended ceremony section')->default(false)->columnSpanFull();
+            }
+            if ($hasPremium && $key === 'reception') {
+                $inputs[] = Toggle::make('sections.maps')
+                    ->label('Show church and reception Google Maps')->default(false)->columnSpanFull();
             }
 
             $groupQuestions = InvitationFormLayout::orderedQuestions(
