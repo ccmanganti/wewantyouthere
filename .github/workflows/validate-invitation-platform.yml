@@ -57,6 +57,7 @@ jobs:
           php artisan view:cache
           find storage/framework/views -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
           php artisan test --filter=WeddingBuilderTest
+          php artisan test --filter=InvitationFormLayoutTest
           php artisan test --filter=CustomerWorkspaceTest
           php artisan test --filter=MarketingPagesTest
           php artisan test --filter=GoogleLoginTest
