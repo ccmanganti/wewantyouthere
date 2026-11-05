@@ -29,9 +29,9 @@
     const stageIcons = {
         sections: 'Choose sections',
         details: 'Add your details',
-        refine: 'Preview & refine',
+        refine: 'Fine-tune template',
         photos: 'Add your photos',
-        publish: 'Publish'
+        publish: 'Review & publish'
     };
     let stage = 'sections';
     let reachedStage = 0;
@@ -105,6 +105,8 @@
             reachedStage: reachedStage,
             group: currentGroup,
             advancedOpen: advancedOpen,
+            includeParents: !!document.getElementById('include-parents')?.checked,
+            fineTuneOpen: Array.from(app.querySelectorAll('[data-fine-tune-group][open]')).map(node => node.dataset.fineTuneGroup),
             slug: slugInput.value,
             slugManual: slugWasEdited,
             savedAt: new Date().toISOString()
@@ -149,6 +151,13 @@
                 element.checked = saved.sections[element.dataset.sectionToggle];
             }
         });
+        const includeParents = document.getElementById('include-parents');
+        if (includeParents && typeof saved.includeParents === 'boolean') includeParents.checked = saved.includeParents;
+        if (Array.isArray(saved.fineTuneOpen)) {
+            app.querySelectorAll('[data-fine-tune-group]').forEach(function (container) {
+                container.open = saved.fineTuneOpen.includes(container.dataset.fineTuneGroup);
+            });
+        }
         if (typeof saved.slug === 'string') slugInput.value = saved.slug.slice(0, 72);
         if (typeof saved.slugManual === 'boolean') slugWasEdited = saved.slugManual;
         advancedOpen = saved.advancedOpen && typeof saved.advancedOpen === 'object'
@@ -250,12 +259,16 @@
         app.querySelectorAll('[data-section-input]').forEach(function (input) {
             input.value = selected(input.dataset.sectionInput) ? '1' : '0';
         });
-        questionGroups.forEach(function (group) {
-            const groupEnabled = selected(group.dataset.questionGroup);
+        app.querySelectorAll('[data-question-group], [data-fine-tune-group]').forEach(function (group) {
+            const key = group.dataset.questionGroup || group.dataset.fineTuneGroup;
+            const groupEnabled = selected(key);
             group.querySelectorAll('[data-question]').forEach(function (input) {
-                input.disabled = !groupEnabled;
-                input.required = groupEnabled && input.dataset.requiredInitial === '1';
+                const familyAllowed = !input.hasAttribute('data-family-field')
+                    || !!document.getElementById('include-parents')?.checked;
+                input.disabled = !groupEnabled || !familyAllowed;
+                input.required = groupEnabled && familyAllowed && input.dataset.requiredInitial === '1';
             });
+            if (group.matches('[data-fine-tune-group]')) group.hidden = !groupEnabled;
         });
         app.querySelectorAll('[data-group-tab]').forEach(function (tab) {
             tab.hidden = !selected(tab.dataset.groupTab);
@@ -269,6 +282,23 @@
         const counter = document.getElementById('section-selection-count');
         counter.textContent = enabled.length + ' sections selected · Change them anytime';
         if (!enabled.includes(currentGroup)) currentGroup = enabled[0] || groups[0];
+        refreshParentVisibility();
+    }
+
+    function refreshParentVisibility() {
+        const enabled = !!document.getElementById('include-parents')?.checked;
+        const parentFields = Array.from(app.querySelectorAll('[data-family-field]'));
+        const parentContainer = document.getElementById('family-fields');
+        if (parentContainer) parentContainer.hidden = !enabled;
+        parentFields.forEach(function (field) { field.disabled = !enabled; });
+        const anyFilled = enabled && parentFields.some(function (field) { return field.value.trim() !== ''; });
+        preview.querySelectorAll('[data-parent-card]').forEach(function (card) {
+            const key = card.dataset.parentCard;
+            const field = fieldFor(key);
+            card.hidden = !enabled || !field || !String(field.value || '').trim();
+        });
+        const familySection = preview.querySelector('[data-parent-section]');
+        if (familySection) familySection.hidden = !anyFilled;
     }
 
     // A newly added template can supply editable copy via data-field without
@@ -294,6 +324,7 @@
         });
         const bride = values.bride_name || 'Amelia';
         const groom = values.groom_name || 'Gabriel';
+        refreshParentVisibility();
         app.querySelectorAll('.comparison-name').forEach(function (node) {
             node.textContent = bride + ' & ' + groom;
         });
@@ -405,7 +436,8 @@
         if (!field) return;
         clearRemovedPreview();
         const key = field.dataset.question;
-        const groupKey = field.closest('[data-question-group]')?.dataset.questionGroup || 'couple';
+        const groupKey = field.closest('[data-question-group]')?.dataset.questionGroup
+            || field.closest('[data-fine-tune-group]')?.dataset.fineTuneGroup || 'couple';
         const candidates = Array.from(preview.querySelectorAll('[data-field]'))
             .filter(function (node) {
                 return node.dataset.field === key && !node.closest('#rbv-intro') && !node.closest('[hidden]');
@@ -439,7 +471,7 @@
         document.getElementById('group-subtitle').textContent = currentNode.dataset.groupDescription || '';
         document.getElementById('details-next').textContent =
             index === enabled.length - 1
-                ? (app.dataset.photosEnabled === '1' ? 'Preview & refine →' : 'Review & publish →')
+                ? (app.dataset.photosEnabled === '1' ? 'Fine-tune template →' : 'Review & publish →')
                 : 'Next section →';
         document.getElementById('details-previous').textContent =
             index === 0 ? '← Choose sections' : '← Previous section';
