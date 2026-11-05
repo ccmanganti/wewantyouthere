@@ -29,7 +29,7 @@
             || ($draft['sections'][$key] ?? $defaultSelections[$key] ?? false);
     }
 @endphp
-<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}">
+<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}" data-generate-url="{{ route('wedding.messages.generate', $template->slug) }}">
     {{-- The entire workspace uses ONE compact toolbar. The public topbar
          is hidden only on this route, freeing vertical room for both panes. --}}
     <header class="builder-utility" aria-label="Invitation builder toolbar">
@@ -148,7 +148,7 @@
                     <span class="group-count" id="group-counter">Your details</span>
                     <h2 id="detail-stage-title">The happy couple</h2>
                     <p id="group-subtitle">Only the questions for this section are shown.</p>
-                    <div class="preview-link-tip"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> Click or type in a field to spotlight its location in the preview.</div>
+                    <div class="preview-link-tip"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Click any editable text in the preview to open its input here. Use <strong>Generate</strong> for a ready-made message or quote.</div>
                 </div>
                 <div class="group-tabs" id="group-tabs" aria-label="Question sections">
                     @foreach($groups as $key => $group)
@@ -176,7 +176,7 @@
                                 @endif
                             </div>
                             @if($advancedQuestions->isNotEmpty())
-                                <button type="button" class="expand-questions" data-expand-questions="{{ $key }}" aria-expanded="false">＋ Add more {{ strtolower($group['title']) }} details ({{ $advancedQuestions->count() }})</button>
+                                <button type="button" class="expand-questions" data-expand-questions="{{ $key }}" aria-expanded="false"><i class="fa-solid fa-sliders" aria-hidden="true"></i> More optional details <span>({{ $advancedQuestions->count() }})</span></button>
                             @endif
                         </div>
                     @endforeach
@@ -272,7 +272,7 @@
             </div>
             <div class="preview-highlight-help" id="preview-highlight-help" role="status" aria-live="polite">
                 <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
-                <span id="preview-highlight-status">Select any section or field to see where it appears.</span>
+                <span id="preview-highlight-status">Click text in the invitation to edit it. Your preview stays where you left it.</span>
             </div>
             <div class="preview-scroll" id="preview-scroll">
                 <div id="preview-website">
