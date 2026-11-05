@@ -358,4 +358,31 @@ body.builder-page > main{min-height:0}
  .builder-app .builder-mobile-switch button{padding:6px 5px}
 }
 
+
+/* Optional immersive preview using the same screen height with a wider page. */
+.builder-app .preview-expand-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    flex:none;min-height:30px;padding:6px 9px;border-radius:7px;
+    color:#e7caaa;border:1px solid #705257;background:#37292e;
+    font:700 10px 'DM Sans',sans-serif;white-space:nowrap;
+}
+.builder-app .preview-expand-btn:hover,.builder-app .preview-expand-btn:focus-visible{
+    background:#653039;color:#fff;outline-offset:2px
+}
+.builder-app[data-preview-expanded="true"] .builder-columns{
+    grid-template-columns:minmax(0,1fr)
+}
+.builder-app[data-preview-expanded="true"] .editor-pane{display:none}
+.builder-app[data-preview-expanded="true"] .preview-pane{display:flex}
+.builder-app[data-preview-expanded="true"] .preview-canvas,
+.builder-app[data-preview-expanded="true"] .preview-comparison{max-width:790px}
+.builder-app[data-preview-expanded="true"] .preview-scroll{padding:12px}
+@media(max-width:1240px){
+ .builder-app .preview-expand-btn span{display:none}
+ .builder-app .preview-expand-btn{min-width:32px;padding:6px}
+}
+@media(max-width:850px){
+ .builder-app .preview-expand-btn{display:none}
+}
+
 </style>
