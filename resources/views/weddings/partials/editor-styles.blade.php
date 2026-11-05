@@ -383,6 +383,12 @@ body.builder-page > main{min-height:0}
 }
 @media(max-width:850px){
  .builder-app .preview-expand-btn{display:none}
+ /* Mobile Edit/Preview switch remains authoritative when rotating or
+    resizing a browser that previously used desktop expanded mode. */
+ .builder-app[data-preview-expanded="true"][data-mobile-view="edit"] .editor-pane{display:flex}
+ .builder-app[data-preview-expanded="true"][data-mobile-view="edit"] .preview-pane{display:none}
+ .builder-app[data-preview-expanded="true"][data-mobile-view="preview"] .editor-pane{display:none}
+ .builder-app[data-preview-expanded="true"][data-mobile-view="preview"] .preview-pane{display:flex}
 }
 
 </style>
