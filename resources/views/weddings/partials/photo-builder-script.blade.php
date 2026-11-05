@@ -16,28 +16,43 @@
     const baseDraftUrl = uploadUrl; // /templates/wedding/{slug}/photos
 
     function cardFor(slot) { return cards.find(c => c.dataset.photoCard === slot); }
+    function visibleTarget(node) {
+        return node && !node.closest('[hidden]') && !node.closest('#rbv-intro');
+    }
     function photoTarget(slot) {
-        return Array.from(preview.querySelectorAll('[data-photo-slot]')).find(el => el.dataset.photoSlot === slot);
+        return Array.from(preview.querySelectorAll('[data-photo-slot]'))
+            .find(node => node.dataset.photoSlot === slot && visibleTarget(node)) || null;
+    }
+    function syncPhotoCards() {
+        cards.forEach(function (card) {
+            const section = card.dataset.photoSection;
+            const sectionControl = app.querySelector('[data-section-toggle="' + section + '"]');
+            const disabled = sectionControl && (sectionControl.disabled || !sectionControl.checked);
+            const target = photoTarget(card.dataset.photoCard);
+            // Hidden sections and unused image placements should never clutter
+            // the photo step, particularly the locked premium sections.
+            card.hidden = !!disabled || !target;
+        });
     }
     function selectedSlot(slot, scroll = true) {
         const card = cardFor(slot);
         const target = photoTarget(slot);
-        if (!card || !target) return;
+        if (!card || card.hidden || !target) return;
         cards.forEach(c => c.classList.toggle('is-focused', c === card));
         preview.querySelectorAll('[data-photo-slot]').forEach(el => el.classList.toggle('is-photo-focused', el === target));
-
         if (!scroll) return;
-        const tab = app.querySelector('[data-preview-format="website"]');
-        if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
-        if (target.closest('[hidden]')) {
-            const note = card.querySelector('[data-photo-status]');
-            if (note) note.textContent = 'This photo appears when its section is enabled.';
-            return;
-        }
-        const top = target.getBoundingClientRect().top - viewport.getBoundingClientRect().top
-            + viewport.scrollTop - 72;
-        viewport.scrollTo({top:Math.max(0, top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-        card.scrollIntoView({block:'nearest',behavior:'auto'});
+        window.dispatchEvent(new CustomEvent('wwyt:photo-position', {detail:{slot}}));
+    }
+    function setBusy(slot, active, message) {
+        const card = cardFor(slot);
+        if (!card) return;
+        card.classList.toggle('is-uploading', active);
+        card.setAttribute('aria-busy', active ? 'true' : 'false');
+        const control = card.querySelector('[data-photo-input]');
+        if (control) control.disabled = active;
+        const label = card.querySelector('.photo-slot-upload');
+        if (label) label.classList.toggle('is-disabled', active);
+        if (message) status(slot, message);
     }
 
     function status(slot, message, failed = false) {
@@ -72,8 +87,9 @@
             if (button.classList.contains('rb-cover-edit')) return;
             button.innerHTML = '<i class="fa-solid fa-camera" aria-hidden="true"></i>' + (url ? ' Replace photo' : ' Add photo');
         });
-        const target = photoTarget(slot);
-        if (target) {
+        const targets = Array.from(preview.querySelectorAll('[data-photo-slot]'))
+            .filter(node => node.dataset.photoSlot === slot);
+        targets.forEach(function (target) {
             if (target.classList.contains('rb-cover-photo')) {
                 target.style.backgroundImage = url ? 'url("' + url.replaceAll('"', '') + '")' : '';
             } else {
@@ -102,6 +118,28 @@
                         placeholder.append(symbol,desc);
                         target.prepend(placeholder);
                     }
+                }
+            }
+        });
+        if (slot === 'hero') {
+            // Envelope preview has a separate landscape-paper portrait.
+            // Keep it in sync with the cover image after every replacement.
+            const envelopeFrame = preview.querySelector('[data-envelope-photo]');
+            if (envelopeFrame) {
+                let img = envelopeFrame.querySelector('[data-envelope-hero-image]');
+                const monogram = envelopeFrame.querySelector('[data-envelope-monogram]');
+                if (url) {
+                    if (!img) {
+                        img = document.createElement('img');
+                        img.dataset.envelopeHeroImage = 'true';
+                        img.alt = '';
+                        envelopeFrame.prepend(img);
+                    }
+                    img.src = url;
+                    if (monogram) monogram.hidden = true;
+                } else {
+                    img?.remove();
+                    if (monogram) monogram.hidden = false;
                 }
             }
         }
@@ -149,12 +187,13 @@
             return;
         }
         const input = cardFor(slot)?.querySelector('[data-photo-input]');
-        if (input) input.disabled = true;
-        status(slot, 'Uploading securely…');
+        setBusy(slot, true, 'Preparing image…');
         try {
+            const optimized = await optimizeFile(file);
+            setBusy(slot, true, 'Uploading image…');
             const body = new FormData();
             body.append('slot',slot);
-            body.append('photo',await optimizeFile(file));
+            body.append('photo',optimized);
             const response = await fetch(uploadUrl,{
                 method:'POST',
                 credentials:'same-origin',
@@ -163,13 +202,22 @@
             });
             const result = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(result.message || Object.values(result.errors||{}).flat()[0] || 'Could not upload photo');
+            setBusy(slot, true, 'Updating preview…');
+            // Decode the new image before displaying it to avoid a blank flash.
+            if (result.url) {
+                const loaded = new Image();
+                loaded.src = result.url;
+                try { await loaded.decode(); } catch (_) { /* Keep the server upload if preview decoding fails. */ }
+            }
             setImage(slot,result.url);
-            status(slot,'Saved! Your photo is visible in the preview.');
+            status(slot,'Saved to your invitation.');
+            syncPhotoCards();
             selectedSlot(slot,true);
         } catch (error) {
             status(slot,error.message || 'Upload failed. Try again.',true);
         } finally {
-            if (input) {input.disabled = false;input.value = '';}
+            setBusy(slot, false);
+            if (input) input.value = '';
         }
     }
 
@@ -185,6 +233,7 @@
             });
             if (!response.ok) throw new Error('Unable to remove photo');
             setImage(slot,null);
+            syncPhotoCards();
             status(slot,'Photo removed.');
         } catch(error){status(slot,error.message,true);}
     }
@@ -198,10 +247,19 @@
         card.addEventListener('focusin',()=>selectedSlot(slot,false));
     });
 
+    window.addEventListener('wwyt:preview-updated', syncPhotoCards);
+    app.querySelectorAll('[data-section-toggle]').forEach(input => {
+        input.addEventListener('change', function () {
+            window.requestAnimationFrame(syncPhotoCards);
+        });
+    });
+    syncPhotoCards();
+
     preview.querySelectorAll('[data-photo-edit]').forEach(button=>{
         button.addEventListener('click',event=>{
             event.preventDefault();
             const slot=button.dataset.photoEdit;
+            if (!cardFor(slot) || cardFor(slot).hidden) return;
             selectedSlot(slot,true);
             cardFor(slot)?.querySelector('[data-photo-input]')?.click();
         });
