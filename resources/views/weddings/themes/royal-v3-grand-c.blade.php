@@ -72,7 +72,17 @@
 
         @if(session('rsvp_success') && $isPublishedSite)
             <div class="rbv-rsvp-success" role="status"><i class="fa-solid fa-circle-check"></i> {{ session('rsvp_success') }}</div>
-        @elseif($isPublishedSite || $isPreview || $isSample)
+        @elseif($isPreview)
+            {{-- The builder is already a form: never nest an RSVP form in it. --}}
+            <div class="rbv-rsvp-form rbv-rsvp-sample" aria-label="Preview of guest RSVP form">
+                <label><span>Your full name *</span><input disabled placeholder="Guest name" type="text"></label>
+                <fieldset disabled><legend>Will you be joining us? *</legend><label class="rbv-radio"><input type="radio" checked> Joyfully accepts</label><label class="rbv-radio"><input type="radio"> Regretfully declines</label></fieldset>
+                <label><span>Number of guests *</span><select disabled><option>1 guest</option></select></label>
+                <label><span>A message for the couple</span><textarea disabled rows="2" placeholder="A little note or blessing…"></textarea></label>
+                <button type="button" class="rbv-rsvp-button" disabled>RSVP FORM PREVIEW</button>
+                <p class="rbv-rsvp-note">This form will collect responses on your published invitation.</p>
+            </div>
+        @elseif($isPublishedSite || $isSample)
             <form method="POST" action="{{ $isPublishedSite ? route('wedding.rsvp.store', $website->slug) : '#' }}"
                 id="rbv-rsvp-form" class="rbv-rsvp-form" data-demo="{{ $isPublishedSite ? '0' : '1' }}">
                 @csrf
