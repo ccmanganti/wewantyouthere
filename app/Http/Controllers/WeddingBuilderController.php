@@ -11,6 +11,7 @@ use App\Models\WeddingMessageTemplate;
 use App\Models\User;
 use App\Support\InvitationAccounts;
 use App\Support\InvitationWebsiteManager;
+use App\Support\InvitationPremium;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
@@ -81,7 +82,8 @@ class WeddingBuilderController extends Controller
             }
         }
 
-        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls'));
+        $hasPremium = InvitationPremium::has(Auth::user(), $template);
+        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls', 'hasPremium'));
     }
 
     /**
@@ -178,7 +180,7 @@ class WeddingBuilderController extends Controller
         }
 
         $template = InvitationTemplate::query()
-            ->where('slug', $slug)->where('status', 'published')->where('is_premium', false)
+            ->where('slug', $slug)->where('status', 'published')
             ->where('settings->renderer', 'builtin_wedding')
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->firstOrFail();
@@ -195,12 +197,21 @@ class WeddingBuilderController extends Controller
             return back()->withErrors(['slug' => 'This invitation link is already reserved. Choose another one.'])->withInput();
         }
 
+        $hasPremium = InvitationPremium::has($request->user(), $template);
+        if ($template->is_premium && !$hasPremium) {
+            return redirect()->route('premium.show', $template->slug)
+                ->withErrors(['premium' => 'This design requires premium access before publishing.']);
+        }
+
         $allowedGroups = config('wedding_builder.groups');
         $sections = [];
         foreach ($allowedGroups as $key => $group) {
             $sections[$key] = ! ($group['hideable'] ?? false)
                 || $request->input("sections.$key", '1') === '1';
         }
+        if (!$hasPremium) $sections = InvitationPremium::filterSections($sections, false);
+        $sections['maps'] = $hasPremium && $request->boolean('premium_options.maps');
+        $sections['ceremony_details'] = $hasPremium && $request->boolean('premium_options.ceremony_details');
 
         $rules = [];
         foreach ($template->eventType->questions()->where('is_enabled', true)->get() as $question) {
@@ -224,6 +235,7 @@ class WeddingBuilderController extends Controller
         }
         $validated = $request->validate($rules);
         $answers = array_filter($validated['answers'] ?? [], fn ($value) => $value !== null && $value !== '');
+        if (!$hasPremium) $answers = InvitationPremium::stripPremiumAnswers($answers);
         // Persist the explicit opt-in; users may supply some names, or omit them
         // all without showing placeholder family cards on the published site.
         $answers['_show_parents'] = $request->boolean('show_parents') && (($template->settings['theme'] ?? '') === 'royal_burgundy');
@@ -289,9 +301,20 @@ class WeddingBuilderController extends Controller
 
         $template = InvitationTemplate::query()
             ->whereKey($pending['template_id'])
-            ->where('status', 'published')->where('is_premium', false)
+            ->where('status', 'published')
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding'))
             ->firstOrFail();
+
+        $ownerHasPremium = InvitationPremium::has($request->user(), $template);
+        if ($template->is_premium && !$ownerHasPremium) {
+            return redirect()->route('premium.show', $template->slug);
+        }
+        $pending['sections'] = InvitationPremium::filterSections($pending['sections'], $ownerHasPremium);
+        if (!$ownerHasPremium) {
+            $pending['sections']['maps'] = false;
+            $pending['sections']['ceremony_details'] = false;
+            $pending['answers'] = InvitationPremium::stripPremiumAnswers($pending['answers']);
+        }
 
         $names = collect([$pending['answers']['bride_name'] ?? '', $pending['answers']['groom_name'] ?? ''])
             ->filter()->implode(' & ');
@@ -403,12 +426,21 @@ class WeddingBuilderController extends Controller
             }
         }
 
+        $premiumAccess = InvitationPremium::has($website->user, $website->template);
+        $publicSections = InvitationPremium::filterSections(($website->answers ?? [])['_sections'] ?? [], $premiumAccess);
+        if (!$premiumAccess) {
+            $publicSections['maps'] = false;
+            $publicSections['ceremony_details'] = false;
+        }
+        $publicAnswers = $premiumAccess ? ($website->answers ?? []) : InvitationPremium::stripPremiumAnswers($website->answers ?? []);
+
         return view('weddings.show', [
             'photoUrls' => $photoUrls,
             'template' => $website->template,
             'website' => $website,
-            'answers' => $website->answers ?? [],
-            'sections' => ($website->answers ?? [])['_sections'] ?? [],
+            'answers' => $publicAnswers,
+            'sections' => $publicSections,
+            'premiumAccess' => $premiumAccess,
             'questions' => $website->template->eventType->questions()->where('is_enabled', true)->orderBy('sort_order')->get()->groupBy('group_key'),
         ]);
     }
