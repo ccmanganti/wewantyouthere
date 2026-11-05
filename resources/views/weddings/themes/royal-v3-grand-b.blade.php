@@ -94,8 +94,17 @@
     </div>
 </section>
 
+@php
+    $entourageFields = [
+        'principal_sponsors','maid_of_honor','matron_of_honor','best_man',
+        'bridesmaids','groomsmen','secondary_sponsors','flower_girls',
+        'ring_bearer','coin_bearer','bible_bearer','candle_sponsors',
+        'veil_sponsors','cord_sponsors','officiant_name'
+    ];
+    $hasEntourage = collect($entourageFields)->contains(fn ($key) => filled($answers[$key] ?? null));
+@endphp
 {{-- 13 GRAND: couple collage acknowledging family and friends --}}
-<section class="rbv-grand rbv-family-art" id="people-art" data-preview-section="entourage" @if(!$visible('entourage')) hidden @endif>
+<section class="rbv-grand rbv-family-art" id="people-art" data-preview-section="entourage" @if(!$visible('entourage') || (!$isSample && !$isPreview && !$hasEntourage)) hidden @endif>
     <span class="rbv-eyebrow">THE PEOPLE WHO HAVE LOVED US ALL ALONG</span>
     <h2 class="rbv-title" data-field="people_art_heading">{{ $copy('people_art_heading','In good company.') }}</h2>
     <div class="rbv-family-collage">
@@ -110,7 +119,7 @@
 </section>
 
 {{-- 14 INFO: every wedding role from the shared event questions --}}
-<section class="rbv-info" id="our-people" data-preview-section="entourage" @if(!$visible('entourage')) hidden @endif>
+<section class="rbv-info" id="our-people" data-preview-section="entourage" @if(!$visible('entourage') || (!$isSample && !$isPreview && !$hasEntourage)) hidden @endif>
     <div class="rbv-inner rbv-inner-wide"><span class="rbv-eyebrow">WITH THE BLESSINGS OF OUR FAMILIES</span>
         <h2 class="rbv-title" data-field="entourage_heading">{{ $copy('entourage_heading','Our dearest people.') }}</h2>
         <p class="rbv-copy" data-field="entourage_intro">{{ $copy('entourage_intro','We are surrounded by so much love, and these are the people standing beside us on our special day.') }}</p>
