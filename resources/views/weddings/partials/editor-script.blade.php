@@ -540,15 +540,17 @@
     function validateGroup(key) {
         const group = questionGroup(key);
         if (!group) return true;
-        const activeInputs = Array.from(group.querySelectorAll('[data-question]')).filter(function (input) {
-            return !input.disabled;
-        });
-        const invalid = activeInputs.find(function (input) { return !input.checkValidity(); });
+        const fineTune = app.querySelector('[data-fine-tune-group="' + key + '"]');
+        const controls = Array.from(group.querySelectorAll('[data-question]'))
+            .concat(Array.from(fineTune?.querySelectorAll('[data-question]') || []))
+            .filter(function (input) { return !input.disabled; });
+        const invalid = controls.find(function (input) { return !input.checkValidity(); });
         if (!invalid) return true;
         currentGroup = key;
-        goToStage('details');
+        const extra = invalid.closest('[data-fine-tune-group]');
+        goToStage(extra ? 'refine' : 'details');
+        if (extra) extra.open = true;
         setMobileView('edit');
-        if (invalid.closest('[data-advanced-fields]')) revealAdvanced(key, true);
         invalid.focus();
         invalid.reportValidity();
         writeDraft();
@@ -673,17 +675,26 @@
         const key = target.dataset.field;
         const field = fieldFor(key);
         if (!field || field.disabled) return false;
-        const group = field.closest('[data-question-group]')?.dataset.questionGroup;
+        const fineTune = field.closest('[data-fine-tune-group]');
+        const group = fineTune?.dataset.fineTuneGroup ||
+            field.closest('[data-question-group]')?.dataset.questionGroup;
         if (!group || !selected(group)) return false;
         currentGroup = group;
-        // The person clicked content that is ALREADY visible in the preview:
-        // keep it anchored instead of jumping to the beginning of its group.
+        // Clicking preview text selects its own existing field, in the correct
+        // step, without moving the preview to a different chapter.
         suppressNextGroupPreviewScroll = true;
-        goToStage('details');
-        if (field.closest('[data-advanced-fields]')) revealAdvanced(group, true);
+        goToStage(fineTune ? 'refine' : 'details');
+        if (fineTune) fineTune.open = true;
         if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
         setMobileView('edit');
-        const pane = document.getElementById('detail-scroll');
+        if (field.hasAttribute('data-family-field')) {
+            const toggle = document.getElementById('include-parents');
+            if (toggle && !toggle.checked) {
+                toggle.checked = true;
+                refreshSections();
+            }
+        }
+        const pane = fineTune ? fineTune.closest('.stage-scroll') : document.getElementById('detail-scroll');
         const paneBounds = pane.getBoundingClientRect();
         const fieldBounds = field.getBoundingClientRect();
         pane.scrollTop += fieldBounds.top - paneBounds.top - Math.max(18, pane.clientHeight * .18);
@@ -740,6 +751,16 @@
         if (!slugWasEdited) slugInput.value = suggestSlug();
         queueSlugCheck();
         writeDraft();
+    });
+
+    const familyToggle = document.getElementById('include-parents');
+    familyToggle?.addEventListener('change', function () {
+        refreshSections();
+        refreshPreview();
+        writeDraft();
+    });
+    app.querySelectorAll('[data-fine-tune-group]').forEach(function (panel) {
+        panel.addEventListener('toggle', writeDraft);
     });
 
     sectionControls.forEach(function (input) {
