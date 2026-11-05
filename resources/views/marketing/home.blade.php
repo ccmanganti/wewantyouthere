@@ -1,7 +1,7 @@
 @extends('layouts.wwyt')
 @section('body_class', 'marketing-v2')
-@section('title', 'Free Wedding Invitation Website Maker Philippines | We Want You There')
-@section('meta_description', 'Create a free digital wedding invitation website in the Philippines. Choose a wedding template, edit details live, get a custom link and download a QR code. No design skills needed.')
+@section('title', 'Free Wedding Invitation Website Philippines | We Want You There')
+@section('meta_description', 'Make a free wedding invitation website in the Philippines. Pick a digital invitation template, add your names and photos, and share a custom link and QR code. Optional premium upgrades.')
 @push('styles')
 @include('marketing.partials.styles')
 @endpush
@@ -12,9 +12,9 @@
     <section class="mkt-hero" id="top">
         <div class="mkt-wrap mkt-hero-grid">
             <div class="mkt-hero-copy">
-                <div class="mkt-kicker">THE NEXT BIG HOME FOR DIGITAL INVITATIONS</div>
-                <h1 class="mkt-display">YOUR BIGGEST MOMENTS. <span class="mkt-serif">beautifully invited.</span></h1>
-                <p><strong>Make your wedding invitation website for free.</strong> Choose an elegant design, tell your story, add your ceremony and entourage details, and share everything through one memorable link.</p>
+                <div class="mkt-kicker">WE WANT YOU THERE · THE ONLINE INVITATION MAKER</div>
+                <h1 class="mkt-display">FREE WEDDING INVITATION WEBSITE. <span class="mkt-serif">Made for your forever.</span></h1>
+                <p><strong>Create a free digital wedding invitation in the Philippines.</strong> Choose a design, enter your names, wedding date and venue, add photos, then publish a mobile-friendly website with a personal link and QR code. Upgrade for RSVP, maps and more only if you want them.</p>
                 <div class="mkt-hero-actions">
                     @if(!$canCreate)
                         <a class="mkt-button light" href="{{ url('/app/invitations') }}">Manage my invitation <span aria-hidden="true"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span></a>
@@ -32,7 +32,7 @@
                 <div class="mkt-proof" aria-label="Platform highlights">
                     <span>Free to publish</span>
                     <span>Personalized URL and QR code</span>
-                    <span>Made for Filipino celebrations</span>
+                    <span>No app download needed</span>
                 </div>
             </div>
             <div class="mkt-hero-art" aria-label="Preview of a full-page digital wedding invitation website">
@@ -49,7 +49,7 @@
                         <span class="mini-top">TOGETHER WITH OUR FAMILIES</span>
                         <span class="mini-names">Amelia<br><span class="mini-and">&</span><br>Gabriel</span>
                         <span class="mini-top">JOYFULLY INVITE YOU</span>
-                        <span class="mini-date">December 12, 2027</span>
+                        <img class="mkt-hero-couple-photo" src="{{ config('wedding_sample_photos.portrait_one') }}" width="320" height="150" loading="eager" fetchpriority="high" alt="Sample wedding couple portrait in an online invitation design"><span class="mini-date">December 12, 2027</span>
                         <span class="mini-bottom">THE GLASS GARDEN · PHILIPPINES</span>
                     </div>
                 </div>
@@ -60,19 +60,19 @@
     </section>
 
     <div class="mkt-ticker" aria-hidden="true"><div class="mkt-ticker-inner">
-        <div class="mkt-ticker-copy"><span>WEDDING WEBSITE MAKER</span><span>DIGITAL INVITATIONS</span><span>LIVE PREVIEW</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
-        <div class="mkt-ticker-copy"><span>WEDDING WEBSITE MAKER</span><span>DIGITAL INVITATIONS</span><span>LIVE PREVIEW</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
+        <div class="mkt-ticker-copy"><span>FREE WEDDING WEBSITE PHILIPPINES</span><span>DIGITAL WEDDING INVITATION</span><span>ONLINE INVITATION MAKER</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
+        <div class="mkt-ticker-copy"><span>FREE WEDDING WEBSITE PHILIPPINES</span><span>DIGITAL WEDDING INVITATION</span><span>ONLINE INVITATION MAKER</span><span>CUSTOM URL</span><span>FREE QR CODE</span></div>
     </div></div>
 
     <section class="mkt-section" id="templates">
         <div class="mkt-wrap">
             <div class="mkt-section-head mkt-reveal">
                 <div>
-                    <div class="mkt-kicker red">THE INVITATION EDIT</div>
-                    <h2>Pick a design.<br><span class="mkt-serif">Make it yours.</span></h2>
+                    <div class="mkt-kicker red">DIGITAL WEDDING INVITATION TEMPLATES</div>
+                    <h2>Wedding website templates.<br><span class="mkt-serif">Make one yours.</span></h2>
                 </div>
                 <div>
-                    <p>Explore actual wedding website templates. Open the full preview before you decide, then personalize each section in the guided builder.</p>
+                    <p>Browse working digital invitation designs with real sample couple photos and an interactive preview. Customize online without coding or graphic design skills.</p>
                     <a href="{{ route('marketing.templates') }}" style="display:inline-block;margin-top:16px;color:#810100;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:4px">Explore all wedding invitation templates <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                 </div>
             </div>
@@ -92,11 +92,11 @@
                 <div><div class="mkt-kicker">NO DESIGN SKILLS. NO COMPLICATED STEPS.</div>
                     <h2>Three steps from <span class="mkt-serif">yes</span><br>to <span class="mkt-serif">you're invited.</span></h2>
                 </div>
-                <p>No guessing what to write. Our wedding website maker guides you through the details, with the preview right beside you.</p>
+                <p>Make a free online wedding invitation in three steps, then send the link via Messenger or Viber. The live preview updates as you type.</p>
             </div>
             <div class="mkt-process-grid">
                 <article class="mkt-step mkt-reveal"><div class="number">01</div><h3>Choose your invitation</h3><p>Explore wedding website templates, preview a full working design and pick the one that feels like your celebration.</p></article>
-                <article class="mkt-step mkt-reveal"><div class="number">02</div><h3>Tell us your details</h3><p>Choose the sections you need, add names, entourage, ninong and ninang, schedule, venues, dress code and more. See changes live.</p></article>
+                <article class="mkt-step mkt-reveal"><div class="number">02</div><h3>Tell us your details</h3><p>Enter your names, date, venue, personal message and photos. Maps, RSVP, programme and entourage are optional premium sections.</p></article>
                 <article class="mkt-step mkt-reveal"><div class="number">03</div><h3>Publish and share</h3><p>Create a free account, choose a personalized website URL and get a shareable invitation link with its own downloadable QR code.</p></article>
             </div>
             <svg class="mkt-journey-line mkt-line-reveal" viewBox="0 0 1000 48" aria-hidden="true" focusable="false" preserveAspectRatio="none">
@@ -123,11 +123,11 @@
                 <div class="worksheet" aria-hidden="true">
                     <span class="label">YOUR INVITATION, YOUR WAY</span>
                     <h3>Let's make it personal.</h3>
-                    <div class="fake-input">Partner 1 &nbsp; — &nbsp; Amelia</div>
-                    <div class="fake-input">Partner 2 &nbsp; — &nbsp; Gabriel</div>
+                    <div class="fake-input">Bride &nbsp; — &nbsp; Amelia</div>
+                    <div class="fake-input">Groom &nbsp; — &nbsp; Gabriel</div>
                     <div class="fake-input">Wedding date &nbsp; — &nbsp; December 12, 2027</div>
-                    <div class="fake-input">Ceremony & entourage &nbsp; ✓</div>
-                    <div class="fake-input">Reception & dress code &nbsp; ✓</div>
+                    <div class="fake-input">Ceremony &nbsp; — &nbsp; Garden Chapel</div>
+                    <div class="fake-input">Dress code &nbsp; — &nbsp; Formal garden</div>
                     <div class="fake-btn">Preview my website <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></div>
                 </div>
             </div>
@@ -154,14 +154,14 @@
             <div class="mkt-reveal">
                 <div class="mkt-kicker" style="color:#e6c299">THE CELEBRATION COMES FIRST</div>
                 <h2>YOUR INVITATION<br><span class="mkt-serif">starts free.</span></h2>
-                <p>Design and publish a wedding invitation website without entering payment details. Premium tools and additional invitation formats are planned for later.</p>
+                <p>Create and publish a basic wedding website for free. Upgrade later for RSVP email alerts, Google Maps, an embedded video, the programme, entourage or extended ceremony details.</p>
             </div>
             <div class="mkt-free-card mkt-reveal">
                 <span class="mkt-pill">FREE PLAN — AVAILABLE NOW</span>
                 <h3 style="font:35px 'DM Serif Display',serif;margin:13px 0 0">Your first wedding website</h3>
                 <div class="free-price">₱0</div>
                 <ul>
-                    <li>One published wedding invitation website per free account</li>
+                    <li>One basic wedding invitation website per free account</li>
                     <li>Guided questions, live editing and section visibility</li>
                     <li>Custom invitation URL and downloadable QR code</li>
                     <li>Manage and update your wedding details later</li>
@@ -173,7 +173,10 @@
                 @else
                     <a class="mkt-button" href="{{ route('marketing.templates') }}">Browse wedding templates <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                 @endif
-                <div style="margin-top:15px;font-size:11px;color:#796c65">Premium RSVP dashboards, personalized guest QR codes, printed and video invitations are being developed.</div>
+                <div style="margin-top:15px;font-size:11px;color:#796c65">Google Maps, RSVP email alerts, embedded video, programme, entourage and extended ceremony details are premium upgrades.</div>
+                @if($featured)
+                    <p style="font-size:11px;color:#725d51">Optional premium upgrade for {{ $featured->name }}: <strong>{{ \App\Support\InvitationPremium::price($featured) }}</strong> one-time. <a href="{{ route('premium.show', $featured->slug) }}" style="text-decoration:underline">Compare what's included</a>.</p>
+                @endif
             </div>
         </div>
     </section>
@@ -183,10 +186,12 @@
             <div class="mkt-reveal"><div class="mkt-kicker red">GOOD TO KNOW</div><h2>Questions?<br><span class="mkt-serif">We got you.</span></h2></div>
             <div class="mkt-faq-list mkt-reveal">
                 <details><summary>Is the wedding invitation website maker really free?</summary><p>Yes. One wedding website per free account, with a guided editor, shareable link, and a downloadable QR code. No payment details are needed for free publishing.</p></details>
-                <details><summary>Can I add ninong, ninang, entourage and my wedding program?</summary><p>Yes. The wedding form includes Filipino wedding details such as principal sponsors, bridesmaids, groomsmen, ceremony and reception venues, guest notes, dress code and the program. You choose which sections appear.</p></details>
+                <details><summary>Can I add my ninong, ninang, entourage and wedding programme?</summary><p>Yes. Those sections are available with a premium upgrade. Free invitations include essential names, date, venue, message and photos.</p></details>
                 <details><summary>Can I preview the wedding website before signing up?</summary><p>Yes. Explore a full sample website, choose a template and customize it first. Registration is requested when you're ready to publish.</p></details>
                 <details><summary>Can I change the website after it's published?</summary><p>Yes. Sign in and use My Invitations to edit details, update the link or unpublish the website. Previous links redirect when you change your invitation URL.</p></details>
-                <details><summary>Are online RSVP tracking and printed or video invitations included?</summary><p>Not yet. Those premium features are on the roadmap. Free website publishing, custom link, and basic downloadable QR code are available in this release.</p></details>
+                <details><summary>Are Google Maps, RSVP and video included for free?</summary><p>They are premium options. RSVP includes email notifications to the invitation owner; video supports YouTube and Vimeo embeds. Printed and animated invitation exports are not yet available.</p></details>
+                <details><summary>Where can I create a free wedding invitation website in the Philippines?</summary><p>We Want You There is a free online wedding website maker. Start with an editable digital invitation template, add your basic details and sample photos, then share your website link and QR code. Premium sections are optional.</p></details>
+                <details><summary>Can I make an invitation without signing up first?</summary><p>You can try the template and save changes in your current browser first. You will need a free account to publish your invitation or purchase premium features.</p></details>
                 <details><summary>Do I need to download an app?</summary><p>No. Build and share your invitation using your web browser. Guests open your wedding website using its link or QR code.</p></details>
             </div>
         </div>
