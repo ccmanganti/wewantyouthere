@@ -118,13 +118,13 @@
                 <div class="stage-top">
                     <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '01 / 05' : '01 / 03' }} · Make it personal</span>
                     <h1 id="section-stage-title">What would you like to include?</h1>
-                    <p>Select the sections that belong in your wedding invitation. You can change this later without losing what you've typed.</p>
-                    <div class="preview-link-tip"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Select a section to highlight exactly where it appears in your live preview.</div>
+                    <p>Choose what goes into your invitation.</p>
+                    <div class="preview-link-tip"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> Select a section to find it in the preview.</div>
                 </div>
                 <div class="stage-scroll">
                     <div class="selector-intro">
                         <span class="selector-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
-                        <div><strong>Start with the essentials.</strong><p>The couple and ceremony are always included. Add only what feels right for your celebration.</p></div>
+                        <div><strong>Start with the essentials.</strong><p>Premium extras are optional.</p></div>
                     </div>
                     <div class="section-choice-grid">
                         @foreach($groups as $key => $group)
@@ -183,7 +183,7 @@
                         @endforeach
                     </div>
                     @unless($hasPremium)
-                        <p class="premium-selector-note">Your free invitation includes a beautiful website, couple details, venue information, custom link and QR code. Premium sections are optional upgrades.</p>
+                        <p class="premium-selector-note">Unlock optional extras anytime.</p>
                     @endunless
                 </div>
                 <div class="stage-footer">
@@ -197,7 +197,7 @@
                     <span class="group-count" id="group-counter">Your details</span>
                     <h2 id="detail-stage-title">The happy couple</h2>
                     <p id="group-subtitle">The essential details for this part of your celebration.</p>
-                    <div class="preview-link-tip"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Click text in the preview to edit it here. Use <strong>Generate</strong> for optional message ideas.</div>
+                    <div class="preview-link-tip"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Click preview text to edit it.</div>
                 </div>
                 <div class="group-tabs" id="group-tabs" aria-label="Question sections">
                     @foreach($groups as $key => $group)
@@ -226,7 +226,7 @@
                         @endphp
                         <div class="question-group" data-question-group="{{ $key }}" data-group-description="{{ $group['description'] }}">
                             @if($key === 'couple')
-                                <p class="basic-intro">Start with your names and invitation message. You can personalize the smaller details later.</p>
+                                <p class="basic-intro">Start with your names and message.</p>
                             @endif
                             <div class="question-grid">
                                 @foreach($coreQuestions as $question)
@@ -269,12 +269,12 @@
                 <div class="stage-top">
                     <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '05 / 05' : '03 / 03' }} · Final review</span>
                     <h2 id="publish-stage-title">Review before you share.</h2>
-                    <p>Check the essentials, your personal messages and the full invitation preview before publishing.</p>
+                    <p>Check your details and preview before publishing.</p>
                 </div>
                 <div class="stage-scroll">
                     <div class="custom-link-panel">
                         <label for="invitation-slug" class="custom-link-label">Your personalized invitation link</label>
-                        <p>Choose a short, memorable address. This will be the link guests use to visit your wedding website and scan your QR code.</p>
+                        <p>This is the link you'll share with guests.</p>
                         <div class="custom-link-field">
                             <span class="url-prefix">{{ parse_url(config('app.url'), PHP_URL_HOST) ?: 'wewantyouthere.com' }}/i/</span>
                             <input id="invitation-slug" name="slug" type="text" inputmode="url" autocapitalize="none" spellcheck="false"
@@ -289,7 +289,7 @@
                         </div>
                         @error('slug')<div class="field-error" role="alert">{{ $message }}</div>@enderror
                         <div class="full-url-preview">Full address: <span id="full-invitation-url"></span></div>
-                        <div class="full-url-preview qr-note">A downloadable QR code will be generated automatically once your invitation is published.</div>
+                        <div class="full-url-preview qr-note">Your QR code is created when you publish.</div>
                     </div>
                     <div class="final-review-summary" aria-labelledby="final-review-essential-title">
                         <div class="final-review-heading">
@@ -309,43 +309,15 @@
                     </div>
                     <div class="final-review-preview">
                         <strong>Review the full wedding website</strong>
-                        <p>Scroll the live preview beside this checklist, or expand it for a closer look. Only sections you have selected will be published.</p>
+                        <p>Inspect your invitation before sharing.</p>
                         <button type="button" class="review-preview-button" id="review-open-preview">
                             <i class="fa-solid fa-expand" aria-hidden="true"></i> Open full preview
                         </button>
                     </div>
                     <h3 style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9f353c;margin:17px 0 12px">Sections you selected</h3>
                     <ul class="review-list" id="review-sections" aria-label="Selected sections"></ul>
-                    <details class="review-plan-info">
-                        <summary>What's included with the free website?</summary>
-                        <div class="plan-grid">
-                        <div class="plan-card">
-                            <span class="pill">Available now</span>
-                            <h3>Free invitation</h3>
-                            <div class="plan-price">₱0</div>
-                            <ul>
-                                <li>Custom shareable website link</li>
-                                <li>Downloadable invitation QR code</li>
-                                <li>Names, date, venue details and photo gallery</li>
-                                <li>Simple invitation messaging and dress code</li>
-                                <li>Mobile-friendly invitation</li>
-                                <li>We Want You There branding</li>
-                            </ul>
-                        </div>
-                        <div class="plan-card premium">
-                            <span class="pill">Premium upgrade</span>
-                            <h3>Premium invitation</h3>
-                            <div class="plan-price">{{ \App\Support\InvitationPremium::price($template) }}</div>
-                            <ul>
-                                <li>Google Maps for church and reception</li>
-                                <li>RSVP with email notifications</li>
-                                <li>YouTube or Vimeo video embed</li>
-                                <li>Programme, entourage and ceremony details</li>
-                            </ul>
-                        </div>
-                    </div>
-                    </details>
-                    <div class="launch-note"><strong>Start free.</strong> Premium features unlock only after secure payment confirmation. <a href="{{ route('premium.show', $template->slug) }}" target="_blank" rel="noopener">See premium pricing</a>. Free publishing never requires payment.</div>
+
+                    <p class="publish-free-note"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Free publishing requires no payment. <a href="{{ route('premium.show', $template->slug) }}" target="_blank" rel="noopener">Optional upgrade</a></p>
                 </div>
                 <div class="stage-footer">
                     <button type="button" class="back-btn" id="publish-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to photos</button>
@@ -356,12 +328,7 @@
 
         <aside class="preview-pane" aria-label="Live invitation preview">
             <div class="preview-top">
-                <div><strong>Live invitation preview</strong><small>Watch your edits appear instantly</small></div>
-                <div class="preview-switch" role="tablist" aria-label="Invitation format preview">
-                    <button type="button" role="tab" aria-selected="true" data-preview-format="website">Website</button>
-                    <button type="button" role="tab" aria-selected="false" data-preview-format="paper">Paper ◇</button>
-                    <button type="button" role="tab" aria-selected="false" data-preview-format="animated">Animated / Video ◇</button>
-                </div>
+                <div><strong>Live preview</strong></div>
                 <button type="button" class="preview-expand-btn" id="preview-expand"
                     aria-pressed="false" title="Use the full workspace to inspect the invitation">
                     <i class="fa-solid fa-expand" aria-hidden="true"></i>
@@ -370,23 +337,13 @@
             </div>
             <div class="preview-highlight-help" id="preview-highlight-help" role="status" aria-live="polite">
                 <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
-                <span id="preview-highlight-status">Click text in the invitation to edit it. Your preview stays where you left it.</span>
+                <span id="preview-highlight-status">Click invitation text to edit.</span>
             </div>
             <div class="preview-scroll" id="preview-scroll">
                 <div id="preview-website">
-                    <div class="preview-comparison" id="preview-comparison">
-                        <div class="compare-block"><span class="small-badge">FREE WEBSITE</span><strong class="comparison-name">Amelia & Gabriel</strong><span>Essentials and your chosen sections</span></div>
-                        <div class="compare-block premium"><span class="small-badge">PREMIUM CONCEPT</span><strong class="comparison-name">Amelia & Gabriel</strong><span>Advanced RSVP, extra formats and more (soon)</span></div>
-                    </div>
                     <div class="preview-canvas">
                         @include('weddings.partials.invitation', ['answers' => $draft['answers'] ?? [], 'sections' => $currentSectionSelection, 'questions' => $questions, 'isPreview' => true, 'template' => $template, 'photoUrls' => $photoUrls ?? []])
                     </div>
-                </div>
-                <div id="preview-paper" hidden>
-                    <div class="preview-locked"><div><span class="icon" aria-hidden="true"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i></span><h3>Printed invitations</h3><p>Print-ready paper invitations are a planned premium format. Editing and exports will be added in a later phase.</p><span class="pill">Coming soon</span></div></div>
-                </div>
-                <div id="preview-animated" hidden>
-                    <div class="preview-locked"><div><span class="icon" aria-hidden="true"><i class="fa-solid fa-film" aria-hidden="true"></i></span><h3>Animated & video invitations</h3><p>Photo animations and personalized video invitations are planned premium formats, not yet available to export.</p><span class="pill">Coming soon</span></div></div>
                 </div>
             </div>
             <div class="preview-bottom">
