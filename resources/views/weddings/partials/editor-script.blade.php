@@ -39,6 +39,7 @@
     let draftSupported = true;
     let advancedOpen = {};
     let restoring = true;
+    let suppressNextGroupPreviewScroll = false;
 
     function controlFor(key) {
         return sectionControls.find(function (element) { return element.dataset.sectionToggle === key; });
@@ -444,7 +445,8 @@
             index === 0 ? '← Choose sections' : '← Previous section';
         const detailScroll = document.getElementById('detail-scroll');
         detailScroll.scrollTop = 0;
-        if (stage === 'details') spotlightSection(currentGroup);
+        if (stage === 'details' && !suppressNextGroupPreviewScroll) spotlightSection(currentGroup);
+        suppressNextGroupPreviewScroll = false;
     }
 
     function renderReview() {
@@ -642,6 +644,9 @@
         const group = field.closest('[data-question-group]')?.dataset.questionGroup;
         if (!group || !selected(group)) return false;
         currentGroup = group;
+        // The person clicked content that is ALREADY visible in the preview:
+        // keep it anchored instead of jumping to the beginning of its group.
+        suppressNextGroupPreviewScroll = true;
         goToStage('details');
         if (field.closest('[data-advanced-fields]')) revealAdvanced(group, true);
         if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
