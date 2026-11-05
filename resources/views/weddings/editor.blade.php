@@ -56,8 +56,8 @@
             </button>
             @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="refine" title="Preview and refine" aria-label="Preview and refine" disabled>
-                <span class="step-dot">3</span> <span class="wizard-step-label">Preview & refine</span>
+            <button type="button" class="wizard-step" data-step-navigation="refine" title="Fine-tune template" aria-label="Fine-tune template" disabled>
+                <span class="step-dot">3</span> <span class="wizard-step-label">Fine-tune template</span>
             </button>
             <span class="wizard-arrow" aria-hidden="true">›</span>
             <button type="button" class="wizard-step" data-step-navigation="photos" title="Add your photos" aria-label="Add your photos" disabled>
@@ -65,8 +65,8 @@
             </button>
             @endif
             <span class="wizard-arrow" aria-hidden="true">›</span>
-            <button type="button" class="wizard-step" data-step-navigation="publish" title="Publish" aria-label="Publish" disabled>
-                <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> <span class="wizard-step-label">Publish</span>
+            <button type="button" class="wizard-step" data-step-navigation="publish" title="Review and publish" aria-label="Review and publish" disabled>
+                <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> <span class="wizard-step-label">Review & publish</span>
             </button>
         </nav>
         <div class="builder-utility-right">
@@ -214,9 +214,9 @@
 
             <section class="editor-stage" data-stage="publish" aria-labelledby="publish-stage-title">
                 <div class="stage-top">
-                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '05 / 05' : '03 / 03' }} · Almost there</span>
-                    <h2 id="publish-stage-title">It's ready to share.</h2>
-                    <p>Review your invitation, compare free and premium features, then publish your free website. No payment required.</p>
+                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '05 / 05' : '03 / 03' }} · Final review</span>
+                    <h2 id="publish-stage-title">Review before you share.</h2>
+                    <p>Check the essentials, your personal messages and the full invitation preview before publishing.</p>
                 </div>
                 <div class="stage-scroll">
                     <div class="custom-link-panel">
@@ -238,9 +238,34 @@
                         <div class="full-url-preview">Full address: <span id="full-invitation-url"></span></div>
                         <div class="full-url-preview qr-note">A downloadable QR code will be generated automatically once your invitation is published.</div>
                     </div>
-                    <h3 style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9f353c;margin:0 0 12px">Your invitation includes</h3>
+                    <div class="final-review-summary" aria-labelledby="final-review-essential-title">
+                        <div class="final-review-heading">
+                            <h3 id="final-review-essential-title">Wedding information</h3>
+                            <button type="button" class="review-edit-link" data-review-edit="details">Edit basics</button>
+                        </div>
+                        <div class="final-review-grid" id="review-essentials"></div>
+                    </div>
+                    <div class="final-review-summary" aria-labelledby="final-review-messages-title">
+                        <div class="final-review-heading">
+                            <h3 id="final-review-messages-title">Messages and quotes</h3>
+                            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+                                <button type="button" class="review-edit-link" data-review-edit="refine">Fine-tune wording</button>
+                            @endif
+                        </div>
+                        <div id="review-messages" class="review-message-list"></div>
+                    </div>
+                    <div class="final-review-preview">
+                        <strong>Review the full wedding website</strong>
+                        <p>Scroll the live preview beside this checklist, or expand it for a closer look. Only sections you have selected will be published.</p>
+                        <button type="button" class="review-preview-button" id="review-open-preview">
+                            <i class="fa-solid fa-expand" aria-hidden="true"></i> Open full preview
+                        </button>
+                    </div>
+                    <h3 style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9f353c;margin:17px 0 12px">Sections you selected</h3>
                     <ul class="review-list" id="review-sections" aria-label="Selected sections"></ul>
-                    <div class="plan-grid">
+                    <details class="review-plan-info">
+                        <summary>What's included with the free website?</summary>
+                        <div class="plan-grid">
                         <div class="plan-card">
                             <span class="pill">Available now</span>
                             <h3>Free invitation</h3>
@@ -267,10 +292,11 @@
                             </ul>
                         </div>
                     </div>
+                    </details>
                     <div class="launch-note"><strong>No checkout yet.</strong> The premium features above are planned, not available for purchase. The button below publishes the free website only. If you aren't signed in, we'll ask you to create an account first.</div>
                 </div>
                 <div class="stage-footer">
-                    <button type="button" class="back-btn" id="publish-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Edit details</button>
+                    <button type="button" class="back-btn" id="publish-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to photos</button>
                     <button type="submit" class="btn" id="publish-free">Publish free invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
                 </div>
             </section>
