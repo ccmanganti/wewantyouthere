@@ -13,6 +13,7 @@ class RoyalBurgundyWeddingSeeder extends Seeder
     {
         // Seeds the shared questions first. No duplicate questionnaire per design.
         $this->call(WeddingBuilderSeeder::class);
+        $this->call(WeddingMessageSeeder::class);
         $event = EventType::where('slug', 'wedding')->firstOrFail();
 
         $additional = [
