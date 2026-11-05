@@ -81,6 +81,11 @@
 .rb-v3 .rbv-photo-pair .rbv-photo:nth-child(2){transform:translateY(32px)}
 .rb-v3 .rbv-photo-pair figcaption{position:absolute;bottom:0;left:0;right:0;
     background:#240e16a8;color:#fff2da;font:italic 19px 'Cormorant Garamond',serif;padding:9px}
+.rb-v3 .rbv-story-keepsake{width:min(280px,70%);aspect-ratio:4/5;margin:25px auto;border:6px solid #f9f0e2}
+.rb-v3 .rbv-quote-portrait{position:absolute;inset:0;z-index:0;opacity:.08}
+.rb-v3 .rbv-quote-portrait img{width:100%;height:100%;object-fit:cover}
+.rb-v3 .rbv-rsvp-portrait{width:min(225px,60%);aspect-ratio:4/5;margin:25px auto;border:7px solid #fff4e2}
+.rb-v3:not([data-preview="1"]){container-type:normal}
 .rb-v3 .rbv-chapters{display:grid;gap:14px;margin:26px auto}
 .rb-v3 .rbv-chapters article{padding:18px 21px;border:1px solid #d8c5af;background:#fff8eca6}
 .rb-v3 .rbv-chapters article>span{font:700 9px 'DM Sans',sans-serif;letter-spacing:.16em;color:#a76b56}
