@@ -56,6 +56,10 @@
         @else<div class="rbv-photo-empty">OUR FOREVER BEGINS HERE</div>@endif
         @if($isPreview)<button type="button" class="rbv-photo-edit" data-photo-edit="closing_portrait"><i class="fa-solid fa-camera"></i> Closing photo</button>@endif
     </figure>
+    <figure class="rbv-photo rbv-quote-portrait" data-photo-slot="quote_portrait">
+        @if($image('quote_portrait','gallery-couple-garden.webp','grand-doors.webp'))<img src="{{ $image('quote_portrait','gallery-couple-garden.webp','grand-doors.webp') }}" data-slot-img="quote_portrait" alt="An artistic couple photograph" loading="lazy">@else<div class="rbv-photo-empty">LOVE AND GRATITUDE</div>@endif
+        @if($isPreview)<button type="button" class="rbv-photo-edit" data-photo-edit="quote_portrait"><i class="fa-solid fa-camera"></i> Replace photo</button>@endif
+    </figure>
     <div class="rbv-closing-copy"><span class="rbv-eyebrow">WITH LOVE &amp; GRATITUDE</span>
         <h2 data-field="closing_quote">{{ $copy('closing_quote',"We can't wait to see you.") }}</h2>
         <p data-field="closing_message">{{ $copy('closing_message','Until the last dance.') }}</p>
@@ -110,6 +114,12 @@
             <p class="rbv-copy">Please contact the couple for RSVP details.</p>
         @endif
 
+        @if($isPreview || $isSample || isset($photoUrls['rsvp_portrait']))
+        <figure class="rbv-photo rbv-rsvp-portrait" data-photo-slot="rsvp_portrait">
+            @if($image('rsvp_portrait','gallery-couple-smiling.webp','grand-doors.webp'))<img src="{{ $image('rsvp_portrait','gallery-couple-smiling.webp','grand-doors.webp') }}" data-slot-img="rsvp_portrait" alt="A joyful couple photograph" loading="lazy">@else<div class="rbv-photo-empty">WITH LOVE</div>@endif
+            @if($isPreview)<button type="button" class="rbv-photo-edit" data-photo-edit="rsvp_portrait"><i class="fa-solid fa-camera"></i> Add photo</button>@endif
+        </figure>
+        @endif
         <div class="rbv-contact"><span class="rbv-eyebrow">QUESTIONS ABOUT THE DAY?</span>
             <h3 data-field="rsvp_contact_heading">{{ $copy('rsvp_contact_heading',"We'd love to hear from you.") }}</h3>
             <p data-field="contact_name">{{ $personal('contact_name','Your wedding coordinator') }}</p>
