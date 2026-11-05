@@ -54,6 +54,7 @@ return [
         'school_name', 'company_name', 'couple_names', 'debutante_name',
         'child_name', 'graduate_name', 'host_message', 'agenda',
         'principal_sponsors', 'godfathers', 'godmothers',
+        'contact_name', 'dress_code', 'color_motif',
         'eighteen_roses', 'eighteen_candles', 'eighteen_treasures',
     ],
 ];
