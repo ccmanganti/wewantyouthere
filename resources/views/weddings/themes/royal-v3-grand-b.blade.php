@@ -48,7 +48,7 @@
         ] as [$number,$title,$timeKey,$time,$noteKey,$note])
         @if($isSample || $isPreview || filled($answers[$timeKey] ?? null) || filled($answers[$noteKey] ?? null))
         <li class="rbv-timeline-step" data-program-time="{{ $timeKey }}" data-program-note="{{ $noteKey }}"
-            @if(!filled($answers[$timeKey] ?? null) && !filled($answers[$noteKey] ?? null)) hidden @endif>
+            @if(!$isSample && !filled($answers[$timeKey] ?? null) && !filled($answers[$noteKey] ?? null)) hidden @endif>
             <span class="rbv-timeline-dot" aria-hidden="true"></span>
             <div class="rbv-timeline-content">
                 <span class="rbv-eyebrow">{{ $number }} / THE MOMENT</span>
@@ -79,8 +79,8 @@
                 ['04','program_step_four','Celebrate together on the dance floor.']
             ] as [$num,$key,$default])
                 @if($isSample || $isPreview || filled($answers[$key] ?? null))
-                <div data-optional-field-row="{{ $key }}" @if(blank($answers[$key] ?? null)) hidden @endif>
-                    <span>{{ $num }}</span><p data-field="{{ $key }}">{{ $personal($key, '') }}</p>
+                <div data-optional-field-row="{{ $key }}" @if(!$isSample && blank($answers[$key] ?? null)) hidden @endif>
+                    <span>{{ $num }}</span><p data-field="{{ $key }}">{{ $isSample ? $copy($key,$default) : $personal($key, '') }}</p>
                 </div>
                 @endif
             @endforeach
@@ -88,7 +88,7 @@
         @foreach(['ceremony_program','reception_program'] as $key)
             @if($isSample || $isPreview || filled($answers[$key] ?? null))
                 <p class="rbv-copy rbv-small" data-field="{{ $key }}" data-optional-field-row="{{ $key }}"
-                    @if(blank($answers[$key] ?? null)) hidden @endif>{{ $personal($key,'') }}</p>
+                    @if(!$isSample && blank($answers[$key] ?? null)) hidden @endif>{{ $personal($key,'') }}</p>
             @endif
         @endforeach
     </div>
@@ -133,7 +133,7 @@
         ] as [$role,$key,$fallback])
             @if($isPreview || $isSample || filled($answers[$key] ?? null))
             <div class="rbv-entourage-person" data-optional-field-row="{{ $key }}"
-                @if(blank($answers[$key] ?? null)) hidden @endif><span class="rbv-eyebrow">{{ $role }}</span>
+                @if(!$isSample && blank($answers[$key] ?? null)) hidden @endif><span class="rbv-eyebrow">{{ $role }}</span>
                 <p data-field="{{ $key }}">{{ $personal($key,$fallback) }}</p>
             </div>
             @endif
