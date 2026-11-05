@@ -5,6 +5,7 @@ use App\Http\Controllers\WeddingBuilderController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\WeddingPhotoController;
+use App\Http\Controllers\WeddingRsvpController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
@@ -52,4 +53,8 @@ Route::get('/invitation-slug-availability', [WeddingBuilderController::class, 's
     ->middleware('throttle:30,1')->name('wedding.slugAvailability');
 Route::get('/i/{slug}/qr.svg', [WeddingBuilderController::class, 'qrCode'])
     ->middleware('throttle:90,1')->name('wedding.qr');
+Route::post('/i/{slug}/rsvp', [WeddingRsvpController::class, 'store'])
+    ->middleware('throttle:6,1')->name('wedding.rsvp.store');
+Route::middleware('auth')->get('/app/invitations/{website}/rsvps', [WeddingRsvpController::class, 'manage'])
+    ->name('wedding.rsvps.manage');
 Route::get('/i/{slug}', [WeddingBuilderController::class, 'show'])->name('wedding.show');
