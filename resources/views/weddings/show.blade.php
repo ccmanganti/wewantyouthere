@@ -15,8 +15,11 @@
     body.invitation-page{background:#fbf8f1}
     body.invitation-page .topbar,body.invitation-page .foot{display:none}
     body.invitation-page>main{display:block;width:100%;margin:0;padding:0}
-    body.invitation-page>.wrap:has(.alert){position:fixed;top:15px;left:50%;transform:translateX(-50%);z-index:60;max-width:560px;width:calc(100% - 30px)}
-    body.invitation-page>.wrap .alert{box-shadow:0 8px 28px #1e2a1e36;margin:0}
+    body.invitation-page>.wrap:has(.alert){position:fixed;bottom:18px;right:18px;top:auto;left:auto;transform:none;z-index:60;max-width:390px;width:calc(100% - 36px);pointer-events:none}
+    body.invitation-page>.wrap .alert{box-shadow:0 8px 28px #1e2a1e36;margin:0;pointer-events:auto;display:flex;gap:12px;align-items:center;justify-content:space-between;font-size:12px;line-height:1.5}
+    body.invitation-page .flash-dismiss{border:0;border-radius:50%;background:transparent;color:inherit;font-size:19px;line-height:1;min-width:28px;min-height:28px}
+    body.invitation-page .flash-dismiss:hover{background:#c8dfc4}
+    @media(max-width:550px){body.invitation-page>.wrap:has(.alert){bottom:12px;right:12px;width:calc(100% - 24px)}}
     .public-wedding{width:100%;min-height:100svh;margin:0}
     .public-wedding .wedding-invite{width:100%}
     .invite-share{position:fixed;right:24px;bottom:24px;z-index:50;font:14px 'DM Sans',Arial,sans-serif}
@@ -99,6 +102,20 @@
 @endif
 <script>
 (function () {
+    // A publishing confirmation is a short-lived toast, not a fixed banner.
+    const flash = document.querySelector('body.invitation-page > .wrap .alert[role="status"]');
+    if (flash) {
+        const wrapper = flash.closest('.wrap');
+        const dismiss = document.createElement('button');
+        dismiss.type = 'button';
+        dismiss.className = 'flash-dismiss';
+        dismiss.setAttribute('aria-label', 'Dismiss confirmation');
+        dismiss.textContent = '×';
+        dismiss.addEventListener('click', function () { wrapper?.remove(); });
+        flash.append(dismiss);
+        window.setTimeout(function () { wrapper?.remove(); }, 6000);
+    }
+
     const button = document.getElementById('copy-invitation-link');
     const link = @json(route('wedding.show', $website->slug));
     if (!button) return;
