@@ -77,6 +77,10 @@ class RoyalBurgundyWeddingTest extends TestCase
     {
         $this->get('/')->assertOk()->assertSee('Royal Burgundy');
         $this->get('/wedding-invitation-templates')->assertOk()->assertSee('Royal Burgundy');
+        $this->get('/wedding-invitation-templates/royal-burgundy-wedding')->assertOk()
+            ->assertSee('mkt-detail-preview')
+            ->assertSee('Full-screen preview')
+            ->assertSee('Customize this invitation');
 
         $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
             ->assertSee('rb-invite')
@@ -105,6 +109,10 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('data-rbv-landscape-letter="true"', false)
             ->assertSee('data-step-navigation="refine"', false)
             ->assertSee('data-step-navigation="photos"', false)
+            ->assertSee('preview-highlight-status')
+            ->assertSee('Select a section to highlight exactly where it appears')
+            ->assertSee('data-refine-section="cover"', false)
+            ->assertSee('data-refine-section="rsvp"', false)
             ->assertSee('data-photo-slot="venue_ceremony"', false)
             ->assertSee('data-photo-slot="venue_reception"', false)
             ->assertSee('preview-envelope-intro', false);
