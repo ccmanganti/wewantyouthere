@@ -31,6 +31,7 @@
             $currentSectionSelection[$key] = false;
         }
     }
+    $premiumAccess = $hasPremium;
     $currentSectionSelection['maps'] = $hasPremium && ($draft['sections']['maps'] ?? false);
     $currentSectionSelection['ceremony_details'] = $hasPremium && ($draft['sections']['ceremony_details'] ?? false);
 @endphp
