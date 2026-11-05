@@ -147,8 +147,8 @@
                 <div class="group-headline">
                     <span class="group-count" id="group-counter">Your details</span>
                     <h2 id="detail-stage-title">The happy couple</h2>
-                    <p id="group-subtitle">Only the questions for this section are shown.</p>
-                    <div class="preview-link-tip"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Click any editable text in the preview to open its input here. Use <strong>Generate</strong> for a ready-made message or quote.</div>
+                    <p id="group-subtitle">The essential details for this part of your celebration.</p>
+                    <div class="preview-link-tip"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Click text in the preview to edit it here. Use <strong>Generate</strong> for optional message ideas.</div>
                 </div>
                 <div class="group-tabs" id="group-tabs" aria-label="Question sections">
                     @foreach($groups as $key => $group)
@@ -158,26 +158,36 @@
                 <div class="stage-scroll detail-scroll" id="detail-scroll">
                     @foreach($groups as $key => $group)
                         @php
-                            $all = $group['questions']->values();
-                            $primaryQuestions = $all->filter(fn ($question, $index) => $index < 4 || $question->is_required);
-                            $advancedQuestions = $all->reject(fn ($question, $index) => $index < 4 || $question->is_required);
+                            $coreKeys = config('wedding_editor_basics.'.$key, []);
+                            $coreQuestions = $group['questions']->filter(fn ($question) => in_array($question->key, $coreKeys, true))
+                                ->sortBy(fn ($question) => array_search($question->key, $coreKeys))->values();
                         @endphp
                         <div class="question-group" data-question-group="{{ $key }}" data-group-description="{{ $group['description'] }}">
-                            <div class="question-grid">
-                                @foreach($primaryQuestions as $question)
-                                    @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
-                                @endforeach
-                                @if($advancedQuestions->isNotEmpty())
-                                    <div class="advanced-fields" data-advanced-fields="{{ $key }}">
-                                        @foreach($advancedQuestions as $question)
-                                            @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                            @if($advancedQuestions->isNotEmpty())
-                                <button type="button" class="expand-questions" data-expand-questions="{{ $key }}" aria-expanded="false"><i class="fa-solid fa-sliders" aria-hidden="true"></i> More optional details <span>({{ $advancedQuestions->count() }})</span></button>
+                            @if($key === 'couple')
+                                <p class="basic-intro">Start with your names and a warm invitation message. Everything else can be customized later.</p>
                             @endif
+                            <div class="question-grid">
+                                @foreach($coreQuestions as $question)
+                                    @if($key === 'couple' && $question->key === 'bride_mother')
+                                    <div class="family-option full">
+                                        <label class="family-toggle">
+                                            <input type="checkbox" id="include-parents" name="show_parents" value="1"
+                                                @checked(old('show_parents', $draft['answers']['_show_parents'] ?? false))>
+                                            <span><strong>Include parents' names</strong>
+                                                <small>Optional. Leave this off to omit the parents section entirely.</small></span>
+                                        </label>
+                                        <div class="family-fields" id="family-fields" hidden>
+                                            <p class="family-fields-intro">Only the names you enter will appear. You can leave any parent blank.</p>
+                                            <div class="question-grid">
+                                    @endif
+                                    @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
+                                    @if($key === 'couple' && $question->key === 'groom_father')
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                     @endforeach
                 </div>
