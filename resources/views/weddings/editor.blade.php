@@ -30,12 +30,45 @@
     }
 @endphp
 <div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}">
-    <div class="builder-utility">
-        <div class="builder-title">
-            <a class="builder-back" href="{{ route('home') }}#templates" title="Back to templates"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Templates</a>
-            <span aria-hidden="true" style="color:#67575b">/</span>
-            <div><strong>{{ $template->name }}</strong><small>Your wedding invitation workspace</small></div>
+    {{-- The entire workspace uses ONE compact toolbar. The public topbar
+         is hidden only on this route, freeing vertical room for both panes. --}}
+    <header class="builder-utility" aria-label="Invitation builder toolbar">
+        <div class="builder-identity">
+            <a class="builder-brand" href="{{ route('home') }}" aria-label="We Want You There homepage">
+                <img class="builder-brand-full" src="{{ asset('brand/wwyt/logo-white.png') }}"
+                     alt="We Want You There" width="160" height="40">
+                <img class="builder-brand-icon" src="{{ asset('brand/wwyt/favicon.png') }}"
+                     alt="" width="36" height="36">
+            </a>
+            <span class="builder-toolbar-divider" aria-hidden="true"></span>
+            <a class="builder-back" href="{{ route('marketing.templates') }}" title="Back to templates"
+               aria-label="Back to templates"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+               <span>Templates</span></a>
+            <div class="builder-title"><strong title="{{ $template->name }}">{{ $template->name }}</strong></div>
         </div>
+        <nav class="wizard-strip" aria-label="Invitation creation steps">
+            <button type="button" class="wizard-step is-current" data-step-navigation="sections" aria-current="step">
+                <span class="step-dot">1</span> <span class="wizard-step-label">Choose sections</span>
+            </button>
+            <span class="wizard-arrow" aria-hidden="true">›</span>
+            <button type="button" class="wizard-step" data-step-navigation="details" disabled>
+                <span class="step-dot">2</span> <span class="wizard-step-label">Add your details</span>
+            </button>
+            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+            <span class="wizard-arrow" aria-hidden="true">›</span>
+            <button type="button" class="wizard-step" data-step-navigation="refine" disabled>
+                <span class="step-dot">3</span> <span class="wizard-step-label">Preview & refine</span>
+            </button>
+            <span class="wizard-arrow" aria-hidden="true">›</span>
+            <button type="button" class="wizard-step" data-step-navigation="photos" disabled>
+                <span class="step-dot">4</span> <span class="wizard-step-label">Add your photos</span>
+            </button>
+            @endif
+            <span class="wizard-arrow" aria-hidden="true">›</span>
+            <button type="button" class="wizard-step" data-step-navigation="publish" disabled>
+                <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> <span class="wizard-step-label">Publish</span>
+            </button>
+        </nav>
         <div class="builder-utility-right">
             <div class="draft-indicator" id="draft-indicator" data-state="saving" role="status" aria-live="polite">Saving draft...</div>
             <div class="builder-mobile-switch" role="group" aria-label="Mobile workspace view">
@@ -43,34 +76,12 @@
                 <button type="button" id="mobile-preview" aria-pressed="false">Preview</button>
             </div>
             <form id="cancel-builder-form" method="POST" action="{{ route('wedding.cancel', $template->slug) }}">@csrf
-                <button class="cancel-btn" type="submit" id="cancel-builder">Cancel building</button>
+                <button class="cancel-btn" type="submit" id="cancel-builder" title="Cancel building">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Cancel</span>
+                </button>
             </form>
         </div>
-    </div>
-
-    <nav class="wizard-strip" aria-label="Invitation creation steps">
-        <button type="button" class="wizard-step is-current" data-step-navigation="sections" aria-current="step">
-            <span class="step-dot">1</span> Choose sections
-        </button>
-        <span class="wizard-arrow" aria-hidden="true">›</span>
-        <button type="button" class="wizard-step" data-step-navigation="details" disabled>
-            <span class="step-dot">2</span> Add your details
-        </button>
-        @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-        <span class="wizard-arrow" aria-hidden="true">›</span>
-        <button type="button" class="wizard-step" data-step-navigation="refine" disabled>
-            <span class="step-dot">3</span> Preview & refine
-        </button>
-        <span class="wizard-arrow" aria-hidden="true">›</span>
-        <button type="button" class="wizard-step" data-step-navigation="photos" disabled>
-            <span class="step-dot">4</span> Add your photos
-        </button>
-        @endif
-        <span class="wizard-arrow" aria-hidden="true">›</span>
-        <button type="button" class="wizard-step" data-step-navigation="publish" disabled>
-            <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> Publish
-        </button>
-    </nav>
+    </header>
 
     @if($errors->any())
     <div class="alert" style="margin:0 14px;border-radius:0;color:#9b282b;background:#fcebe7" role="alert">
