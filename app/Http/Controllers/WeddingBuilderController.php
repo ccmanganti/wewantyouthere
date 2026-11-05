@@ -7,6 +7,7 @@ use App\Models\EventType;
 use App\Models\InvitationTemplate;
 use App\Models\InvitationWebsite;
 use App\Models\InvitationSlugRedirect;
+use App\Models\WeddingMessageTemplate;
 use App\Models\User;
 use App\Support\InvitationAccounts;
 use App\Support\InvitationWebsiteManager;
@@ -81,6 +82,52 @@ class WeddingBuilderController extends Controller
         }
 
         return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls'));
+    }
+
+    /**
+     * Read-only generator for original, hand-authored wedding wording.
+     * Its field whitelist prevents arbitrary category or database access.
+     */
+    public function generateMessage(Request $request, string $slug): JsonResponse
+    {
+        $template = InvitationTemplate::query()
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->where('settings->renderer', 'builtin_wedding')
+            ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
+            ->firstOrFail();
+
+        $fieldCategories = config('wedding_message_fields', []);
+        $validated = $request->validate([
+            'field' => ['required', 'string', Rule::in(array_keys($fieldCategories))],
+            'exclude' => ['nullable', 'integer', 'min:1'],
+        ]);
+        $field = $validated['field'];
+
+        abort_unless(
+            $template->eventType->questions()
+                ->where('key', $field)->where('is_enabled', true)->exists(),
+            404,
+        );
+
+        $suggestions = WeddingMessageTemplate::query()
+            ->where('category', $fieldCategories[$field]);
+        if (!empty($validated['exclude'])) {
+            $suggestions->where('id', '!=', (int) $validated['exclude']);
+        }
+
+        $suggestion = $suggestions->inRandomOrder()->first();
+
+        if (!$suggestion) {
+            return response()->json([
+                'message' => 'Suggestions are not available yet. Please ask the site administrator to seed the wedding message library.',
+            ], 503)->header('Cache-Control', 'no-store');
+        }
+
+        return response()->json([
+            'id' => $suggestion->id,
+            'content' => $suggestion->content,
+        ])->header('Cache-Control', 'no-store');
     }
 
     /**
