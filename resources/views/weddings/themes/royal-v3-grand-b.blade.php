@@ -46,7 +46,9 @@
             ['03','RECEPTION','reception_time','6:00 PM','reception_timeline_note','Dinner and speeches'],
             ['04','CELEBRATION','celebration_time','9:00 PM','celebration_timeline_note','Dance the night away']
         ] as [$number,$title,$timeKey,$time,$noteKey,$note])
-        <li class="rbv-timeline-step">
+        @if($isSample || $isPreview || filled($answers[$timeKey] ?? null) || filled($answers[$noteKey] ?? null))
+        <li class="rbv-timeline-step" data-program-time="{{ $timeKey }}" data-program-note="{{ $noteKey }}"
+            @if(!filled($answers[$timeKey] ?? null) && !filled($answers[$noteKey] ?? null)) hidden @endif>
             <span class="rbv-timeline-dot" aria-hidden="true"></span>
             <div class="rbv-timeline-content">
                 <span class="rbv-eyebrow">{{ $number }} / THE MOMENT</span>
@@ -55,6 +57,7 @@
                 <p data-field="{{ $noteKey }}">{{ $copy($noteKey,$note) }}</p>
             </div>
         </li>
+        @endif
         @endforeach
     </ol>
     <p class="rbv-quote">Until the last dance.</p>
@@ -66,6 +69,8 @@
 <section class="rbv-info" id="program-details" data-preview-section="program" @if(!$visible('program')) hidden @endif>
     <div class="rbv-inner"><span class="rbv-eyebrow">A LITTLE GUIDE TO OUR DAY</span>
         <h2 class="rbv-title" data-field="program_details_heading">{{ $copy('program_details_heading','What to expect') }}</h2>
+        <p class="rbv-copy rbv-schedule-text" data-field="event_schedule" data-optional-field-row="event_schedule"
+            @if(blank($answers['event_schedule'] ?? null)) hidden @endif>{{ $personal('event_schedule', '') }}</p>
         <div class="rbv-program-rows">
             @foreach([
                 ['01','program_step_one','Arrive and settle in before the ceremony.'],
@@ -73,11 +78,19 @@
                 ['03','program_step_three','Share a meal, a toast, and a few stories.'],
                 ['04','program_step_four','Celebrate together on the dance floor.']
             ] as [$num,$key,$default])
-                <div><span>{{ $num }}</span><p data-field="{{ $key }}">{{ $copy($key,$default) }}</p></div>
+                @if($isSample || $isPreview || filled($answers[$key] ?? null))
+                <div data-optional-field-row="{{ $key }}" @if(blank($answers[$key] ?? null)) hidden @endif>
+                    <span>{{ $num }}</span><p data-field="{{ $key }}">{{ $personal($key, '') }}</p>
+                </div>
+                @endif
             @endforeach
         </div>
-        <p class="rbv-copy rbv-small" data-field="ceremony_program">{{ $copy('ceremony_program','Processional · Vows · Exchange of rings') }}</p>
-        <p class="rbv-copy rbv-small" data-field="reception_program">{{ $copy('reception_program','Dinner · First dance · Speeches') }}</p>
+        @foreach(['ceremony_program','reception_program'] as $key)
+            @if($isSample || $isPreview || filled($answers[$key] ?? null))
+                <p class="rbv-copy rbv-small" data-field="{{ $key }}" data-optional-field-row="{{ $key }}"
+                    @if(blank($answers[$key] ?? null)) hidden @endif>{{ $personal($key,'') }}</p>
+            @endif
+        @endforeach
     </div>
 </section>
 
@@ -119,7 +132,8 @@
             ['OFFICIANT','officiant_name','Our officiant']
         ] as [$role,$key,$fallback])
             @if($isPreview || $isSample || filled($answers[$key] ?? null))
-            <div class="rbv-entourage-person"><span class="rbv-eyebrow">{{ $role }}</span>
+            <div class="rbv-entourage-person" data-optional-field-row="{{ $key }}"
+                @if(blank($answers[$key] ?? null)) hidden @endif><span class="rbv-eyebrow">{{ $role }}</span>
                 <p data-field="{{ $key }}">{{ $personal($key,$fallback) }}</p>
             </div>
             @endif
