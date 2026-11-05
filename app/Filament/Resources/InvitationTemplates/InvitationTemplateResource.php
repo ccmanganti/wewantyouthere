@@ -9,8 +9,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -26,7 +24,12 @@ class InvitationTemplateResource extends Resource {
  FileUpload::make('code_path')->label('HTML template source')->disk('local')->directory('invitation-templates')->acceptedFileTypes(['text/html','text/plain'])->required(fn (string $operation): bool => $operation === 'create')->helperText('Upload a static .html template using {{event_title}} placeholders. Scripts and PHP are not supported.'),
  FileUpload::make('thumbnail_path')->image()->disk('public')->directory('template-thumbnails'),
  Select::make('status')->options(['draft'=>'Draft','published'=>'Published','archived'=>'Archived'])->required()->default('draft'),
- Toggle::make('is_premium'),
+ Toggle::make('is_premium')->label('Premium-only design')
+     ->helperText('Off: basic template is free; advanced features can be upgraded separately. On: the design itself requires a paid upgrade.'),
+ TextInput::make('premium_price_cents')->label('Premium price (PHP centavos)')
+     ->numeric()->minValue(100)->maxValue(10000000)->default(99900)->required()
+     ->helperText('Example: 99900 = ₱999.00, charged once per account for this design.'),
+ Select::make('premium_currency')->options(['PHP'=>'Philippine peso (PHP)'])->default('PHP')->required(),
  ]);}
  public static function table(Table $table): Table{return $table->columns([
  TextColumn::make('name')->searchable(),TextColumn::make('eventType.name')->label('Event'),
