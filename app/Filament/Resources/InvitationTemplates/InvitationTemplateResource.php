@@ -13,6 +13,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\ToggleColumn;
 class InvitationTemplateResource extends Resource {
  protected static ?string $model=InvitationTemplate::class;
  protected static string|\BackedEnum|null $navigationIcon='heroicon-o-swatch';
@@ -26,14 +27,22 @@ class InvitationTemplateResource extends Resource {
  Select::make('status')->options(['draft'=>'Draft','published'=>'Published','archived'=>'Archived'])->required()->default('draft'),
  Toggle::make('is_premium')->label('Premium-only design')
      ->helperText('Off: basic template is free; advanced features can be upgraded separately. On: the design itself requires a paid upgrade.'),
- TextInput::make('premium_price_cents')->label('Premium price (PHP centavos)')
-     ->numeric()->minValue(100)->maxValue(10000000)->default(99900)->required()
-     ->helperText('Example: 99900 = ₱999.00, charged once per account for this design.'),
+ TextInput::make('premium_price_cents')->label('One-time premium price (₱)')
+     ->numeric()->prefix('₱')->step(0.01)->minValue(1)->maxValue(100000)->default(999)
+     ->afterStateHydrated(fn (TextInput $component, $state) => $component->state(
+         number_format(((int) ($state ?? 99900)) / 100, 2, '.', '')
+     ))
+     ->dehydrateStateUsing(fn ($state) => (int) round(((float) $state) * 100))
+     ->required()
+     ->helperText('Enter an amount in pesos (e.g. 999.00). This price is charged once per account for this design.'),
  Select::make('premium_currency')->options(['PHP'=>'Philippine peso (PHP)'])->default('PHP')->required(),
  ]);}
  public static function table(Table $table): Table{return $table->columns([
  TextColumn::make('name')->searchable(),TextColumn::make('eventType.name')->label('Event'),
  SelectColumn::make('status')->options(['draft'=>'Draft','published'=>'Published','archived'=>'Archived']),
+ ToggleColumn::make('is_premium')->label('Premium-only')->sortable(),
+ TextColumn::make('premium_price_cents')->label('Upgrade price')
+     ->formatStateUsing(fn ($state) => '₱' . number_format(((int) $state) / 100, 2)),
  TextColumn::make('version')->sortable(),
  ])->headerActions([CreateAction::make()->modalHeading('Upload template')->mutateDataUsing(fn(array $data):array=>[...$data,'creator_id'=>auth()->id()])])->recordActions([EditAction::make()->modalHeading('Edit template')]);}
  public static function getPages(): array{return ['index'=>ListInvitationTemplates::route('/')];}
