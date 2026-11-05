@@ -15,7 +15,7 @@
             catch (\Throwable $e) { return $value; }
         }
 
-        if (in_array($key, ['event_time', 'reception_time'], true) && preg_match('/^\d{2}:\d{2}$/', $value)) {
+        if (in_array($key, ['event_time', 'reception_time', 'guest_arrival_time', 'celebration_time', 'after_party_time', 'first_dance_time'], true) && preg_match('/^\d{2}:\d{2}$/', $value)) {
             try { return \Carbon\Carbon::createFromFormat('!H:i', $value)->format('g:i A'); }
             catch (\Throwable $e) { return $value; }
         }
