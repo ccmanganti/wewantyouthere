@@ -2,7 +2,7 @@
     <div class="stage-top">
         <span class="stage-kicker">Step 03 / 05 · The finishing touches</span>
         <h2 id="refine-stage-title">See how your story unfolds.</h2>
-        <p>Explore your invitation as a guest would. Choose a section to jump to it, then return to Details to change its wording.</p>
+        <p>Explore your invitation as a guest would. Choose a section to spotlight it in your live preview, then return to Details to change its wording.</p>
     </div>
     <div class="stage-scroll rb-refine-scroll">
         <div class="rb-refine-tip">
@@ -15,15 +15,15 @@
         <div class="rb-refine-headline">EXPLORE YOUR SECTIONS</div>
         <div class="rb-refine-grid">
             @foreach([
-                ['wedding-home', 'Opening cover', 'fa-envelope-open-text'],
-                ['wedding-ceremony', 'Ceremony', 'fa-church'],
-                ['wedding-date', 'Wedding date', 'fa-calendar-days'],
-                ['wedding-program', 'Timing & program', 'fa-clock'],
-                ['wedding-reception', 'Venues', 'fa-location-dot'],
-                ['wedding-details', 'Dress code & details', 'fa-user-tie'],
-                ['wedding-story', 'Our story', 'fa-heart'],
-                ['wedding-entourage', 'Family & entourage', 'fa-people-group'],
-                ['wedding-guests', 'Guests & RSVP', 'fa-envelope-open-text'],
+                ['cover', 'Opening cover', 'fa-envelope-open-text'],
+                ['location-details', 'Ceremony', 'fa-church'],
+                ['the-date', 'Wedding date', 'fa-calendar-days'],
+                ['the-timeline', 'Timing & program', 'fa-clock'],
+                ['venue-photo-story', 'Venues', 'fa-location-dot'],
+                ['dress-information', 'Dress code & details', 'fa-user-tie'],
+                ['our-story', 'Our story', 'fa-heart'],
+                ['our-people', 'Family & entourage', 'fa-people-group'],
+                ['rsvp', 'Guests & RSVP', 'fa-envelope-open-text'],
             ] as [$target, $label, $icon])
                 <button type="button" class="rb-refine-jump" data-refine-section="{{ $target }}">
                     <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
