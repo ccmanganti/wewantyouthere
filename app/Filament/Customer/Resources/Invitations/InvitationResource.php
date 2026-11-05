@@ -5,6 +5,7 @@ namespace App\Filament\Customer\Resources\Invitations;
 use App\Filament\Customer\Resources\Invitations\Pages\ListInvitations;
 use App\Models\InvitationWebsite;
 use App\Support\InvitationAccounts;
+use App\Support\InvitationFormLayout;
 use App\Support\InvitationWebsiteManager;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -149,8 +150,8 @@ class InvitationResource extends Resource
                     ->label('Edit details')
                     ->icon('heroicon-s-document-text')
                     ->color('gray')
-                    ->modalHeading('Edit your wedding details')
-                    ->modalDescription('Update any information and decide which sections guests can see.')
+                    ->modalHeading(fn (InvitationWebsite $record): string => 'Edit ' . $record->template->eventType->name . ' details')
+                    ->modalDescription('Update your event information and guest-facing details.')
                     ->modalWidth('7xl')
                     ->form(fn (InvitationWebsite $record): array => static::contentFields($record))
                     ->fillForm(function (InvitationWebsite $record): array {
@@ -165,7 +166,8 @@ class InvitationResource extends Resource
                             ->where('user_id', Filament::auth()->id())
                             ->findOrFail($record->id);
 
-                        $groupDefs = config('wedding_builder.groups', []);
+                        $groupDefs = $website->template->eventType->slug === 'wedding'
+                            ? config('wedding_builder.groups', []) : [];
                         $activeKeys = $website->template->eventType->questions()
                             ->where('is_enabled', true)->pluck('key')->all();
                         $submittedAnswers = array_intersect_key($data['answers'] ?? [], array_flip($activeKeys));
@@ -197,49 +199,65 @@ class InvitationResource extends Resource
 
     private static function contentFields(InvitationWebsite $record): array
     {
-        $questions = $record->template->eventType->questions()
+        $eventType = $record->template->eventType;
+        $questions = $eventType->questions()
             ->where('is_enabled', true)->orderBy('sort_order')->get();
-        $groups = [];
+        $sections = [];
 
+        // All non-wedding event types use the same responsive question system.
+        // Their event-specific fields are grouped meaningfully rather than
+        // being forced into wedding-only categories.
+        if ($eventType->slug !== 'wedding') {
+            foreach (InvitationFormLayout::sections($questions, $eventType->slug) as $key => $group) {
+                $inputs = $group['questions']
+                    ->map(fn ($question) => InvitationFormLayout::field($question))
+                    ->all();
+
+                $sections[] = Section::make($group['title'])
+                    ->columns(InvitationFormLayout::columns())
+                    ->collapsible()
+                    ->collapsed($key !== 'essentials')
+                    ->schema($inputs);
+            }
+
+            return $sections;
+        }
+
+        // Preserve the existing wedding section visibility controls for
+        // published websites and drafts, but use the SAME responsive grid.
         foreach (config('wedding_builder.groups', []) as $key => $groupDef) {
             $inputs = [];
-
             if ($groupDef['hideable'] ?? false) {
                 $inputs[] = Toggle::make('sections.' . $key)
                     ->label('Show this section on my website')
-                    ->default(true);
+                    ->default(true)
+                    ->columnSpanFull();
             }
 
-            foreach ($questions->where('group_key', $key) as $question) {
-                $statePath = 'answers.' . $question->key;
-                $field = match ($question->type) {
-                    'textarea' => Textarea::make($statePath)->rows(3),
-                    'date' => TextInput::make($statePath)->type('date'),
-                    'time' => TextInput::make($statePath)->type('time'),
-                    'number' => TextInput::make($statePath)->numeric()->minValue(0),
-                    'url' => TextInput::make($statePath)->url(),
-                    'email' => TextInput::make($statePath)->email(),
-                    default => TextInput::make($statePath),
-                };
-                $inputs[] = $field
-                    ->label($question->label)
-                    ->helperText($question->help_text ?: null)
-                    ->required($question->is_required && ! ($groupDef['hideable'] ?? false))
-                    ->maxLength(in_array($question->type, ['text','textarea'], true) ? 2000 : null);
+            $groupQuestions = InvitationFormLayout::orderedQuestions(
+                $questions->where('group_key', $key),
+                $eventType->slug,
+            );
+            foreach ($groupQuestions as $question) {
+                $inputs[] = InvitationFormLayout::field(
+                    $question,
+                    ! ($groupDef['hideable'] ?? false),
+                );
             }
 
-            if (! $inputs) {
+            if (!$inputs) {
                 continue;
             }
 
-            $groups[] = Section::make($groupDef['title'])
+            $sections[] = Section::make($groupDef['title'])
                 ->description($groupDef['description'])
+                ->columns(InvitationFormLayout::columns())
                 ->collapsible()
                 ->collapsed($key !== 'couple')
                 ->schema($inputs);
         }
 
-        return $groups;
+        return $sections;
     }
 
     public static function getPages(): array
