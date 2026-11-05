@@ -70,6 +70,7 @@ class InvitationPremium
     {
         foreach ([
             'ceremony_program','reception_program','ceremony_notes','ceremony_type',
+            'unplugged_note', 'map_heading', 'map_intro',
             'ceremony_map_url','reception_map_url','venue_map_url',
             'video_embed_url','video_heading','video_message',
         ] as $key) {
