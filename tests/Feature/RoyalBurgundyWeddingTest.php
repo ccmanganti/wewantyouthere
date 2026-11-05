@@ -50,12 +50,12 @@ class RoyalBurgundyWeddingTest extends TestCase
         ];
     }
 
-    public function test_wedding_template_seeder_adds_a_second_working_design_without_overwriting_admin_questions(): void
+    public function test_seeder_only_offers_v3_design_and_preserves_previous_templates_for_existing_sites(): void
     {
         $this->assertSame('published', $this->royal()->status);
         $this->assertSame('builtin_wedding', $this->royal()->settings['renderer']);
         $this->assertSame('royal_burgundy', $this->royal()->settings['theme']);
-        $this->assertSame(2, $this->royal()->version);
+        $this->assertSame(3, $this->royal()->version);
         $this->assertContains('venue_ceremony', $this->royal()->settings['photo_slots']);
         $this->assertContains('venue_reception', $this->royal()->settings['photo_slots']);
 
@@ -69,6 +69,8 @@ class RoyalBurgundyWeddingTest extends TestCase
         $this->assertSame($count, EventQuestion::count());
         $this->assertFalse($question->fresh()->is_enabled);
         $this->assertDatabaseCount('invitation_templates', 2);
+        $this->assertSame(1, InvitationTemplate::where('status','published')->count());
+        $this->assertSame('archived', InvitationTemplate::where('slug','ever-after-classic')->firstOrFail()->status);
     }
 
     public function test_royal_template_is_discoverable_and_has_fullpage_and_five_step_live_editor(): void
@@ -78,13 +80,16 @@ class RoyalBurgundyWeddingTest extends TestCase
 
         $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
             ->assertSee('rb-invite')
-            ->assertSee('Our love story')
-            ->assertSee('rb-story')
+            ->assertSee('How it all began.')
+            ->assertSee('rbv-chapters')
             ->assertSee('envelope-front.webp')
             ->assertSee('dress-swatches.webp')
-            ->assertSee('rb-calendar')
-            ->assertSee('wedding-entourage')
-            ->assertSee('wedding-guests');
+            ->assertSee('rbv-calendar')
+            ->assertSee('our-people')
+            ->assertSee('id="rsvp"', false)
+            ->assertSee('data-intro-click-only="true"', false)
+            ->assertDontSee('device-option')
+            ->assertDontSee('replay-button');
 
         $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
             ->assertSee('Step 04 / 05')
@@ -96,7 +101,7 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('data-step-navigation="photos"', false)
             ->assertSee('data-photo-slot="venue_ceremony"', false)
             ->assertSee('data-photo-slot="venue_reception"', false)
-            ->assertSee('replay-envelope-intro', false);
+            ->assertSee('preview-envelope-intro', false);
     }
 
     public function test_anonymous_photo_upload_can_be_previewed_then_published_after_registration(): void
