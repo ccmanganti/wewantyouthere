@@ -27,6 +27,10 @@ class MarketingPagesTest extends TestCase
             ->assertSee('wedding-invitation-templates')
             ->assertSee('Ever After')
             ->assertSee('application/ld+json')
+            ->assertSee('mkt-sample-photo-grid')
+            ->assertSee('ACTUAL PHOTOGRAPHY')
+            ->assertSee('SAMPLE PHOTO')
+            ->assertSee('free website invitation')
             ->assertSee('index,follow');
     }
 
