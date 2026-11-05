@@ -54,6 +54,10 @@
             <article><span>CHAPTER {{ $num }}</span><h3 data-field="{{ $headingKey }}">{{ $copy($headingKey,$heading) }}</h3><p data-field="{{ $bodyKey }}">{{ $copy($bodyKey,$body) }}</p></article>
         @endforeach
         </div>
+        <figure class="rbv-photo rbv-story-keepsake" data-photo-slot="story_three">
+            @if($image('story_three','gallery-couple-soft.webp','grand-doors.webp'))<img src="{{ $image('story_three','gallery-couple-soft.webp','grand-doors.webp') }}" data-slot-img="story_three" alt="A special chapter in our story" loading="lazy">@else<div class="rbv-photo-empty">OUR FAVORITE MEMORY</div>@endif
+            @if($isPreview)<button type="button" class="rbv-photo-edit" data-photo-edit="story_three"><i class="fa-solid fa-camera"></i> Add photo</button>@endif
+        </figure>
         <blockquote data-field="hero_quote">{{ $copy('hero_quote','The best thing to hold onto in life is each other.') }}</blockquote>
     </div>
 </section>
