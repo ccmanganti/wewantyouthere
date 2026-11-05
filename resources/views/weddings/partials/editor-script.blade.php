@@ -316,6 +316,59 @@
         }
     });
 
+    function safeVideoEmbed(value) {
+        try {
+            const url = new URL(String(value || '').trim());
+            if (url.protocol !== 'https:') return null;
+            const host = url.hostname.toLowerCase().replace(/^www\./, '');
+            const path = url.pathname.replace(/^\/+|\/+$/g, '');
+            if (['youtu.be','youtube.com','m.youtube.com','youtube-nocookie.com'].includes(host)) {
+                const id = host === 'youtu.be' ? path.split('/')[0]
+                    : (url.searchParams.get('v') || (path.match(/^(?:embed|shorts)\/([a-zA-Z0-9_-]{11})$/) || [])[1]);
+                return /^[a-zA-Z0-9_-]{11}$/.test(id || '') ? 'https://www.youtube-nocookie.com/embed/' + id : null;
+            }
+            if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+                const match = path.match(/^(?:video\/)?(\d{6,12})$/);
+                return match ? 'https://player.vimeo.com/video/' + match[1] : null;
+            }
+        } catch (_) { /* Invalid URL: keep the preview placeholder. */ }
+        return null;
+    }
+
+    function refreshVideoPreview(values) {
+        const section = preview.querySelector('#wedding-video');
+        if (!section) return;
+        const container = section.querySelector('.wwyt-premium-video-inner');
+        if (!container) return;
+        const url = safeVideoEmbed(values.video_embed_url);
+        let frame = container.querySelector('.wwyt-video-frame');
+        let placeholder = container.querySelector('.wwyt-video-empty');
+        if (!url) {
+            if (frame) frame.remove();
+            if (!placeholder) {
+                placeholder = document.createElement('div');
+                placeholder.className = 'wwyt-video-empty';
+                placeholder.textContent = 'Add a YouTube or Vimeo link to preview your video.';
+                container.appendChild(placeholder);
+            }
+            return;
+        }
+        if (placeholder) placeholder.remove();
+        if (!frame) {
+            frame = document.createElement('div');
+            frame.className = 'wwyt-video-frame';
+            const iframe = document.createElement('iframe');
+            iframe.title = 'Your wedding video preview';
+            iframe.loading = 'lazy';
+            iframe.allowFullscreen = true;
+            iframe.setAttribute('allow', 'encrypted-media; picture-in-picture');
+            frame.appendChild(iframe);
+            container.appendChild(frame);
+        }
+        const iframe = frame.querySelector('iframe');
+        if (iframe && iframe.getAttribute('src') !== url) iframe.setAttribute('src', url);
+    }
+
     function refreshPreview() {
         const values = currentAnswers();
         preview.querySelectorAll('[data-field]').forEach(function (target) {
@@ -331,6 +384,7 @@
             const extra = target.closest('[data-extra-row]');
             if (extra) extra.hidden = !String(values[key] || '').trim();
         });
+        refreshVideoPreview(values);
         const bride = values.bride_name || 'Amelia';
         const groom = values.groom_name || 'Gabriel';
         refreshParentVisibility();
