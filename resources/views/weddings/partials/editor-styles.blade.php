@@ -229,4 +229,133 @@
  }
 }
 
+
+/* Single-row builder chrome: the public navigation is replaced by the complete
+   builder toolbar on this page only. All controls remain in the same document. */
+body.builder-page .topbar{display:none!important}
+body.builder-page > main{min-height:0}
+.builder-app .builder-utility{
+    height:60px;min-height:60px;flex:none;padding:0 15px;gap:12px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:#1b171a;border-bottom:1px solid #473539;
+}
+.builder-app .builder-identity{
+    display:flex;flex:0 1 350px;min-width:0;gap:12px;align-items:center
+}
+.builder-app .builder-brand{display:inline-flex;align-items:center;flex:none;line-height:0}
+.builder-app .builder-brand-full{width:145px;height:38px;object-fit:contain}
+.builder-app .builder-brand-icon{display:none}
+.builder-app .builder-toolbar-divider{height:25px;width:1px;background:#624b4d;flex:none}
+.builder-app .builder-back{
+    display:inline-flex;align-items:center;gap:6px;flex:none;white-space:nowrap;
+    font-size:11px;font-weight:700;color:#e8d3c8;
+}
+.builder-app .builder-back:hover{color:white}
+.builder-app .builder-title{min-width:0;flex:1;display:block}
+.builder-app .builder-title strong{
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:12px;font-weight:700;max-width:100%;
+}
+.builder-app .wizard-strip{
+    flex:1 1 auto;min-width:0;width:auto;height:100%;gap:3px;
+    padding:0 2px;border-bottom:0;justify-content:center;
+    scrollbar-width:thin;scrollbar-color:#75535a transparent
+}
+.builder-app .wizard-strip::-webkit-scrollbar{height:4px}
+.builder-app .wizard-step{gap:6px;padding:6px 6px;font-size:11px}
+.builder-app .wizard-step .step-dot{width:25px;height:25px;flex:none;font-size:10px}
+.builder-app .wizard-arrow{font-size:13px}
+.builder-app .builder-utility-right{flex:none;gap:11px;min-width:0}
+.builder-app .draft-indicator{font-size:10px;white-space:nowrap}
+.builder-app .cancel-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 10px;font-size:11px
+}
+.builder-app .builder-columns{padding:10px;gap:10px}
+.builder-app .editor-pane,.builder-app .preview-pane{border-radius:12px}
+.builder-app .preview-top{min-height:46px;padding:8px 13px;gap:8px;flex-wrap:nowrap}
+.builder-app .preview-top strong{font-size:12px}
+.builder-app .preview-top small{font-size:10px;margin-top:1px}
+.builder-app .preview-switch{flex:none}
+.builder-app .preview-switch button{padding:6px 8px}
+.builder-app .preview-highlight-help{min-height:27px;padding:5px 13px;font-size:10px}
+.builder-app .preview-scroll{padding:12px}
+.builder-app .preview-canvas{max-width:650px}
+.builder-app .preview-comparison{max-width:650px}
+.builder-app .preview-bottom{min-height:29px;padding:7px 12px}
+.builder-app .group-headline{padding:10px 19px 9px}
+.builder-app .group-headline h2{font-size:25px;margin:3px 0}
+.builder-app .group-headline p{margin:3px 0 0}
+.builder-app .stage-top{padding:15px 20px 12px}
+.builder-app .stage-top h1,.builder-app .stage-top h2{font-size:28px;margin:4px 0 7px}
+.builder-app .preview-link-tip{padding:6px 8px;margin-top:7px}
+.builder-app .group-tabs{padding:7px 12px;gap:6px}
+.builder-app .group-tab{padding:7px 10px}
+.builder-app .stage-scroll{padding:15px 20px 20px}
+.builder-app .stage-footer{padding:10px 18px;min-height:58px}
+.builder-app .stage-footer .btn{min-height:38px}
+.builder-app .detail-scroll{padding:15px 20px 20px}
+
+@media(max-width:1320px){
+ .builder-app .builder-identity{flex:0 1 255px}
+ .builder-app .builder-title{display:none}
+ .builder-app .wizard-arrow{display:none}
+}
+@media(max-width:1030px){
+ .builder-app .builder-brand-full{width:116px;height:34px}
+ .builder-app .builder-identity{flex:0 0 auto;gap:9px}
+ .builder-app .wizard-step{padding:6px 4px;gap:4px}
+ .builder-app .wizard-step-label{font-size:10px}
+ .builder-app .draft-indicator{font-size:0;gap:0}
+ .builder-app .draft-indicator::before{width:8px;height:8px}
+}
+@media(max-width:850px){
+ .builder-app .builder-utility{height:54px;min-height:54px;padding:0 9px;gap:7px}
+ .builder-app .builder-brand-full{width:102px}
+ .builder-app .builder-back span{display:none}
+ .builder-app .builder-back{padding:6px 3px}
+ .builder-app .wizard-step-label{display:none}
+ .builder-app .wizard-strip{gap:1px;justify-content:center}
+ .builder-app .wizard-step{padding:4px 3px}
+ .builder-app .wizard-step .step-dot{width:26px;height:26px}
+ .builder-app .builder-utility-right{gap:6px}
+ .builder-app .cancel-btn{padding:7px 8px}
+ .builder-app .builder-columns{padding:7px;gap:0}
+ .builder-app .preview-top{flex-wrap:wrap;gap:5px}
+ .builder-app .preview-scroll{padding:10px}
+ .builder-app .preview-canvas{max-width:650px}
+ .builder-app .stage-scroll{padding:14px 16px 20px}
+}
+@media(max-width:600px){
+ .builder-app .builder-utility{height:52px;min-height:52px;padding:0 7px;gap:5px}
+ .builder-app .builder-identity{gap:5px}
+ .builder-app .builder-brand-full{display:none}
+ .builder-app .builder-brand-icon{display:block;width:32px;height:32px;object-fit:contain}
+ .builder-app .builder-toolbar-divider{display:none}
+ .builder-app .builder-back{padding:6px}
+ .builder-app .wizard-strip{height:100%;padding:0;gap:0;justify-content:center}
+ .builder-app .wizard-step{padding:5px 2px}
+ .builder-app .wizard-step .step-dot{width:24px;height:24px}
+ .builder-app .builder-utility-right{gap:4px}
+ .builder-app .cancel-btn{width:29px;height:31px;padding:0;justify-content:center}
+ .builder-app .cancel-btn span{display:none}
+ .builder-app .builder-mobile-switch{gap:1px;padding:2px}
+ .builder-app .builder-mobile-switch button{padding:6px 7px;font-size:10px}
+ .builder-app .stage-top{padding:14px 15px 10px}
+ .builder-app .stage-top h1,.builder-app .stage-top h2{font-size:25px}
+ .builder-app .group-headline{padding:10px 15px 8px}
+ .builder-app .group-headline h2{font-size:24px}
+ .builder-app .group-tabs{padding:7px 9px}
+ .builder-app .stage-scroll{padding:13px 14px 18px}
+ .builder-app .detail-scroll{padding:13px 14px 18px}
+ .builder-app .stage-footer{padding:8px 10px;min-height:53px}
+ .builder-app .preview-top{padding:8px 10px}
+ .builder-app .preview-bottom{padding:6px 9px}
+}
+@media(max-width:370px){
+ .builder-app .builder-brand-icon{width:26px;height:26px}
+ .builder-app .wizard-step .step-dot{width:22px;height:22px}
+ .builder-app .builder-mobile-switch button{padding:6px 5px}
+}
+
 </style>
