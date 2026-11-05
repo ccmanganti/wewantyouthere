@@ -14,13 +14,9 @@
         'ceremony_venue' => 'Alternative ceremony venue wording',
     ][$question->key] ?? $question->label;
     $familyField = in_array($question->key, ['bride_mother','bride_father','groom_mother','groom_father'], true);
-    // The wedding form places related short inputs together and gives
-    // important titles, venues and long-form messages room to breathe.
-    $wideField = $isLong || in_array($question->key, [
-        'event_title', 'venue_name', 'ceremony_address',
-        'reception_venue', 'reception_address', 'reception_time',
-        'contact_name', 'dress_code', 'color_motif',
-    ], true);
+    // The public builder uses the same presentation rules as all event
+    // types in customer and admin invitation forms.
+    $wideField = \App\Support\InvitationFormLayout::isWide($question);
 @endphp
 <div class="field {{ $wideField ? 'full field--wide' : 'field--half' }}" data-layout-key="{{ $question->key }}">
     <div class="field-heading">
