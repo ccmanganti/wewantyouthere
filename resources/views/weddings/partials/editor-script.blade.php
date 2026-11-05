@@ -408,9 +408,6 @@
         preview.querySelectorAll('#our-people, #people-art').forEach(function (section) {
             section.hidden = !selected('entourage') || !hasEntourage;
         });
-        app.querySelectorAll('.comparison-name').forEach(function (node) {
-            node.textContent = bride + ' & ' + groom;
-        });
         window.dispatchEvent(new Event('wwyt:preview-updated'));
     }
 
@@ -468,8 +465,6 @@
 
     function spotlightElement(target, message, moveToTarget) {
         if (!target) return;
-        const websiteTab = app.querySelector('[data-preview-format="website"]');
-        if (websiteTab && websiteTab.getAttribute('aria-selected') !== 'true') websiteTab.click();
         const parentSection = target.matches('section, [data-preview-section]')
             ? target : (target.closest('section, [data-preview-section]') || target);
         const previousSection = preview.querySelector('.wwyt-preview-section-active');
@@ -516,7 +511,7 @@
     }
 
     function spotlightQuestion(field, shouldScroll) {
-        if (!field) return;
+        if (!field || field.disabled) return;
         clearRemovedPreview();
         const key = field.dataset.question;
         const groupKey = field.closest('[data-question-group]')?.dataset.questionGroup
@@ -528,10 +523,14 @@
         const preferred = candidates.find(function (node) {
             return !!node.closest('.rbv-grand,.rbv-info,[data-preview-section],.wedding-section');
         });
-        const target = preferred || candidates[0] || groupPreviewTarget(groupKey);
+        const target = preferred || candidates[0] ||
+            (field.closest('[data-fine-tune-subsection]')?.dataset.previewTarget
+                ? preview.querySelector('#' + field.closest('[data-fine-tune-subsection]').dataset.previewTarget)
+                : groupPreviewTarget(groupKey));
+        if (!target || target.closest('[hidden]')) return;
         const fieldLabel = field.closest('.field')?.querySelector('label')?.textContent.trim()
             || key.replace(/_/g, ' ');
-        spotlightElement(target, 'Editing: ' + fieldLabel + ' · Click the invitation text to return here', shouldScroll);
+        spotlightElement(target, fieldLabel + ' in your invitation', shouldScroll);
     }
 
     function renderGroup() {
@@ -663,7 +662,7 @@
         });
         if (stage === 'details') renderGroup();
         if (stage === 'publish') renderReview();
-        document.getElementById('preview-comparison').classList.toggle('is-visible', stage === 'publish');
+
     }
 
     function goToStage(nextStage) {
@@ -748,8 +747,15 @@
     writeDraft();
 
     allQuestions.forEach(function (field) {
-        field.addEventListener('focus', function () { spotlightQuestion(field, false); });
-        field.addEventListener('click', function () { spotlightQuestion(field, false); });
+        // Only fine-tuning moves the preview to the exact field.
+        // Basic details remain stationary while the couple types.
+        field.addEventListener('focus', function () {
+            spotlightQuestion(field, stage === 'refine' && !!field.closest('[data-fine-tune-subsection]'));
+        });
+        field.addEventListener('click', function () {
+            if (stage === 'refine' && field.closest('[data-fine-tune-subsection]'))
+                spotlightQuestion(field, true);
+        });
         field.addEventListener('input', function () {
             if (field.dataset.question === 'bride_name' || field.dataset.question === 'groom_name') {
                 updateSuggestedSlug();
@@ -839,6 +845,8 @@
         suppressNextGroupPreviewScroll = true;
         goToStage(fineTune ? 'refine' : 'details');
         if (fineTune) fineTune.open = true;
+        const subScene = field.closest('[data-fine-tune-subsection]');
+        if (subScene) subScene.open = true;
         if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
         setMobileView('edit');
         if (field.hasAttribute('data-family-field')) {
@@ -1003,8 +1011,6 @@
         });
     });
     document.getElementById('review-open-preview')?.addEventListener('click', function () {
-        const websiteTab = app.querySelector('[data-preview-format="website"]');
-        if (websiteTab?.getAttribute('aria-selected') !== 'true') websiteTab?.click();
         setMobileView('preview');
         if (window.innerWidth > 850 && app.dataset.previewExpanded !== 'true') {
             document.getElementById('preview-expand')?.click();
@@ -1018,14 +1024,31 @@
         document.getElementById('refine-next')?.addEventListener('click', function () {
             if (validateAllGroups()) goToStage('photos');
         });
-        document.querySelectorAll('[data-refine-section]').forEach(function (button) {
-            button.addEventListener('click', function () {
-                const section = button.dataset.refineSection;
-                const destination = preview.querySelector('#' + section);
-                if (!destination || destination.hidden) return;
-                setMobileView('preview');
-                spotlightElement(destination, 'Reviewing: ' + button.textContent.trim(), true);
+        app.querySelectorAll('[data-fine-tune-subsection]').forEach(function (scene) {
+            scene.addEventListener('toggle', function () {
+                if (!scene.open || stage !== 'refine') return;
+                const target = preview.querySelector('#' + scene.dataset.previewTarget);
+                if (target && !target.closest('[hidden]')) {
+                    spotlightElement(target, 'Showing ' + scene.querySelector('summary')?.textContent.trim(), true);
+                }
             });
+        });
+        // Each fine-tune field offers an explicit Show action, especially
+        // useful on phones where the editor and preview occupy separate panes.
+        app.querySelectorAll('[data-fine-tune-subsection] [data-question]').forEach(function (field) {
+            const heading = field.closest('.field')?.querySelector('.field-heading');
+            if (!heading) return;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'field-preview-jump';
+            button.title = 'Show this item in the invitation';
+            button.innerHTML = '<i class="fa-solid fa-crosshairs" aria-hidden="true"></i> Show';
+            button.addEventListener('click', function () {
+                if (field.disabled) return;
+                setMobileView('preview');
+                spotlightQuestion(field, true);
+            });
+            heading.append(button);
         });
         document.getElementById('photos-back')?.addEventListener('click', function () {
             goToStage('refine');
@@ -1051,19 +1074,6 @@
             if (['refine','photos','publish'].includes(destination) && !validateAllGroups()) return;
             goToStage(destination);
             setMobileView('edit');
-        });
-    });
-
-    app.querySelectorAll('[data-preview-format]').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const format = button.dataset.previewFormat;
-            app.querySelectorAll('[data-preview-format]').forEach(function (tab) {
-                tab.setAttribute('aria-selected', tab === button ? 'true' : 'false');
-            });
-            ['website', 'paper', 'animated'].forEach(function (name) {
-                document.getElementById('preview-' + name).hidden = format !== name;
-            });
-            document.getElementById('preview-scroll').scrollTop = 0;
         });
     });
 
@@ -1096,6 +1106,21 @@
             const destination = target.getBoundingClientRect().top -
                 pane.getBoundingClientRect().top + pane.scrollTop - 15;
             pane.scrollTo({top: destination, behavior: 'smooth'});
+        });
+    });
+
+    // Photo placement is activated by the photo editor once the target is
+    // visible; use the same scroll calculation as fine-tune fields.
+    window.addEventListener('wwyt:photo-position', function (event) {
+        const slot = event.detail?.slot;
+        if (!slot) return;
+        const target = Array.from(preview.querySelectorAll('[data-photo-slot]')).find(function (node) {
+            return node.dataset.photoSlot === slot && !node.closest('[hidden]') && !node.closest('#rbv-intro');
+        });
+        if (!target) return;
+        setMobileView('preview');
+        window.requestAnimationFrame(function () {
+            spotlightElement(target, 'Photo placement highlighted', true);
         });
     });
 
