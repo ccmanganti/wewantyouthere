@@ -227,6 +227,17 @@ class WeddingBuilderController extends Controller
         // Persist the explicit opt-in; users may supply some names, or omit them
         // all without showing placeholder family cards on the published site.
         $answers['_show_parents'] = $request->boolean('show_parents') && (($template->settings['theme'] ?? '') === 'royal_burgundy');
+        if (($template->settings['theme'] ?? '') === 'royal_burgundy') {
+            // Legacy duplicated inputs are retained in old published records but
+            // never collected again by the simplified builder.
+            unset($answers['bride_full_name'], $answers['groom_full_name'],
+                $answers['bride_parents'], $answers['groom_parents']);
+            if (!$answers['_show_parents']) {
+                foreach (['bride_mother', 'bride_father', 'groom_mother', 'groom_father'] as $key) {
+                    unset($answers[$key]);
+                }
+            }
+        }
 
         $pending = [
             'template_id' => $template->id,
