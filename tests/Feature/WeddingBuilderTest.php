@@ -126,7 +126,9 @@ class WeddingBuilderTest extends TestCase
             ->assertSee('Choose sections')
             ->assertSee('Step 01')
             ->assertSee('Publish free invitation')
-            ->assertSee('Coming soon');
+            ->assertSee('Live preview')
+            ->assertDontSee('id="preview-comparison"', false)
+            ->assertDontSee('id="preview-paper"', false);
 
         $this->assertGuest();
     }
