@@ -763,7 +763,10 @@
     // Click any editable preview text to jump to its existing form control.
     // Input focus never scrolls the preview to a distant invitation section.
     function openEditorForPreviewText(target) {
-        const key = target.dataset.field;
+        let key = target.dataset.field;
+        if (key === 'ceremony_venue' && !String(fieldFor('ceremony_venue')?.value || '').trim()) {
+            key = 'venue_name';
+        }
         const field = fieldFor(key);
         if (!field || field.disabled) return false;
         const fineTune = field.closest('[data-fine-tune-group]');
