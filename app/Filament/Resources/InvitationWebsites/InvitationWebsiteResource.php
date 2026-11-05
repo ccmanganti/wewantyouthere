@@ -2,6 +2,7 @@
 namespace App\Filament\Resources\InvitationWebsites;
 use App\Models\InvitationWebsite;
 use App\Models\InvitationTemplate;
+use App\Support\InvitationFormLayout;
 use App\Filament\Resources\InvitationWebsites\Pages\ListInvitationWebsites;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -26,22 +27,18 @@ class InvitationWebsiteResource extends Resource {
  ...self::questionFields(),
  ]);}
  private static function questionFields(): array {
-  return [\Filament\Schemas\Components\Section::make('Event details')->schema(function(\Filament\Schemas\Components\Utilities\Get $get):array {
-   $template=InvitationTemplate::with('eventType.questions')->find($get('invitation_template_id'));
-   if(!$template)return [];
-   return $template->eventType->questions->where('is_enabled',true)->map(function($q){
-    $field=match($q->type){
-     'textarea'=>Textarea::make('answers.'.$q->key),
-     'date'=>TextInput::make('answers.'.$q->key)->type('date'),
-     'time'=>TextInput::make('answers.'.$q->key)->type('time'),
-     'number'=>TextInput::make('answers.'.$q->key)->numeric(),
-     'url'=>TextInput::make('answers.'.$q->key)->url(),
-     'email'=>TextInput::make('answers.'.$q->key)->email(),
-     default=>TextInput::make('answers.'.$q->key),
-    };
-    return $field->label($q->label)->required($q->is_required);
-   })->all();
-  })];
+  return [\Filament\Schemas\Components\Section::make('Event details')
+      ->description('The form adapts to the event type and available screen width.')
+      ->columns(InvitationFormLayout::columns())
+      ->schema(function(\Filament\Schemas\Components\Utilities\Get $get):array {
+        $template = InvitationTemplate::with('eventType.questions')->find($get('invitation_template_id'));
+        if (!$template) return [];
+
+        return InvitationFormLayout::orderedQuestions(
+            $template->eventType->questions->where('is_enabled', true),
+            $template->eventType->slug
+        )->map(fn ($question) => InvitationFormLayout::field($question))->all();
+      })];
  }
  public static function table(Table $table): Table{return $table->columns([
  TextColumn::make('name')->searchable(),
