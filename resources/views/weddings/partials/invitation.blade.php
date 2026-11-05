@@ -91,6 +91,42 @@
         </div>
     </section>
 
+    @if(($sections['maps'] ?? false) || ($isPreview && ($premiumAccess ?? false)))
+    <section class="invite-section invite-map" id="wedding-maps" data-preview-section="reception" data-premium-section="maps" @if(!($sections['maps'] ?? false)) hidden @endif>
+      <div class="invite-centered-section">
+        <span class="invite-eyebrow">FIND YOUR WAY</span>
+        <h2>Church and reception locations</h2>
+        <div class="invite-map-grid">
+        @foreach([
+            ['Ceremony / Church', $answers['ceremony_address'] ?? $answers['venue_address'] ?? '', $answers['ceremony_venue'] ?? $answers['venue_name'] ?? 'Church'],
+            ['Reception', $answers['reception_address'] ?? '', $answers['reception_venue'] ?? 'Reception']
+        ] as [$label,$address,$venue])
+          <div class="invite-map-card">
+            <h3>{{ $label }}</h3><strong>{{ $venue }}</strong>
+            <p>{{ $address }}</p>
+            @if(filled($address))
+              <iframe loading="lazy" title="{{ $label }} map" referrerpolicy="no-referrer-when-downgrade"
+                  src="https://maps.google.com/maps?q={{ rawurlencode($address) }}&amp;z=14&amp;output=embed"></iframe>
+              <a href="https://www.google.com/maps/search/?api=1&amp;query={{ rawurlencode($address) }}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+            @endif
+          </div>
+        @endforeach
+        </div>
+      </div>
+    </section>
+    @endif
+
+    @if(($sections['ceremony_details'] ?? false) || ($isPreview && ($premiumAccess ?? false)))
+    <section class="invite-section invite-ceremony-details" id="wedding-ceremony-details" data-preview-section="ceremony" data-premium-section="ceremony_details" @if(!($sections['ceremony_details'] ?? false)) hidden @endif>
+      <div class="invite-centered-section">
+        <span class="invite-eyebrow">THE CEREMONY</span>
+        <h2>Our ceremony</h2>
+        <p data-field="ceremony_type">{{ $display('ceremony_type','') }}</p>
+        <p data-field="ceremony_notes" class="pre-line">{{ $display('ceremony_notes','') }}</p>
+      </div>
+    </section>
+    @endif
+
     <section class="invite-section invite-reception invite-tinted" id="wedding-reception" data-preview-section="reception" @if(!($sections['reception'] ?? true)) hidden @endif>
         <div class="invite-section-inner">
             <div class="invite-section-heading">
@@ -112,6 +148,7 @@
         </div>
     </section>
 
+    @if(($sections['entourage'] ?? false) || $isPreview)
     <section class="invite-section invite-entourage" id="wedding-entourage" data-preview-section="entourage" @if(!($sections['entourage'] ?? true)) hidden @endif>
         <div class="invite-centered-section">
             <span class="invite-eyebrow">THE PEOPLE BY OUR SIDE</span>
@@ -142,6 +179,9 @@
         </div>
     </section>
 
+    @endif
+
+    @if(($sections['program'] ?? false) || $isPreview)
     <section class="invite-section invite-program invite-tinted" id="wedding-program" data-preview-section="program" @if(!($sections['program'] ?? true)) hidden @endif>
         <div class="invite-centered-section">
             <span class="invite-eyebrow">A DAY TO REMEMBER</span>
@@ -156,6 +196,9 @@
         </div>
     </section>
 
+    @endif
+
+    @if(($sections['guests'] ?? false) || $isPreview)
     <section class="invite-section invite-guests" id="wedding-guests" data-preview-section="guests" @if(!($sections['guests'] ?? true)) hidden @endif>
         <div class="invite-centered-section">
             <span class="invite-eyebrow">WE WANT YOU THERE</span>
@@ -165,12 +208,36 @@
                 <span>Kindly let us know by</span>
                 <strong data-field="rsvp_deadline" data-fallback="our RSVP deadline">{{ $display('rsvp_deadline', 'our RSVP deadline') }}</strong>
             </div>
-            <p class="invite-muted">Online RSVP collection is an upcoming feature. Please contact the couple directly for now.</p>
+            @if(session('rsvp_success') && isset($website))
+                <p class="invite-muted" role="status">{{ session('rsvp_success') }}</p>
+            @elseif($isPreview)
+                <div class="invite-rsvp-form"><p class="invite-muted">Guest RSVP form preview — available with premium.</p></div>
+            @elseif(isset($website) && $website->status === 'published')
+                <form action="{{ route('wedding.rsvp.store', $website->slug) }}" method="POST" class="invite-rsvp-form">
+                    @csrf
+                    <label>Your full name *<input type="text" name="guest_name" maxlength="120" minlength="2" required></label>
+                    <fieldset><legend>Will you attend? *</legend>
+                        <label><input type="radio" name="attendance" value="attending" required> Joyfully accepts</label>
+                        <label><input type="radio" name="attendance" value="declined" required> Regretfully declines</label>
+                    </fieldset>
+                    <label>Number attending *<select name="party_size" required>
+                        @for($i=1;$i<=max(1,min(12,(int)($answers['guest_limit'] ?? 3)));$i++)
+                            <option value="{{ $i }}">{{ $i }} {{ $i===1?'guest':'guests' }}</option>
+                        @endfor
+                    </select></label>
+                    <label>A message for the couple (optional)<textarea name="message" rows="2" maxlength="500"></textarea></label>
+                    <label class="invite-honeypot" aria-hidden="true">Leave empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+                    <button type="submit" class="btn">Send RSVP</button>
+                    @if($errors->any())<p role="alert">{{ $errors->first() }}</p>@endif
+                </form>
+            @endif
             <div class="invite-more-details">
                 @include('weddings.partials.extras', ['group' => 'guests'])
             </div>
         </div>
     </section>
+
+    @endif
 
     <section class="invite-section invite-details invite-tinted" id="wedding-details" data-preview-section="details" @if(!($sections['details'] ?? true)) hidden @endif>
         <div class="invite-centered-section">
