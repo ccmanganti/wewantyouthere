@@ -1,5 +1,5 @@
 {{-- This intro never opens automatically. The guest clicks OPEN INVITATION. --}}
-<div class="rbv-intro" id="rbv-intro" data-intro-click-only="true" @if($isPreview) hidden @endif
+<div class="rbv-intro" id="rbv-intro" data-intro-click-only="true" @if($isPreview || ($isPublishedSite && (session('rsvp_success') || $errors->any()))) hidden @endif
      role="dialog" aria-modal="true" aria-label="Your wedding invitation">
     <div class="rbv-intro-stage">
         <span class="rbv-intro-eyebrow">SOMETHING BEAUTIFUL AWAITS</span>
