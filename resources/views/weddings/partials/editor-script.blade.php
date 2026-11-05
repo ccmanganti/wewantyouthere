@@ -167,7 +167,8 @@
         advancedOpen[groupKey] = expanded;
         if (button) {
             button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-            button.textContent = expanded ? '− Hide extra details' : '＋ Add more details';
+            const total = container.querySelectorAll('[data-advanced-fields] [data-question]').length;
+            button.textContent = expanded ? '− Hide optional details' : '＋ More optional details (' + total + ')';
         }
     }
 
@@ -414,7 +415,7 @@
         const target = preferred || candidates[0] || groupPreviewTarget(groupKey);
         const fieldLabel = field.closest('.field')?.querySelector('label')?.textContent.trim()
             || key.replace(/_/g, ' ');
-        spotlightElement(target, 'Editing: ' + fieldLabel + ' · Highlighted in preview', shouldScroll);
+        spotlightElement(target, 'Editing: ' + fieldLabel + ' · Click the invitation text to return here', shouldScroll);
     }
 
     function renderGroup() {
@@ -560,8 +561,8 @@
     writeDraft();
 
     allQuestions.forEach(function (field) {
-        field.addEventListener('focus', function () { spotlightQuestion(field, true); });
-        field.addEventListener('click', function () { spotlightQuestion(field, true); });
+        field.addEventListener('focus', function () { spotlightQuestion(field, false); });
+        field.addEventListener('click', function () { spotlightQuestion(field, false); });
         field.addEventListener('input', function () {
             if (field.dataset.question === 'bride_name' || field.dataset.question === 'groom_name') {
                 updateSuggestedSlug();
@@ -576,6 +577,122 @@
             writeDraft();
         });
     });
+
+    // Offline-content / online-database wording picker: one suggestion at a
+    // time, editable as normal form text, with a one-step Undo per field.
+    // This deliberately does not rely on AI subscriptions or external APIs.
+    const suggestionHistory = new Map();
+    const previousSuggestionIds = new Map();
+    app.querySelectorAll('[data-generate-field]').forEach(function (button) {
+        button.addEventListener('click', async function () {
+            const key = button.dataset.generateField;
+            const field = fieldFor(key);
+            const feedback = app.querySelector('[data-generate-feedback="' + key + '"]');
+            const undo = app.querySelector('[data-undo-generated="' + key + '"]');
+            if (!field || field.disabled) return;
+            const search = new URLSearchParams({field:key});
+            const last = previousSuggestionIds.get(key);
+            if (last) search.set('exclude', String(last));
+            button.disabled = true;
+            button.textContent = 'Generating…';
+            if (feedback) feedback.textContent = 'Choosing a message from our collection…';
+            try {
+                const response = await fetch(app.dataset.generateUrl + '?' + search.toString(), {
+                    credentials:'same-origin', headers:{Accept:'application/json'}
+                });
+                const data = await response.json();
+                if (!response.ok || typeof data.content !== 'string') {
+                    throw new Error(data.message || 'Could not get a suggestion right now.');
+                }
+                suggestionHistory.set(key, field.value);
+                previousSuggestionIds.set(key, data.id);
+                field.value = data.content;
+                field.dispatchEvent(new Event('input', {bubbles:true}));
+                if (undo) undo.hidden = false;
+                if (feedback) feedback.textContent = 'Suggestion added. Edit it freely, or select Generate again.';
+                spotlightQuestion(field, false);
+            } catch (error) {
+                if (feedback) feedback.textContent = error.message || 'Unable to load a suggestion. Please try again.';
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Generate';
+            }
+        });
+    });
+    app.querySelectorAll('[data-undo-generated]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const key = button.dataset.undoGenerated;
+            const field = fieldFor(key);
+            if (!field || !suggestionHistory.has(key)) return;
+            field.value = suggestionHistory.get(key);
+            field.dispatchEvent(new Event('input', {bubbles:true}));
+            suggestionHistory.delete(key);
+            button.hidden = true;
+            const feedback = app.querySelector('[data-generate-feedback="' + key + '"]');
+            if (feedback) feedback.textContent = 'Previous wording restored.';
+        });
+    });
+
+    // Click any editable preview text to jump to its existing form control.
+    // Input focus never scrolls the preview to a distant invitation section.
+    function openEditorForPreviewText(target) {
+        const key = target.dataset.field;
+        const field = fieldFor(key);
+        if (!field || field.disabled) return false;
+        const group = field.closest('[data-question-group]')?.dataset.questionGroup;
+        if (!group || !selected(group)) return false;
+        currentGroup = group;
+        goToStage('details');
+        if (field.closest('[data-advanced-fields]')) revealAdvanced(group, true);
+        if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
+        setMobileView('edit');
+        const pane = document.getElementById('detail-scroll');
+        const paneBounds = pane.getBoundingClientRect();
+        const fieldBounds = field.getBoundingClientRect();
+        pane.scrollTop += fieldBounds.top - paneBounds.top - Math.max(18, pane.clientHeight * .18);
+        try { field.focus({preventScroll:true}); } catch (_) { field.focus(); }
+        spotlightElement(target, 'Editing ' + (field.closest('.field')?.querySelector('label')?.textContent.trim() || key), false);
+        return true;
+    }
+
+    preview.querySelectorAll('[data-field]').forEach(function (node) {
+        if (node.closest('#rbv-intro') || !fieldFor(node.dataset.field)) return;
+        node.classList.add('wwyt-preview-editable');
+        node.title = 'Click to edit this text';
+        if (!node.closest('button, a, input, select, textarea')) {
+            node.setAttribute('tabindex', '0');
+            node.setAttribute('role', 'button');
+            node.setAttribute('aria-label', 'Edit ' + (node.textContent.trim().slice(0, 70) || node.dataset.field));
+            node.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                openEditorForPreviewText(node);
+            });
+        }
+    });
+
+    preview.addEventListener('click', function (event) {
+        const textNode = event.target.closest('[data-field]');
+        if (textNode && preview.contains(textNode) && !textNode.closest('#rbv-intro')
+            && openEditorForPreviewText(textNode)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        if (app.dataset.photosEnabled !== '1') return;
+        const photoNode = event.target.closest('[data-photo-slot]');
+        if (!photoNode || !preview.contains(photoNode)
+            || event.target.closest('a,button,input,textarea,select,label')) return;
+        const card = Array.from(app.querySelectorAll('[data-photo-card]'))
+            .find(function (node) { return node.dataset.photoCard === photoNode.dataset.photoSlot; });
+        if (!card) return;
+        event.preventDefault();
+        goToStage('photos');
+        if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
+        setMobileView('edit');
+        card.scrollIntoView({block:'nearest', behavior:'auto'});
+        card.querySelector('[data-photo-locate]')?.click();
+    }, true);
 
     slugInput.addEventListener('input', function () {
         // Keep links simple and copy-friendly while allowing the visitor to customize.
