@@ -135,6 +135,11 @@ class InvitationResource extends Resource
                             $data['status'],
                         );
                     }),
+                Action::make('manageRsvps')
+                    ->label('Guest RSVPs')
+                    ->icon('heroicon-s-users')
+                    ->url(fn (InvitationWebsite $record): string => route('wedding.rsvps.manage', $record))
+                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'),
                 Action::make('managePhotos')
                     ->label('Manage photos')
                     ->icon('heroicon-s-photo')
