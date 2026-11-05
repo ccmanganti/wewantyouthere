@@ -14,8 +14,15 @@
         'ceremony_venue' => 'Alternative ceremony venue wording',
     ][$question->key] ?? $question->label;
     $familyField = in_array($question->key, ['bride_mother','bride_father','groom_mother','groom_father'], true);
+    // The wedding form places related short inputs together and gives
+    // important titles, venues and long-form messages room to breathe.
+    $wideField = $isLong || in_array($question->key, [
+        'event_title', 'venue_name', 'ceremony_address',
+        'reception_venue', 'reception_address', 'reception_time',
+        'contact_name', 'dress_code', 'color_motif',
+    ], true);
 @endphp
-<div class="field {{ $isLong ? 'full' : '' }}">
+<div class="field {{ $wideField ? 'full field--wide' : 'field--half' }}" data-layout-key="{{ $question->key }}">
     <div class="field-heading">
         <label class="field-label" for="question-{{ $question->id }}">
             {{ $displayLabel }}
