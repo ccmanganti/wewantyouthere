@@ -6,8 +6,18 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\WeddingPhotoController;
 use App\Http\Controllers\WeddingRsvpController;
+use App\Http\Controllers\InvitationPremiumController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/upgrade/{slug}', [InvitationPremiumController::class, 'show'])->name('premium.show');
+Route::post('/webhooks/stripe/wwyt', [InvitationPremiumController::class, 'webhook'])
+    ->middleware('throttle:180,1')->name('premium.webhook');
+Route::middleware('auth')->group(function () {
+    Route::post('/upgrade/{slug}/checkout', [InvitationPremiumController::class, 'checkout'])
+        ->middleware('throttle:12,1')->name('premium.checkout');
+    Route::get('/upgrade/{slug}/success', [InvitationPremiumController::class, 'success'])
+        ->name('premium.success');
+});
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
 Route::get('/wedding-invitation-templates', [MarketingController::class, 'templates'])->name('marketing.templates');
 Route::get('/wedding-invitation-templates/{slug}', [MarketingController::class, 'templateDetail'])
