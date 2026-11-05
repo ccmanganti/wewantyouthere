@@ -55,6 +55,7 @@
     </style>
     <script>document.documentElement.classList.add('js-motion')</script>
     @include('partials.site-brand-overrides')
+    @include('partials.scrollbar-theme')
     @stack('styles')
 </head>
 <body class="@yield('body_class')">
