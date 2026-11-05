@@ -76,6 +76,7 @@
         ? (bool) $answers['_show_parents']
         : ($familyHasNewNames || $familyHasLegacyNames);
 @endphp
+@if($isPreview || ($familyOptIn && ($familyHasNewNames || $familyHasLegacyNames)))
 <section class="rbv-info rbv-family-names" id="family-names" data-preview-section="couple" data-parent-section
     @if(!$familyOptIn || (!$familyHasNewNames && !$familyHasLegacyNames)) hidden @endif>
     <div class="rbv-inner">
@@ -104,6 +105,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- 05 GRAND: antique doorway art and editable portrait overlay --}}
 <section class="rbv-grand rbv-doors" id="the-doors" data-preview-section="couple">
