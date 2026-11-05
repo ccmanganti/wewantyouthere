@@ -274,4 +274,14 @@ filter:blur(9px)}
 .mkt .rb-catalogue-names{font:italic 22px Georgia,serif;color:#691d27;margin:12px 0 7px}
 .mkt .rb-catalogue-names span{font-size:12px;padding:0 4px}
 .mkt .rb-catalogue-poster>small{font:800 8px 'DM Sans',sans-serif;letter-spacing:.17em;color:#996a4d}
+
+/* Real licensed sample photographs: identity-led preview instead of empty art. */
+.mkt .mkt-hero-copy h1{font-size:clamp(43px,5.8vw,84px);line-height:.96;overflow-wrap:normal}
+.mkt .mkt-hero-couple-photo{display:block;position:relative;z-index:2;max-width:100%;width:min(100%,275px);height:150px;object-fit:cover;object-position:center;border:5px solid #fff9ed;box-shadow:0 9px 18px #261b2235;border-radius:3px;margin:12px auto}
+.mkt .mkt-mock-invite .mini-names{font-size:clamp(35px,4vw,55px);margin:14px 0}
+.mkt .mkt-template-cover .mini-poster{padding:16px}
+.mkt .mkt-template-cover .mini-poster .couple{font-size:clamp(26px,3vw,36px);margin:9px 0 12px}
+.mkt .mkt-template-couple-photo{display:block;position:relative;z-index:1;width:100%;max-width:240px;height:125px;object-fit:cover;object-position:center;border:3px solid #fff9f0;box-shadow:0 8px 20px #2f18222a;margin:0 auto 13px}
+.mkt .rb-catalogue-poster img{height:154px;object-position:center}
+@media(max-width:620px){.mkt .mkt-hero-copy h1{font-size:clamp(40px,9.2vw,57px)}.mkt .mkt-hero-couple-photo{height:125px;width:230px}.mkt .mkt-template-couple-photo{height:110px}}
 </style>
