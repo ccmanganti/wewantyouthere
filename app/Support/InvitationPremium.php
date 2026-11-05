@@ -41,7 +41,7 @@ class InvitationPremium
     public static function filterSections(array $sections, bool $hasAccess): array
     {
         if ($hasAccess) return $sections;
-        foreach (['entourage', 'program', 'guests', 'video'] as $key) {
+        foreach (['entourage', 'program', 'guests', 'video', 'maps', 'ceremony_details'] as $key) {
             $sections[$key] = false;
         }
         return $sections;
