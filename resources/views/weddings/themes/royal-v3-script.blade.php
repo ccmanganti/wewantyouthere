@@ -161,7 +161,7 @@
             form.addEventListener('submit',event=>{
                 event.preventDefault();
                 if(!form.reportValidity())return;
-                const name=form.querySelector('[name="guest_name"]')?.value.trim()||'Guest';
+                const name=form.querySelector('[name=guest_name]')?.value.trim()||'Guest';
                 if(!attendance()){
                     if(feedback)feedback.textContent='Please select whether you can attend.';
                     return;
