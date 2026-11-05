@@ -436,4 +436,58 @@ body.builder-page > main{min-height:0}
  .builder-app .field-generate-btn,.builder-app .field-undo-btn{font-size:10px;padding:5px 6px}
 }
 
+
+/* A calm basics-first questionnaire, with opt-in family information. */
+.builder-app .basic-intro{font-size:11px;line-height:1.6;color:#7d6d69;margin:0 0 16px}
+.builder-app .family-option{padding:0 0 4px;margin:4px 0 0}
+.builder-app .family-toggle{display:flex;align-items:center;gap:12px;padding:14px 15px;
+    border-radius:10px;border:1px solid #e5d1c7;background:#fff8f2;cursor:pointer}
+.builder-app .family-toggle input{width:18px;height:18px;flex:none;accent-color:#8a2331}
+.builder-app .family-toggle strong{display:block;font-size:12px;color:#4d2830}
+.builder-app .family-toggle small{display:block;font-size:11px;color:#8a7371;line-height:1.5;margin-top:3px}
+.builder-app .family-fields{padding:14px 5px 3px}
+.builder-app .family-fields-intro{font-size:11px;color:#87736f;margin:0 0 12px}
+.builder-app .family-fields .question-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
+.builder-app .family-option .field{min-width:0}
+.builder-app .fine-tune-categories{display:grid;gap:9px;margin:14px 0 18px}
+.builder-app .fine-tune-category{border:1px solid #e4d3cd;border-radius:10px;background:#fffdf9}
+.builder-app .fine-tune-category summary{display:flex;align-items:center;gap:12px;
+    cursor:pointer;padding:14px 13px;color:#4b292c;list-style:none}
+.builder-app .fine-tune-category summary::-webkit-details-marker{display:none}
+.builder-app .fine-tune-category summary i{margin-left:auto;color:#8b4a50;transition:transform .2s}
+.builder-app .fine-tune-category[open] summary i{transform:rotate(180deg)}
+.builder-app .fine-tune-category[open] summary{border-bottom:1px solid #ebdcd7}
+.builder-app .fine-tune-category-title{font-size:12px;font-weight:800}
+.builder-app .fine-tune-category-count{font-size:10px;color:#8c7475}
+.builder-app .fine-tune-category-description{font-size:11px;color:#887773;line-height:1.65;margin:12px 15px}
+.builder-app .fine-tune-question-grid{padding:0 15px 16px}
+.builder-app .rb-refine-explore{margin:16px 0;padding:0 14px;border:1px solid #e3d0c7;border-radius:10px}
+.builder-app .rb-refine-explore>summary{cursor:pointer;padding:14px 1px;color:#71313a;font:700 12px 'DM Sans',sans-serif}
+.builder-app .rb-refine-explore .rb-refine-grid{margin-top:0}
+.builder-app .final-review-summary{margin:0 0 16px;border:1px solid #e8d9d1;border-radius:12px;background:#fffdf9;padding:15px}
+.builder-app .final-review-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.builder-app .final-review-heading h3{font-size:15px;line-height:1.3;margin:0;color:#4e242b;font-family:'DM Sans',sans-serif;font-weight:800}
+.builder-app .review-edit-link{font-size:11px;color:#852d3d;font-weight:800;background:transparent;border:none;text-decoration:underline;text-underline-offset:3px}
+.builder-app .final-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.builder-app .final-review-row{display:flex;flex-direction:column;gap:3px;padding:10px 11px;background:#f8f1ec;border-radius:7px;min-width:0}
+.builder-app .final-review-row>span{color:#866b6d;font-size:10px}
+.builder-app .final-review-row>strong{color:#382529;font-size:12px;overflow-wrap:anywhere}
+.builder-app .review-message-list{display:grid;gap:8px}
+.builder-app .review-message-entry{background:#f9f3ee;border-radius:8px;padding:11px 12px}
+.builder-app .review-message-entry strong{display:block;font-size:10px;color:#8b323e;margin-bottom:4px}
+.builder-app .review-message-entry p{font-size:12px;color:#4f4341;line-height:1.55;white-space:pre-wrap;margin:0}
+.builder-app .review-empty{font-size:11px;color:#836f6b}
+.builder-app .final-review-preview{padding:15px;background:#f4e8df;border:1px solid #e1c7b9;border-radius:10px;margin-bottom:16px}
+.builder-app .final-review-preview>strong{font-size:13px;color:#642b33}
+.builder-app .final-review-preview p{font-size:11px;line-height:1.7;color:#775b59;margin:7px 0 10px}
+.builder-app .review-preview-button{border:1px solid #a44753;border-radius:8px;color:#8f2535;background:#fffcf8;padding:9px 12px;font-size:11px;font-weight:800}
+.builder-app .review-preview-button:hover{background:#f8deda}
+.builder-app .review-plan-info{margin:10px 0 14px}
+.builder-app .review-plan-info>summary{cursor:pointer;color:#7e4149;font:700 11px 'DM Sans',sans-serif;padding:9px 0}
+.builder-app .review-plan-info .plan-grid{margin:10px 0}
+@media(max-width:560px){
+ .builder-app .family-fields .question-grid,.builder-app .final-review-grid{grid-template-columns:1fr}
+ .builder-app .fine-tune-question-grid{padding:0 11px 12px}
+}
+
 </style>
