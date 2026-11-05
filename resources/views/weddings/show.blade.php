@@ -60,6 +60,7 @@
         'questions' => $questions,
         'isPreview' => false,
         'template' => $template,
+        'website' => $website,
         'photoUrls' => $photoUrls ?? [],
     ])
 </div>
