@@ -529,4 +529,24 @@ body.builder-page > main{min-height:0}
     margin-top:10px;
 }
 
+
+/* Premium features are visible, clearly locked, and never appear selectable
+   until the account has a verified purchase. */
+.builder-app .premium-locked-card{cursor:pointer;border:1px solid #bda088;background:#f9f2ea;position:relative}
+.builder-app .premium-locked-card:hover,.builder-app .premium-locked-card:focus-visible{border-color:#863244;box-shadow:0 0 0 3px #86324418;outline-offset:3px}
+.builder-app .premium-locked-card input[type=checkbox]{pointer-events:none}
+.builder-app .premium-feature-tag{display:inline-flex;align-items:center;gap:6px;font:800 10px 'DM Sans',sans-serif;color:#8a2637;margin-top:9px}
+.builder-app .premium-selector-note{font:500 11px/1.6 'DM Sans',sans-serif;color:#745d59;margin:14px 0 0}
+.premium-unlock-dialog{border:1px solid #ddb9ae;border-radius:18px;padding:30px;width:min(440px,calc(100vw - 32px));color:#302326;background:#fffaf4;box-shadow:0 26px 95px #1806098a;max-height:90dvh;overflow-y:auto;text-align:center}
+.premium-unlock-dialog::backdrop{background:#170809a8;backdrop-filter:blur(5px)}
+.premium-modal-close{position:absolute;top:11px;right:12px;color:#683441;background:transparent;border:0;padding:9px}
+.premium-dialog-icon{margin:8px auto 18px;width:52px;height:52px;display:grid;place-items:center;background:#f4e0d3;color:#762a38;border-radius:50%;font-size:22px}
+.premium-dialog-overline{color:#a36e5a;font:800 10px 'DM Sans',sans-serif;letter-spacing:.16em}
+.premium-unlock-dialog h2{color:#341a20;font:33px/1.15 'DM Serif Display',serif;margin:10px 0}
+.premium-unlock-dialog p{font:13px/1.7 'DM Sans',sans-serif;color:#6a5852}
+.premium-dialog-price{font:36px 'DM Serif Display',Georgia,serif;color:#792638;margin:16px 0}
+.premium-dialog-price small{display:block;font:11px 'DM Sans',sans-serif;color:#90746b}
+.premium-dialog-main{display:flex;align-items:center;justify-content:center;gap:12px;background:#850814;color:#fff;text-decoration:none;padding:13px;border-radius:9px;font:800 12px 'DM Sans',sans-serif}
+.premium-dialog-alt,.premium-dialog-skip{display:block;width:100%;font:700 12px 'DM Sans',sans-serif;padding:12px;color:#712b3b;text-align:center}
+.premium-dialog-skip{background:transparent;border:0;text-decoration:underline;text-underline-offset:3px}
 </style>
