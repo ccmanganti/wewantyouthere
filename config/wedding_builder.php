@@ -120,6 +120,16 @@ return [
                 'invitation_only_note' => ['Invitation-only reminder', 'textarea', false, ''],
             ],
         ],
+        'video' => [
+            'title' => 'Video message',
+            'description' => 'Add a teaser, prenup film, or a heartfelt message for guests.',
+            'visible' => true, 'hideable' => true,
+            'questions' => [
+                'video_embed_url' => ['YouTube or Vimeo video link', 'url', false, 'https://www.youtube.com/watch?v=...'],
+                'video_heading' => ['Video section heading', 'text', false, 'A message from us'],
+                'video_message' => ['Short video description', 'textarea', false, 'A little glimpse into our story.'],
+            ],
+        ],
         'details' => [
             'title' => 'Dress code, gifts & FAQs',
             'description' => 'Finish with the details your guests will appreciate.',
