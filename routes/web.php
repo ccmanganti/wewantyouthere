@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('/i/{slug}/photos/{slot}', [WeddingPhotoController::class, 'publicPhoto'])
     ->name('wedding.photos.site');
+Route::get('/templates/wedding/{slug}/generate-message', [WeddingBuilderController::class, 'generateMessage'])
+    ->middleware('throttle:45,1')->name('wedding.messages.generate');
 Route::get('/templates/wedding/{slug}', [WeddingBuilderController::class, 'editor'])->name('wedding.editor');
 Route::post('/templates/wedding/{slug}/cancel', [WeddingBuilderController::class, 'cancel'])->name('wedding.cancel');
 Route::post('/templates/wedding/{slug}/publish', [WeddingBuilderController::class, 'publish'])
