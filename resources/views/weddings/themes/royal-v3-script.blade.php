@@ -33,8 +33,7 @@
         finishTimer=window.setTimeout(dismiss,2250);
     }
     intro?.querySelector('[data-rbv-open]')?.addEventListener('click',open);
-    intro?.querySelector('[data-rbv-skip]')?.addEventListener('click',dismiss);
-    // Optional editor-only preview; no replay button appears on guest websites.
+    // Builder-only envelope preview; no control is shown on the guest page.
     document.getElementById('preview-envelope-intro')?.addEventListener('click',()=>{
         if(!intro) return;
         const websiteTab=builder?.querySelector('[data-preview-format="website"]');
