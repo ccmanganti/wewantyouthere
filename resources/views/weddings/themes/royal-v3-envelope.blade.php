@@ -10,13 +10,13 @@
             {{-- Letter art used to contain preprinted words, causing duplicate,
                  overlapping text. The landscape paper below is fully editable. --}}
             <span class="rbv-letter" data-rbv-landscape-letter="true">
-                <span class="rbv-letter-photo">
+                <span class="rbv-letter-photo" data-envelope-photo>
                     @if($image('hero','couple.webp','grand-doors.webp'))
                         <img src="{{ $image('hero','couple.webp','grand-doors.webp') }}"
-                             alt="" loading="eager">
-                    @else
-                        <span class="rbv-letter-monogram" aria-hidden="true">♥</span>
+                             data-envelope-hero-image alt="" loading="eager">
                     @endif
+                    <span class="rbv-letter-monogram" data-envelope-monogram aria-hidden="true"
+                        @if($image('hero','couple.webp','grand-doors.webp')) hidden @endif>♥</span>
                 </span>
                 <span class="rbv-letter-copy">
                     <small>THE WEDDING OF</small>
