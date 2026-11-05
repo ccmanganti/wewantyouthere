@@ -10,8 +10,8 @@ return [
             'description' => 'Start with the names and the story you want to tell.',
             'visible' => true, 'hideable' => false,
             'questions' => [
-                'bride_name' => ['Bride / Partner 1', 'text', true, 'e.g. Andrea'],
-                'groom_name' => ['Groom / Partner 2', 'text', true, 'e.g. Miguel'],
+                'bride_name' => ["Bride's name", 'text', true, 'e.g. Andrea'],
+                'groom_name' => ["Groom's name", 'text', true, 'e.g. Miguel'],
                 'bride_full_name' => ['Partner 1 full name', 'text', false, ''],
                 'groom_full_name' => ['Partner 2 full name', 'text', false, ''],
                 'event_title' => ['Invitation title', 'text', true, 'The Wedding of Andrea & Miguel'],
@@ -21,6 +21,10 @@ return [
                 'hero_quote' => ['Favorite quote or verse', 'textarea', false, ''],
                 'bride_parents' => ['Partner 1 parents', 'textarea', false, 'One name per line'],
                 'groom_parents' => ['Partner 2 parents', 'textarea', false, 'One name per line'],
+                'bride_mother' => ["Bride's mother", 'text', false, 'Optional'],
+                'bride_father' => ["Bride's father", 'text', false, 'Optional'],
+                'groom_mother' => ["Groom's mother", 'text', false, 'Optional'],
+                'groom_father' => ["Groom's father", 'text', false, 'Optional'],
             ],
         ],
         'ceremony' => [
