@@ -7,6 +7,7 @@
         @if($isPreview)<button type="button" class="rbv-photo-edit" data-photo-edit="hero"><i class="fa-solid fa-camera"></i> Cover photograph</button>@endif
         <figcaption data-field="cover_tagline">{{ $copy('cover_tagline','ONE LOVE. ONE PROMISE. ONE FOREVER.') }}</figcaption>
     </figure>
+    <p class="rbv-event-title" data-field="event_title">{{ $personal('event_title','A celebration of our wedding') }}</p>
     <p class="rbv-names"><span data-field="bride_name">{{ $personal('bride_name','Amelia') }}</span> <b>♥</b> <span data-field="groom_name">{{ $personal('groom_name','Gabriel') }}</span></p>
     <p class="rbv-date-text" data-field="event_date">{{ $dateText }}</p>
     <img class="rbv-botanical rbv-small-botanical" src="{{ $art('botanical.webp','botanical-engraving.webp') }}" alt="" loading="lazy">
