@@ -47,10 +47,14 @@ class GuestRsvpTest extends TestCase
             ->assertSee('name="guest_name"', false)
             ->assertSee('name="attendance"', false)
             ->assertSee('name="party_size"', false)
-            ->assertSee('OPEN INVITATION')
+            ->assertSee('aria-label="Open the wedding invitation"', false)
+            ->assertSee('data-rbv-open', false)
+            ->assertDontSee('Skip introduction')
+            ->assertDontSee('OPEN INVITATION')
             ->assertSee('data-intro-click-only="true"', false)
             ->assertDontSee('device-option')
-            ->assertDontSee('Replay envelope');
+            ->assertDontSee('Replay envelope')
+            ->assertDontSee('data-rbv-skip');
     }
 
     public function test_rsvp_submission_is_stored_and_owner_can_read_it(): void
