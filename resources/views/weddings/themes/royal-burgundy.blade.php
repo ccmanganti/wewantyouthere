@@ -10,7 +10,11 @@
     $personal = fn (string $key, string $fallback = ''): string => $display($key, $fallback);
     $art = function (string $file, string $fallback) {
         $path = 'wedding/royal-burgundy-v3/assets/' . $file;
-        return asset(is_file(public_path($path)) ? $path : 'wedding/royal-burgundy/' . $fallback);
+        // On Hostinger, the public_html web root is outside Laravel's public/
+        // directory. Check both locations so File Manager uploads are detected.
+        $isUploaded = is_file(public_path($path))
+            || is_file(base_path('../../public_html/' . $path));
+        return asset($isUploaded ? $path : 'wedding/royal-burgundy/' . $fallback);
     };
     $image = function (string $slot, string $sample, string $fallback) use ($photoUrls, $art, $isSample, $isPreview) {
         return $photoUrls[$slot] ?? (($isSample || $isPreview) ? $art($sample, $fallback) : null);
