@@ -103,8 +103,7 @@ class InvitationResource extends Resource
                     ->icon('heroicon-s-arrow-top-right-on-square')
                     ->url(fn (InvitationWebsite $record): string => route('wedding.show', $record->slug))
                     ->openUrlInNewTab()
-                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'
-                        && InvitationPremium::has(Filament::auth()->user(), $record->template)),
+                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'),
                 EditAction::make('quickEdit')
                     ->label('Quick edit')
                     ->icon('heroicon-s-pencil-square')
@@ -148,7 +147,8 @@ class InvitationResource extends Resource
                     ->label('Guest RSVPs')
                     ->icon('heroicon-s-users')
                     ->url(fn (InvitationWebsite $record): string => route('wedding.rsvps.manage', $record))
-                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'),
+                    ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'
+                        && InvitationPremium::has(Filament::auth()->user(), $record->template)),
                 Action::make('managePhotos')
                     ->label('Manage photos')
                     ->icon('heroicon-s-photo')
