@@ -186,6 +186,7 @@ class WeddingBuilderController extends Controller
         $base = $request->validate([
             'slug' => ['nullable', 'string', 'min:3', 'max:72', 'regex:/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/D', Rule::unique('invitation_websites', 'slug')],
             'answers' => ['required', 'array'],
+            'show_parents' => ['nullable', Rule::in(['0', '1', 0, 1])],
             'sections' => ['nullable', 'array'],
             'sections.*' => ['nullable', Rule::in(['0', '1', 0, 1])],
         ]);
@@ -223,6 +224,10 @@ class WeddingBuilderController extends Controller
         }
         $validated = $request->validate($rules);
         $answers = array_filter($validated['answers'] ?? [], fn ($value) => $value !== null && $value !== '');
+        // Persist the explicit opt-in; users may supply some names, or omit them
+        // all without showing placeholder family cards on the published site.
+        $answers['_show_parents'] = $request->boolean('show_parents') && (($template->settings['theme'] ?? '') === 'royal_burgundy');
+
         $pending = [
             'template_id' => $template->id,
             'slug' => $base['slug'] ?? null,
