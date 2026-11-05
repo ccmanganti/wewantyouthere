@@ -35,6 +35,7 @@ class WeddingBuilderController extends Controller
             ->whereHas('eventType', fn ($query) => $query->where('slug', 'wedding')->where('is_active', true))
             ->where('status', 'published')
             ->where('settings->renderer', 'builtin_wedding')
+            ->orderBy('is_premium')
             ->orderBy('name')
             ->get();
 
