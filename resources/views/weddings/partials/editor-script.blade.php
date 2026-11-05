@@ -325,6 +325,26 @@
         const bride = values.bride_name || 'Amelia';
         const groom = values.groom_name || 'Gabriel';
         refreshParentVisibility();
+        preview.querySelectorAll('[data-optional-field-row]').forEach(function (row) {
+            const key = row.dataset.optionalFieldRow;
+            row.hidden = !String(values[key] || '').trim();
+        });
+        preview.querySelectorAll('[data-program-time]').forEach(function (row) {
+            const hasTime = String(values[row.dataset.programTime] || '').trim();
+            const hasNote = String(values[row.dataset.programNote] || '').trim();
+            row.hidden = !hasTime && !hasNote;
+        });
+        // An entourage is optional even if initially selected: don't publish
+        // an empty family or wedding-party showcase.
+        const hasEntourage = [
+            'principal_sponsors','maid_of_honor','matron_of_honor','best_man',
+            'bridesmaids','groomsmen','secondary_sponsors','flower_girls',
+            'ring_bearer','coin_bearer','bible_bearer','candle_sponsors',
+            'veil_sponsors','cord_sponsors','officiant_name'
+        ].some(function (key) { return String(values[key] || '').trim(); });
+        preview.querySelectorAll('#our-people, #people-art').forEach(function (section) {
+            section.hidden = !selected('entourage') || !hasEntourage;
+        });
         app.querySelectorAll('.comparison-name').forEach(function (node) {
             node.textContent = bride + ' & ' + groom;
         });
