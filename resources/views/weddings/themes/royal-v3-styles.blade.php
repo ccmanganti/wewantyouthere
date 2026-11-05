@@ -375,4 +375,13 @@ body.rbv-intro-locked{overflow:hidden}
      scroll-behavior:auto!important}
  .rb-v3.rbv-motion-ready .rbv-reveal:not(.rbv-visible){opacity:1!important;transform:none!important}
 }
+
+/* Optional family names never occupy space unless the couple opts in. */
+.rb-v3 .rbv-family-names{background:#f8f0e5}
+.rb-v3 .rbv-family-name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:21px auto 0;max-width:620px}
+.rb-v3 .rbv-family-name-card{padding:18px 15px;background:#fffaf4;border:1px solid #e3cdbb;border-radius:6px;text-align:center}
+.rb-v3 .rbv-family-name-card .rbv-eyebrow{display:block;color:#97615e;font-size:10px;line-height:1.5}
+.rb-v3 .rbv-family-name-card p{font:500 clamp(16px,2vw,21px)/1.3 'Cormorant Garamond',Georgia,serif;color:#621e2c;margin:7px 0 0;overflow-wrap:anywhere}
+@media(max-width:520px){.rb-v3 .rbv-family-name-grid{grid-template-columns:1fr}}
+
 </style>
