@@ -67,6 +67,6 @@ class WeddingMessageLibraryTest extends TestCase
             ->assertSee('data-generate-field="hero_quote"', false)
             ->assertDontSee('data-generate-field="event_date"', false)
             ->assertSee('data-undo-generated="host_message"', false)
-            ->assertSee('Click any editable text in the preview');
+            ->assertSee('Click text in the preview to edit it here.');
     }
 }
