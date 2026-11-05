@@ -269,6 +269,15 @@
         if (!enabled.includes(currentGroup)) currentGroup = enabled[0] || groups[0];
     }
 
+    // A newly added template can supply editable copy via data-field without
+    // duplicating every string in data-fallback. Capture its original copy
+    // once, before the first edit, so an empty input never blanks the preview.
+    preview.querySelectorAll('[data-field]').forEach(function (target) {
+        if (!target.hasAttribute('data-fallback')) {
+            target.dataset.fallback = target.textContent.trim();
+        }
+    });
+
     function refreshPreview() {
         const values = currentAnswers();
         preview.querySelectorAll('[data-field]').forEach(function (target) {
