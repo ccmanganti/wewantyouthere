@@ -4,7 +4,7 @@
     <div class="rbv-intro-stage">
         {{-- The envelope itself is the only visible control; keyboard-accessible by default. --}}
         <button type="button" class="rbv-envelope-button" data-rbv-open
-                aria-label="Open the wedding invitation" title="Open invitation">
+                aria-label="Open the wedding invitation">
             <span class="rbv-envelope" id="rbv-envelope">
             <img class="rbv-envelope-back" src="{{ $art('envelope-back.webp','envelope-back.webp') }}" alt="" width="920" height="600">
             <span class="rbv-letter">
