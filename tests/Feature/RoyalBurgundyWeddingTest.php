@@ -188,8 +188,9 @@ class RoyalBurgundyWeddingTest extends TestCase
         $website = InvitationWebsite::firstOrFail();
         $this->assertFalse((bool) $website->answers['_show_parents']);
         $this->get('/i/' . $website->slug)->assertOk()
-            ->assertSee('data-parent-section', false)
-            ->assertSee('hidden', false)
+            ->assertDontSee('data-parent-section', false)
+            ->assertDontSee('Hidden Sample Mother')
+            ->assertDontSee('Hidden Sample Father')
             ->assertDontSee('PARENTS OF THE BRIDE');
     }
 
