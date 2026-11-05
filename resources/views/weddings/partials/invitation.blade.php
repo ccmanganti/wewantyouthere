@@ -197,6 +197,7 @@
         </div>
     </section>
 
+    @include('weddings.partials.premium-video')
     <footer class="invite-footer">
         <span class="invite-eyebrow">THANK YOU FOR BEING PART OF OUR STORY</span>
         <p class="invite-footer-names">
