@@ -14,6 +14,8 @@
         if(!intro || intro.hidden) return;
         clearTimeout(finishTimer);
         intro.classList.add('is-fading');
+        intro.dataset.opening='0';
+        intro.querySelector('[data-rbv-open]')?.removeAttribute('disabled');
         document.body.classList.remove('rbv-intro-locked');
         finishTimer=window.setTimeout(()=>{
             intro.hidden=true;
@@ -32,6 +34,20 @@
     }
     intro?.querySelector('[data-rbv-open]')?.addEventListener('click',open);
     intro?.querySelector('[data-rbv-skip]')?.addEventListener('click',dismiss);
+    // Optional editor-only preview; no replay button appears on guest websites.
+    document.getElementById('preview-envelope-intro')?.addEventListener('click',()=>{
+        if(!intro) return;
+        const websiteTab=builder?.querySelector('[data-preview-format="website"]');
+        if(websiteTab)websiteTab.click();
+        intro.hidden=false;
+        intro.dataset.opening='0';
+        intro.classList.remove('is-fading');
+        envelope?.classList.remove('is-opening');
+        intro.querySelector('[data-rbv-open]')?.removeAttribute('disabled');
+        document.body.classList.add('rbv-intro-locked');
+        intro.querySelector('[data-rbv-open]')?.focus({preventScroll:true});
+    });
+
     if(intro && !intro.hidden){
         document.body.classList.add('rbv-intro-locked');
         intro.querySelector('[data-rbv-open]')?.focus({preventScroll:true});
