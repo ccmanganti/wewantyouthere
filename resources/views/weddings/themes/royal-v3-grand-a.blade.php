@@ -63,6 +63,48 @@
     </div>
 </section>
 
+{{-- Optional family names are independent of the entourage selection.
+     Only actual names are rendered; legacy invitation records still work. --}}
+@php
+    $familyFields = [
+        'bride_mother' => "Bride's mother", 'bride_father' => "Bride's father",
+        'groom_mother' => "Groom's mother", 'groom_father' => "Groom's father",
+    ];
+    $familyHasNewNames = collect(array_keys($familyFields))->contains(fn ($key) => filled($answers[$key] ?? null));
+    $familyHasLegacyNames = filled($answers['bride_parents'] ?? null) || filled($answers['groom_parents'] ?? null);
+    $familyOptIn = array_key_exists('_show_parents', $answers)
+        ? (bool) $answers['_show_parents']
+        : ($familyHasNewNames || $familyHasLegacyNames);
+@endphp
+<section class="rbv-info rbv-family-names" id="family-names" data-preview-section="couple" data-parent-section
+    @if(!$familyOptIn || (!$familyHasNewNames && !$familyHasLegacyNames)) hidden @endif>
+    <div class="rbv-inner">
+        <span class="rbv-eyebrow">WITH LOVE AND GRATITUDE</span>
+        <h2 class="rbv-title">Our families</h2>
+        <div class="rbv-family-name-grid">
+            @foreach($familyFields as $key => $role)
+                @if($isPreview || filled($answers[$key] ?? null))
+                <div class="rbv-family-name-card" data-parent-card="{{ $key }}"
+                    @if(!filled($answers[$key] ?? null)) hidden @endif>
+                    <span class="rbv-eyebrow">{{ $role }}</span>
+                    <p data-field="{{ $key }}">{{ $personal($key,'') }}</p>
+                </div>
+                @endif
+            @endforeach
+            @if(!$familyHasNewNames && $familyHasLegacyNames)
+                @foreach(['bride_parents' => "Bride's parents", 'groom_parents' => "Groom's parents"] as $key => $role)
+                    @if(filled($answers[$key] ?? null))
+                    <div class="rbv-family-name-card">
+                        <span class="rbv-eyebrow">{{ $role }}</span>
+                        <p>{{ $personal($key,'') }}</p>
+                    </div>
+                    @endif
+                @endforeach
+            @endif
+        </div>
+    </div>
+</section>
+
 {{-- 05 GRAND: antique doorway art and editable portrait overlay --}}
 <section class="rbv-grand rbv-doors" id="the-doors" data-preview-section="couple">
     <figure class="rbv-doors-photo" data-photo-slot="portrait_one">
