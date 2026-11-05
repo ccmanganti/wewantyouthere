@@ -159,34 +159,41 @@
                     @foreach($groups as $key => $group)
                         @php
                             $coreKeys = config('wedding_editor_basics.'.$key, []);
-                            $coreQuestions = $group['questions']->filter(fn ($question) => in_array($question->key, $coreKeys, true))
+                            $parentKeys = ['bride_mother','bride_father','groom_mother','groom_father'];
+                            $coreQuestions = $group['questions']
+                                ->filter(fn ($question) => in_array($question->key, $coreKeys, true) && !in_array($question->key, $parentKeys, true))
                                 ->sortBy(fn ($question) => array_search($question->key, $coreKeys))->values();
+                            $parentQuestions = $key === 'couple'
+                                ? $group['questions']->filter(fn ($question) => in_array($question->key, $parentKeys, true))
+                                    ->sortBy(fn ($question) => array_search($question->key, $parentKeys))->values()
+                                : collect();
                         @endphp
                         <div class="question-group" data-question-group="{{ $key }}" data-group-description="{{ $group['description'] }}">
                             @if($key === 'couple')
-                                <p class="basic-intro">Start with your names and a warm invitation message. Everything else can be customized later.</p>
+                                <p class="basic-intro">Start with your names and invitation message. You can personalize the smaller details later.</p>
                             @endif
                             <div class="question-grid">
                                 @foreach($coreQuestions as $question)
-                                    @if($key === 'couple' && $question->key === 'bride_mother')
-                                    <div class="family-option full">
-                                        <label class="family-toggle">
-                                            <input type="checkbox" id="include-parents" name="show_parents" value="1"
-                                                @checked(old('show_parents', $draft['answers']['_show_parents'] ?? false))>
-                                            <span><strong>Include parents' names</strong>
-                                                <small>Optional. Leave this off to omit the parents section entirely.</small></span>
-                                        </label>
-                                        <div class="family-fields" id="family-fields" hidden>
-                                            <p class="family-fields-intro">Only the names you enter will appear. You can leave any parent blank.</p>
-                                            <div class="question-grid">
-                                    @endif
                                     @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
-                                    @if($key === 'couple' && $question->key === 'groom_father')
-                                            </div>
+                                @endforeach
+                                @if($parentQuestions->isNotEmpty())
+                                <div class="family-option full">
+                                    <label class="family-toggle">
+                                        <input type="checkbox" id="include-parents" name="show_parents" value="1"
+                                            @checked(old('show_parents', $draft['answers']['_show_parents'] ?? false))>
+                                        <span><strong>Include parents' names</strong>
+                                            <small>Optional. Turn off to omit parents from the invitation.</small></span>
+                                    </label>
+                                    <div class="family-fields" id="family-fields" hidden>
+                                        <p class="family-fields-intro">Only names you provide will be shown. Leave any parent blank.</p>
+                                        <div class="question-grid">
+                                            @foreach($parentQuestions as $question)
+                                                @include('weddings.partials.editor-question', ['question' => $question, 'draft' => $draft])
+                                            @endforeach
                                         </div>
                                     </div>
-                                    @endif
-                                @endforeach
+                                </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
