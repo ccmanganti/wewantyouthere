@@ -2,7 +2,8 @@
     $photoUrls = $photoUrls ?? [];
     $isPreview = $isPreview ?? false;
     $isSample = !isset($website) && !$isPreview;
-    $visible = fn (string $group) => $sections[$group] ?? true;
+    $premiumAccess = $premiumAccess ?? false;
+    $visible = fn (string $group) => $sections[$group] ?? !in_array($group, ['maps','ceremony_details','video'], true);
     $copy = function (string $key, string $fallback = '') use ($answers): string {
         $value = trim((string) ($answers[$key] ?? ''));
         return $value !== '' ? $value : $fallback;
@@ -55,8 +56,8 @@
         <details class="rbv-menu"><summary><span class="rbv-menu-icon" aria-hidden="true">☰</span> Menu</summary>
             <nav aria-label="Invitation sections">
                 <a href="#our-story">Our story</a><a href="#the-date">Date</a>
-                <a href="#location-details">Venue</a><a href="#the-timeline">Program</a>
-                <a href="#our-people">Entourage</a><a href="#gallery-memories">Gallery</a><a href="#rsvp">RSVP</a>
+                <a href="#location-details">Venue</a><a href="#the-timeline" @if(!$visible('program')) hidden @endif>Program</a>
+                <a href="#our-people" @if(!$visible('entourage')) hidden @endif>Entourage</a><a href="#gallery-memories">Gallery</a><a href="#rsvp" @if(!$visible('guests')) hidden @endif>RSVP</a>
             </nav>
         </details>
     </header>
@@ -64,6 +65,7 @@
         @include('weddings.themes.royal-v3-grand-a')
         @include('weddings.themes.royal-v3-grand-b')
         @include('weddings.themes.royal-v3-grand-c')
+        @include('weddings.partials.premium-video')
     </main>
     @include('weddings.themes.royal-v3-envelope')
     <dialog class="rbv-lightbox" id="rbv-lightbox" aria-label="Wedding photo viewer">
