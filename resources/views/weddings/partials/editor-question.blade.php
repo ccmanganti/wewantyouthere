@@ -10,6 +10,8 @@
         'bride_father' => "Bride's father",
         'groom_mother' => "Groom's mother",
         'groom_father' => "Groom's father",
+        'venue_name' => 'Ceremony venue',
+        'ceremony_venue' => 'Alternative ceremony venue wording',
     ][$question->key] ?? $question->label;
     $familyField = in_array($question->key, ['bride_mother','bride_father','groom_mother','groom_father'], true);
 @endphp
