@@ -53,6 +53,37 @@ class InvitationPremiumTest extends TestCase
         ];
     }
 
+    public function test_all_six_premium_sections_are_hidden_without_an_entitlement(): void
+    {
+        $sections = [
+            'couple' => true,
+            'ceremony' => true,
+            'reception' => true,
+            'entourage' => true,
+            'program' => true,
+            'guests' => true,
+            'video' => true,
+            'maps' => true,
+            'ceremony_details' => true,
+        ];
+        $filtered = \App\Support\InvitationPremium::filterSections($sections, false);
+
+        foreach (['entourage', 'program', 'guests', 'video', 'maps', 'ceremony_details'] as $key) {
+            $this->assertFalse($filtered[$key], $key);
+        }
+        $this->assertTrue($filtered['couple']);
+        $this->assertTrue($filtered['reception']);
+        $this->assertSame($sections, \App\Support\InvitationPremium::filterSections($sections, true));
+    }
+
+    public function test_premium_price_is_stored_per_template_and_displayed_in_pesos(): void
+    {
+        $template = $this->template();
+        $template->update(['premium_price_cents' => 129900, 'is_premium' => true]);
+        $this->assertSame('₱1,299.00', \App\Support\InvitationPremium::price($template->fresh()));
+        $this->get('/upgrade/' . $template->slug)->assertOk()->assertSee('₱1,299.00');
+    }
+
     public function test_unpaid_editor_shows_six_locked_premium_choices_and_price(): void
     {
         $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
