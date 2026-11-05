@@ -21,8 +21,8 @@ class MarketingPagesTest extends TestCase
     public function test_seo_landing_page_is_server_rendered_and_links_to_working_builder(): void
     {
         $this->get('/')->assertOk()
-            ->assertSee('Free Wedding Invitation Website Maker Philippines')
-            ->assertSee('YOUR BIGGEST MOMENTS.')
+            ->assertSee('Free Wedding Invitation Website Philippines')
+            ->assertSee('FREE WEDDING INVITATION WEBSITE.')
             ->assertSee('Make my invitation')
             ->assertSee('wedding-invitation-templates')
             ->assertSee('Ever After')
