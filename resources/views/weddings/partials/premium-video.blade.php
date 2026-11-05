@@ -4,8 +4,8 @@
     $isPreview = $isPreview ?? false;
     $isSample = $isSample ?? false;
 @endphp
-@if($videoEnabled || ($isSample && $videoUrl))
-<section class="wwyt-premium-video" id="wedding-video" data-preview-section="video">
+@if(($videoEnabled && ($videoUrl || $isPreview)) || ($isPreview && ($premiumAccess ?? false)) || ($isSample && $videoUrl))
+<section class="wwyt-premium-video" id="wedding-video" data-preview-section="video" @if(!($sections['video'] ?? false)) hidden @endif>
     <div class="wwyt-premium-video-inner">
         <span class="wwyt-video-eyebrow">A MOMENT TO SHARE</span>
         <h2 data-field="video_heading">{{ $answers['video_heading'] ?? 'A message from us' }}</h2>
