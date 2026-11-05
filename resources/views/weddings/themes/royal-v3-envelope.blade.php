@@ -7,12 +7,23 @@
                 aria-label="Open the wedding invitation">
             <span class="rbv-envelope" id="rbv-envelope">
             <img class="rbv-envelope-back" src="{{ $art('envelope-back.webp','envelope-back.webp') }}" alt="" width="920" height="600">
-            <span class="rbv-letter">
-                <img src="{{ $art('letter.webp','envelope-letter.webp') }}" alt="" width="610" height="740">
+            {{-- Letter art used to contain preprinted words, causing duplicate,
+                 overlapping text. The landscape paper below is fully editable. --}}
+            <span class="rbv-letter" data-rbv-landscape-letter="true">
+                <span class="rbv-letter-photo">
+                    @if($image('hero','couple.webp','grand-doors.webp'))
+                        <img src="{{ $image('hero','couple.webp','grand-doors.webp') }}"
+                             alt="" loading="eager">
+                    @else
+                        <span class="rbv-letter-monogram" aria-hidden="true">♥</span>
+                    @endif
+                </span>
                 <span class="rbv-letter-copy">
                     <small>THE WEDDING OF</small>
-                    <strong><span data-field="bride_name">{{ $personal('bride_name','Amelia') }}</span> &amp; <span data-field="groom_name">{{ $personal('groom_name','Gabriel') }}</span></strong>
-                    <span>YOU ARE CORDIALLY INVITED</span>
+                    <strong><span data-field="bride_name">{{ $personal('bride_name','Amelia') }}</span>
+                    <i>&amp;</i> <span data-field="groom_name">{{ $personal('groom_name','Gabriel') }}</span></strong>
+                    <span class="rbv-letter-divider" aria-hidden="true">✦</span>
+                    <span class="rbv-letter-invite">YOU ARE CORDIALLY INVITED</span>
                     <b data-field="event_date">{{ $date->format('F j, Y') }}</b>
                 </span>
             </span>
