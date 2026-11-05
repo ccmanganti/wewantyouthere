@@ -1,20 +1,22 @@
 <article class="mkt-template-card mkt-reveal {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'mkt-template-royal' : '' }}" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' ' . ($template->settings['description'] ?? '') . ' invitation website') }}">
     <div class="mkt-template-cover">
         <img class="mkt-template-stamp" src="{{ asset('brand/wwyt/seal-flat.png') }}" width="43" height="43" loading="lazy" alt="" aria-hidden="true">
-        <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM' : 'FREE WEBSITE' }}</span>
+        <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM DESIGN' : 'FREE WEBSITE' }}</span>
         @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
             <div class="rb-catalogue-poster" aria-hidden="true">
                 <span class="rb-catalogue-the">The</span>
                 <strong>WEDDING <em>day</em></strong>
-                <img src="{{ asset('wedding/royal-burgundy/grand-doors.webp') }}"
-                     alt="" width="220" height="180" loading="lazy">
+                <img src="{{ config('wedding_sample_photos.hero') }}"
+                     alt="Sample wedding couple in a Royal Burgundy invitation" width="250" height="175" loading="lazy">
                 <span class="rb-catalogue-names">Amelia <span>♥</span> Gabriel</span>
                 <small>YOU'RE INVITED</small>
             </div>
         @else
             <div class="mini-poster" aria-hidden="true">
                 <span class="overline">TOGETHER WITH OUR FAMILIES</span>
-                <span class="couple">Amelia<br><small>&amp;</small><br>Gabriel</span>
+                <span class="couple">Amelia <small>&amp;</small> Gabriel</span>
+                <img class="mkt-template-couple-photo" src="{{ config('wedding_sample_photos.portrait_two') }}"
+                     alt="Sample wedding couple photograph in a digital invitation" width="270" height="135" loading="lazy">
                 <span class="overline">CELEBRATE OUR WEDDING</span>
                 <span class="date">DECEMBER 12, 2027</span>
             </div>
@@ -32,7 +34,7 @@
             @if(!$canCreate)
                 <a class="mkt-button small" href="{{ url('/app/invitations') }}">Manage site <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             @elseif($template->is_premium)
-                <span class="mkt-pill">Premium · Coming soon</span>
+                <a class="mkt-button small" href="{{ route('premium.show', $template->slug) }}">Premium · {{ \App\Support\InvitationPremium::price($template) }} <i class="fa-solid fa-lock"></i></a>
             @else
                 <a class="mkt-button small" href="{{ route('wedding.editor', $template->slug) }}">Use design <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             @endif
