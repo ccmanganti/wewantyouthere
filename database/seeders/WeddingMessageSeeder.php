@@ -9,6 +9,8 @@ class WeddingMessageSeeder extends Seeder
 {
     public function run(): void
     {
+        $now = now();
+        $rows = [];
         foreach (config('wedding_message_library', []) as $category => $phrases) {
             $opens = $phrases['opens'] ?? [];
             $ends = $phrases['ends'] ?? [];
@@ -20,12 +22,21 @@ class WeddingMessageSeeder extends Seeder
             foreach ($opens as $open) {
                 foreach ($ends as $end) {
                     $content = trim($open) . ' ' . trim($end);
-                    WeddingMessageTemplate::firstOrCreate(
-                        ['category' => $category, 'content_hash' => hash('sha256', $content)],
-                        ['content' => $content],
-                    );
+                    $rows[] = [
+                        'category' => $category,
+                        'content' => $content,
+                        'content_hash' => hash('sha256', $content),
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
                 }
             }
+        }
+
+        // Idempotent bulk inserts keep migrations, seeds, and test suites fast.
+        // Chunks also respect SQLite's lower parameter limits.
+        foreach (array_chunk($rows, 100) as $batch) {
+            WeddingMessageTemplate::query()->insertOrIgnore($batch);
         }
     }
 }
