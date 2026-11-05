@@ -687,6 +687,25 @@
         });
     });
 
+    // Optional wide-screen proofing mode. The invitation still scrolls
+    // within its own pane; return to split view to continue editing.
+    const previewExpand = document.getElementById('preview-expand');
+    previewExpand?.addEventListener('click', function () {
+        const expanded = app.dataset.previewExpanded === 'true';
+        app.dataset.previewExpanded = expanded ? 'false' : 'true';
+        previewExpand.setAttribute('aria-pressed', expanded ? 'false' : 'true');
+        const label = previewExpand.querySelector('span');
+        if (label) label.textContent = expanded ? 'Expand' : 'Split view';
+        const icon = previewExpand.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-expand', expanded);
+            icon.classList.toggle('fa-compress', !expanded);
+        }
+        previewExpand.title = expanded
+            ? 'Use the full workspace to inspect the invitation'
+            : 'Return to side-by-side editing';
+    });
+
     // Keep preview navigation inside its own scrolling pane, not the builder page.
     preview.querySelectorAll('a[href^="#wedding-"]').forEach(function (link) {
         link.addEventListener('click', function (event) {
