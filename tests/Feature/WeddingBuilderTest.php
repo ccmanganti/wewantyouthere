@@ -32,6 +32,24 @@ class WeddingBuilderTest extends TestCase
             ->assertSee('wwyt:wedding:draft:v2:', false);
     }
 
+    public function test_every_wedding_design_uses_the_shared_title_and_paired_name_layout(): void
+    {
+        // Ever After is a different theme from Royal Burgundy, but both render
+        // through the same configurable wedding editor and field components.
+        $this->get('/templates/wedding/ever-after-classic')->assertOk()
+            ->assertSeeInOrder([
+                'data-layout-key="event_title"',
+                'data-layout-key="bride_name"',
+                'data-layout-key="groom_name"',
+                'data-layout-key="host_message"',
+            ], false)
+            ->assertSee('class="field full field--wide" data-layout-key="event_title"', false)
+            ->assertSee('class="field field--half" data-layout-key="bride_name"', false)
+            ->assertSee('class="field field--half" data-layout-key="groom_name"', false)
+            ->assertSee('class="field full field--wide" data-layout-key="host_message"', false)
+            ->assertSee('data-layout-key="wedding_hashtag"', false);
+    }
+
     public function test_wedding_questions_are_idempotent_and_preserve_admin_disabled_state(): void
     {
         $event = EventType::where('slug', 'wedding')->firstOrFail();
