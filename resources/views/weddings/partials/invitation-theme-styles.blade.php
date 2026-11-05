@@ -144,4 +144,13 @@
 @media(prefers-reduced-motion:reduce){
     .wedding-invite *{scroll-behavior:auto!important}
 }
+
+.wwyt-premium-video{padding:70px 22px;text-align:center;background:#f9f1e8}
+.wwyt-premium-video-inner{max-width:900px;margin:0 auto}
+.wwyt-premium-video h2{font:clamp(31px,4vw,50px) 'DM Serif Display',Georgia,serif;color:#6b1c2c;margin:10px 0}
+.wwyt-premium-video p{max-width:580px;margin:0 auto 22px;color:#67534f}
+.wwyt-video-eyebrow{color:#a27b57;font-size:11px;font-weight:800;letter-spacing:.15em}
+.wwyt-video-frame{aspect-ratio:16/9;overflow:hidden;border-radius:13px;background:#241b22}
+.wwyt-video-frame iframe{display:block;width:100%;height:100%;border:0}
+.wwyt-video-empty{border:1px dashed #bca396;border-radius:12px;padding:45px 20px;color:#806761}
 </style>
