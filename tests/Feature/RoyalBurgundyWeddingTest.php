@@ -118,6 +118,81 @@ class RoyalBurgundyWeddingTest extends TestCase
             ->assertSee('preview-envelope-intro', false);
     }
 
+    public function test_editor_has_clear_wedding_names_optional_parents_and_separate_fine_tune_and_final_review(): void
+    {
+        $this->get('/templates/wedding/royal-burgundy-wedding')->assertOk()
+            ->assertSee("Bride's name")
+            ->assertSee("Groom's name")
+            ->assertSee("Bride's mother")
+            ->assertSee("Bride's father")
+            ->assertSee("Groom's mother")
+            ->assertSee("Groom's father")
+            ->assertSee('id="include-parents"', false)
+            ->assertSee('data-fine-tune-group="couple"', false)
+            ->assertSee('data-stage="refine"', false)
+            ->assertSee('data-stage="publish"', false)
+            ->assertSee('id="review-essentials"', false)
+            ->assertSee('id="review-messages"', false)
+            ->assertSee('id="review-open-preview"', false)
+            ->assertDontSee('data-question="bride_full_name"', false)
+            ->assertDontSee('data-question="groom_full_name"', false)
+            ->assertDontSee('data-question="bride_parents"', false)
+            ->assertDontSee('data-question="groom_parents"', false);
+    }
+
+    public function test_only_opted_in_supplied_parent_names_appear_on_published_site(): void
+    {
+        $this->post('/templates/wedding/royal-burgundy-wedding/publish', [
+            'answers' => array_merge($this->answers(), [
+                'bride_mother' => 'Lucia Sample',
+                'groom_father' => 'Manuel Sample',
+            ]),
+            'show_parents' => '1',
+            'sections' => ['entourage' => '0', 'guests' => '1'],
+        ])->assertRedirect('/app/register');
+
+        $this->post('/register', [
+            'name' => 'Wedding Family Test',
+            'email' => 'family-test@example.test',
+            'password' => 'secure-password-123',
+            'password_confirmation' => 'secure-password-123',
+        ])->assertRedirect();
+
+        $website = InvitationWebsite::firstOrFail();
+        $this->assertTrue((bool) $website->answers['_show_parents']);
+        $this->get('/i/' . $website->slug)->assertOk()
+            ->assertSee('Lucia Sample')
+            ->assertSee('Manuel Sample')
+            ->assertSee("Bride's mother")
+            ->assertSee("Groom's father")
+            ->assertDontSee('PARENTS OF THE BRIDE');
+    }
+
+    public function test_parent_names_can_be_omitted_even_if_names_were_previously_entered(): void
+    {
+        $this->post('/templates/wedding/royal-burgundy-wedding/publish', [
+            'answers' => array_merge($this->answers(), [
+                'bride_mother' => 'Hidden Sample Mother',
+                'groom_father' => 'Hidden Sample Father',
+            ]),
+            'show_parents' => '0',
+        ])->assertRedirect('/app/register');
+
+        $this->post('/register', [
+            'name' => 'Wedding Without Parents',
+            'email' => 'no-family-test@example.test',
+            'password' => 'secure-password-123',
+            'password_confirmation' => 'secure-password-123',
+        ])->assertRedirect();
+
+        $website = InvitationWebsite::firstOrFail();
+        $this->assertFalse((bool) $website->answers['_show_parents']);
+        $this->get('/i/' . $website->slug)->assertOk()
+            ->assertSee('data-parent-section', false)
+            ->assertSee('hidden', false)
+            ->assertDontSee('PARENTS OF THE BRIDE');
+    }
+
     public function test_anonymous_photo_upload_can_be_previewed_then_published_after_registration(): void
     {
         $this->postJson('/templates/wedding/royal-burgundy-wedding/photos',[
