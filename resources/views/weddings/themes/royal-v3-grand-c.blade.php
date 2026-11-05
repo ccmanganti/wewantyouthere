@@ -31,6 +31,7 @@
 </section>
 
 {{-- 18 INFO: guest policy, parking, contact and other helpful specifics --}}
+@if($visible('guests') || $isPreview || $isSample)
 <section class="rbv-info" id="guest-details" data-preview-section="guests" @if(!$visible('guests')) hidden @endif>
     <div class="rbv-inner"><span class="rbv-eyebrow">A FEW MORE THINGS TO KNOW</span>
         <h2 class="rbv-title" data-field="guest_details_heading">{{ $copy('guest_details_heading','Little reminders.') }}</h2>
@@ -47,6 +48,8 @@
         <p class="rbv-copy rbv-small" data-field="accommodation_details">{{ $personal('accommodation_details','') }}</p>
     </div>
 </section>
+
+@endif
 
 {{-- 19 GRAND: emotional closing with user-replaceable photograph --}}
 <section class="rbv-grand rbv-closing" id="our-moment" data-preview-section="couple">
@@ -67,6 +70,7 @@
 </section>
 
 {{-- 20 INFO: real RSVP for a published invitation; no fake server submission --}}
+@if($visible('guests') || $isPreview || $isSample)
 <section class="rbv-info rbv-rsvp" id="rsvp" data-preview-section="guests" @if(!$visible('guests')) hidden @endif>
     <div class="rbv-inner">
         <span class="rbv-eyebrow">A KIND RESPONSE IS REQUESTED</span>
@@ -132,3 +136,4 @@
     </div>
 </section>
 <footer class="rbv-footer"><span>MADE WITH LOVE</span><strong>WE WANT YOU THERE</strong></footer>
+@endif
