@@ -201,42 +201,97 @@
 .rb-v3 .rbv-lightbox img{max-height:78svh;max-width:90vw;width:auto;display:block;margin:auto}
 .rb-v3 .rbv-lightbox-close{position:absolute;top:0;right:3px;background:none;border:0;font-size:27px;color:#fff;cursor:pointer}
 .rb-v3 .rbv-lightbox p{text-align:center;font:italic 18px Georgia,serif}
-.rb-v3 .rbv-intro{position:fixed;inset:0;z-index:9999;background:
-    radial-gradient(ellipse at 50% 45%,#64202e,#230912 75%);
-    display:grid;place-items:center;opacity:1;visibility:visible;
-    transition:opacity .8s ease,transform .8s cubic-bezier(.17,.67,.2,1),visibility .8s ease}
+/* Intro — the only visible element is the sealed, interactive envelope.
+   All five layers use the same 920x600 art coordinate system as the approved V2
+   HTML, with the letter FULLY hidden before the guest clicks. */
+.rb-v3 .rbv-intro{
+    position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 38%,#672b39 0%,#3f111f 49%,#1d0a11 100%);
+    opacity:1;visibility:visible;
+    transition:opacity .75s ease,visibility .75s ease;
+}
 .rb-v3 .rbv-intro[hidden]{display:none!important}
-.rb-v3 .rbv-intro.is-fading{opacity:0;visibility:hidden;transform:scale(1.065);pointer-events:none}
-.rb-v3 .rbv-intro-stage{width:min(95vw,620px);text-align:center;color:#f5ddbb;padding:22px 0;position:relative}
-.rb-v3 .rbv-intro-eyebrow{font:700 10px 'DM Sans',sans-serif;letter-spacing:.2em}
-.rb-v3 .rbv-intro-stage h2{font:400 clamp(43px,7vw,72px) 'Great Vibes',cursive;color:#fbd7a8;margin:13px 0 26px}
-.rb-v3 .rbv-envelope{position:relative;margin:auto;width:min(80vw,480px);height:min(54vw,340px);
-    isolation:isolate;perspective:1150px;transform:translateZ(0)}
-.rb-v3 .rbv-envelope img{position:absolute;pointer-events:none;user-select:none}
-.rb-v3 .rbv-envelope-back,.rb-v3 .rbv-envelope-front{inset:0;width:100%;height:auto}
+.rb-v3 .rbv-intro::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,#f2c49812 0%,transparent 56%);
+}
+.rb-v3 .rbv-intro-stage{
+    position:relative;width:100%;display:grid;place-items:center;
+    padding:22px 10px;transform:scale(1);
+    transition:transform .84s cubic-bezier(.15,.7,.2,1),filter .84s ease;
+}
+.rb-v3 .rbv-envelope{
+    position:relative;display:block;appearance:none;-webkit-appearance:none;
+    width:min(88vw,540px);height:auto;aspect-ratio:920/600;
+    margin:0;padding:0;background:transparent;border:0;border-radius:0;
+    perspective:1150px;isolation:isolate;cursor:pointer;
+    filter:drop-shadow(0 26px 25px #11050b88);
+    animation:rbv-sealed-float 5.2s ease-in-out infinite;
+    -webkit-tap-highlight-color:transparent;
+}
+@keyframes rbv-sealed-float{
+    0%,100%{transform:translate3d(0,2px,0) rotate(-.25deg)}
+    50%{transform:translate3d(0,-10px,0) rotate(.25deg)}
+}
+.rb-v3 .rbv-envelope:hover{
+    filter:drop-shadow(0 28px 32px #0c020aaf) drop-shadow(0 0 15px #d8a36c36);
+}
+.rb-v3 .rbv-envelope:focus-visible{
+    outline:2px solid #f8d9a1;outline-offset:9px;border-radius:9px;
+}
+.rb-v3 .rbv-envelope>img{position:absolute;display:block;max-width:none;
+    user-select:none;pointer-events:none}
+.rb-v3 .rbv-envelope-back,.rb-v3 .rbv-envelope-front{
+    inset:0;width:100%;height:100%;object-fit:contain
+}
 .rb-v3 .rbv-envelope-back{z-index:1}
-.rb-v3 .rbv-letter{position:absolute;top:2%;left:23%;width:54%;z-index:2;
-    transform:translateY(20%) scale(.9);transition:transform 1.25s cubic-bezier(.2,.7,.2,1) .6s}
-.rb-v3 .rbv-letter>img{width:100%;height:auto;position:relative;display:block}
-.rb-v3 .rbv-letter-copy{position:absolute;inset:22% 9% auto;display:grid;gap:6px;text-align:center;color:#742734}
-.rb-v3 .rbv-letter-copy small,.rb-v3 .rbv-letter-copy span,.rb-v3 .rbv-letter-copy b{font:700 clamp(6px,1.2vw,10px) 'DM Sans',sans-serif;letter-spacing:.06em}
-.rb-v3 .rbv-letter-copy strong{font:italic clamp(15px,3vw,27px) 'Cormorant Garamond',serif}
-.rb-v3 .rbv-envelope-front{z-index:3}
-.rb-v3 .rbv-envelope-flap{width:100%;height:auto;left:0;top:15%;transform-origin:50% 0;
-    transform:rotateX(0);z-index:4;backface-visibility:visible;
-    transition:transform .95s cubic-bezier(.25,.7,.2,1)}
-.rb-v3 .rbv-envelope-seal{width:22%;height:auto;left:39%;top:35%;z-index:5;filter:drop-shadow(0 5px 7px #0006);
-    transition:opacity .25s ease,transform .35s ease}
-.rb-v3 .rbv-envelope.is-opening .rbv-envelope-seal{opacity:0;transform:scale(.75)}
-.rb-v3 .rbv-envelope.is-opening .rbv-envelope-flap{transform:rotateX(175deg);z-index:2}
-.rb-v3 .rbv-envelope.is-opening .rbv-letter{transform:translateY(-36%) scale(1)}
-.rb-v3 .rbv-intro-tagline{font:700 9px 'DM Sans',sans-serif;letter-spacing:.19em;margin:20px auto 22px}
-.rb-v3 .rbv-intro-actions{display:flex;justify-content:center;gap:18px;align-items:center;flex-wrap:wrap}
-.rb-v3 .rbv-open-button{background:#f3d8b3;color:#5e1523;border:0;padding:14px 22px;cursor:pointer;
-    font:800 11px 'DM Sans',sans-serif;letter-spacing:.07em;display:flex;gap:11px;align-items:center}
-.rb-v3 .rbv-open-button:hover{background:#fff1d6}
-.rb-v3 .rbv-skip-button{background:transparent;color:#e9caa9;border:0;cursor:pointer;
-    font:600 11px 'DM Sans',sans-serif;text-decoration:underline;padding:12px}
+.rb-v3 .rbv-envelope-front{z-index:4}
+.rb-v3 .rbv-envelope-flap{
+    width:100%;height:auto;top:20%;left:0;z-index:5;transform-origin:50% 0;
+    transform:rotateX(0deg);backface-visibility:hidden;
+    transition:transform 1.05s cubic-bezier(.24,.72,.21,1) .18s;
+}
+.rb-v3 .rbv-envelope-seal{
+    width:21%;height:auto;left:39.5%;top:45%;z-index:6;
+    filter:drop-shadow(0 7px 11px #21030d88);
+    transition:opacity .32s ease,transform .35s ease;
+}
+.rb-v3 .rbv-letter{
+    position:absolute;z-index:2;left:25%;top:8%;width:50%;
+    aspect-ratio:610/740;opacity:0;pointer-events:none;
+    transform:translateY(4%) scale(.84);
+    filter:drop-shadow(0 13px 12px #1a041063);
+    transition:transform 1.12s cubic-bezier(.18,.73,.2,1) .86s,
+               opacity .22s linear .94s;
+}
+.rb-v3 .rbv-letter>img{position:relative;display:block;width:100%;height:100%}
+.rb-v3 .rbv-letter-copy{
+    position:absolute;left:5%;right:5%;top:23%;
+    display:flex;flex-direction:column;align-items:center;gap:clamp(4px,1.2vw,11px);
+    text-align:center;color:#72232c;
+}
+.rb-v3 .rbv-letter-copy small,.rb-v3 .rbv-letter-copy span,.rb-v3 .rbv-letter-copy b{
+    font:700 clamp(6px,1vw,10px) 'DM Sans',sans-serif;letter-spacing:.07em
+}
+.rb-v3 .rbv-letter-copy strong{
+    font:italic clamp(16px,3vw,29px)/1.08 'Cormorant Garamond',serif
+}
+.rb-v3 .rbv-envelope.is-opening{
+    animation:none;transform:translate3d(0,0,0);cursor:default;pointer-events:none;
+}
+.rb-v3 .rbv-envelope.is-opening .rbv-envelope-seal{
+    opacity:0;transform:translateY(8px) scale(.72)
+}
+.rb-v3 .rbv-envelope.is-opening .rbv-envelope-flap{
+    transform:rotateX(-177deg)
+}
+.rb-v3 .rbv-envelope.is-opening .rbv-letter{
+    opacity:1;transform:translateY(-25%) scale(1)
+}
+.rb-v3 .rbv-intro.is-fading{opacity:0;visibility:hidden;pointer-events:none}
+.rb-v3 .rbv-intro.is-fading .rbv-intro-stage{
+    transform:scale(1.12);filter:blur(3px)
+}
 body.rbv-intro-locked{overflow:hidden}
 .rb-v3.rbv-motion-ready .rbv-reveal{transition:opacity .7s ease,transform .7s ease}
 .rb-v3.rbv-motion-ready .rbv-reveal:not(.rbv-visible){opacity:.15;transform:translateY(15px)}
@@ -268,7 +323,7 @@ body.rbv-intro-locked{overflow:hidden}
  .rb-v3 .rbv-info-columns{grid-template-columns:1fr}
  .rb-v3 .rbv-photo-pair{gap:7px}
  .rb-v3 .rbv-calendar{max-width:305px}
- .rb-v3 .rbv-intro-stage h2{font-size:40px}
+ 
 }
 @media(max-width:600px){
  .rb-v3 .rbv-header{padding:9px 15px}
@@ -277,8 +332,8 @@ body.rbv-intro-locked{overflow:hidden}
  .rb-v3 .rbv-info{padding:52px 18px}
  .rb-v3 .rbv-info-columns{grid-template-columns:1fr}
  .rb-v3 .rbv-entourage{grid-template-columns:1fr 1fr}
- .rb-v3 .rbv-intro-stage h2{margin-bottom:0}
- .rb-v3 .rbv-envelope{width:min(92vw,480px);height:min(64vw,340px)}
+ 
+ .rb-v3 .rbv-envelope{width:min(90vw,470px);height:auto;aspect-ratio:920/600}
  .rb-v3 .rbv-photo-edit{font-size:9px;padding:6px 9px}
 }
 @media(prefers-reduced-motion:reduce){
