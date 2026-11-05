@@ -846,7 +846,12 @@
         goToStage(fineTune ? 'refine' : 'details');
         if (fineTune) fineTune.open = true;
         const subScene = field.closest('[data-fine-tune-subsection]');
-        if (subScene) subScene.open = true;
+        if (subScene && !subScene.open) {
+            // Opening a control after clicking its preview text must not
+            // scroll the preview away from the element that was clicked.
+            subScene.dataset.skipPreviewJump = '1';
+            subScene.open = true;
+        }
         if (app.dataset.previewExpanded === 'true') document.getElementById('preview-expand')?.click();
         setMobileView('edit');
         if (field.hasAttribute('data-family-field')) {
@@ -1026,6 +1031,10 @@
         });
         app.querySelectorAll('[data-fine-tune-subsection]').forEach(function (scene) {
             scene.addEventListener('toggle', function () {
+                if (scene.dataset.skipPreviewJump === '1') {
+                    delete scene.dataset.skipPreviewJump;
+                    return;
+                }
                 if (!scene.open || stage !== 'refine') return;
                 const target = preview.querySelector('#' + scene.dataset.previewTarget);
                 if (target && !target.closest('[hidden]')) {
