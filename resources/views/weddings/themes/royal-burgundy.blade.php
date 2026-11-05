@@ -17,7 +17,22 @@
         return asset($isUploaded ? $path : 'wedding/royal-burgundy/' . $fallback);
     };
     $image = function (string $slot, string $sample, string $fallback) use ($photoUrls, $art, $isSample, $isPreview) {
-        return $photoUrls[$slot] ?? (($isSample || $isPreview) ? $art($sample, $fallback) : null);
+        // A customer's uploaded photograph always takes priority.
+        if (!empty($photoUrls[$slot])) return $photoUrls[$slot];
+
+        // The real-couple stock images belong to the demo/builder ONLY.
+        // A published invitation must never inherit another couple's photo.
+        if (!$isSample && !$isPreview) return null;
+
+        // Keep the optional self-hosted V3 sample set as the first choice.
+        $samplePath = 'wedding/royal-burgundy-v3/assets/' . $sample;
+        if (is_file(public_path($samplePath)) || is_file(base_path('../../public_html/' . $samplePath))) {
+            return asset($samplePath);
+        }
+
+        // Production no longer depends on an untracked File Manager ZIP to
+        // show real wedding photography in the preview.
+        return config('wedding_sample_photos.' . $slot) ?: $art($sample, $fallback);
     };
     $date = !empty($answers['event_date']) ? \Carbon\CarbonImmutable::parse($answers['event_date']) : \Carbon\CarbonImmutable::create(2027,12,12);
     $sampleDate = $isSample || $isPreview;
