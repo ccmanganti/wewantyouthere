@@ -165,8 +165,8 @@
 
 {{-- Expanded ceremony wording is optional Premium content; basic date and
      location remain free so a minimal invitation still makes sense. --}}
-@if($visible('ceremony_details'))
-<section class="rbv-info rbv-ceremony-extra" id="ceremony-extra" data-preview-section="ceremony" data-premium-section="ceremony_details">
+@if($visible('ceremony_details') || ($isPreview && $premiumAccess) || $isSample)
+<section class="rbv-info rbv-ceremony-extra" id="ceremony-extra" data-preview-section="ceremony" data-premium-section="ceremony_details" @if(!$visible('ceremony_details')) hidden @endif>
     <div class="rbv-inner">
         <span class="rbv-eyebrow">THE CEREMONY</span>
         <h2 class="rbv-title">The moment we say yes</h2>
