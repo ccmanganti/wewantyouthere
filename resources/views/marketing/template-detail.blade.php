@@ -111,11 +111,11 @@
                     @if(!$canCreate)
                         <a class="mkt-button" href="{{ url('/app/invitations') }}">Manage my invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     @elseif($template->is_premium)
-                        <span class="mkt-pill">Premium publishing is coming soon</span>
+                        <a class="mkt-button" href="{{ route('premium.show', $template->slug) }}">Unlock premium · {{ \App\Support\InvitationPremium::price($template) }} <i class="fa-solid fa-lock"></i></a>
                     @else
                         <a class="mkt-button" href="{{ route('wedding.editor', $template->slug) }}">Customize this invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     @endif
-                    <p>Everything shown is sample content. Personalize it with your own details and photos before publishing.</p>
+                    <p>Sample photos and wording are illustrative. Personalize your design before publishing. Maps, RSVP, video, programme and entourage are premium upgrades.</p>
                 </div>
             </div>
         </div>
