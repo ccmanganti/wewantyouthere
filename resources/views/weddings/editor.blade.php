@@ -158,12 +158,15 @@
                 <div class="stage-scroll detail-scroll" id="detail-scroll">
                     @foreach($groups as $key => $group)
                         @php
-                            $coreKeys = config('wedding_editor_basics.'.$key, []);
+                            $isRoyalBuilder = ($template->settings['theme'] ?? '') === 'royal_burgundy';
+                            $coreKeys = $isRoyalBuilder
+                                ? config('wedding_editor_basics.'.$key, [])
+                                : $group['questions']->pluck('key')->all();
                             $parentKeys = ['bride_mother','bride_father','groom_mother','groom_father'];
                             $coreQuestions = $group['questions']
-                                ->filter(fn ($question) => in_array($question->key, $coreKeys, true) && !in_array($question->key, $parentKeys, true))
+                                ->filter(fn ($question) => in_array($question->key, $coreKeys, true) && (!$isRoyalBuilder || !in_array($question->key, $parentKeys, true)))
                                 ->sortBy(fn ($question) => array_search($question->key, $coreKeys))->values();
-                            $parentQuestions = $key === 'couple'
+                            $parentQuestions = $isRoyalBuilder && $key === 'couple'
                                 ? $group['questions']->filter(fn ($question) => in_array($question->key, $parentKeys, true))
                                     ->sortBy(fn ($question) => array_search($question->key, $parentKeys))->values()
                                 : collect();
