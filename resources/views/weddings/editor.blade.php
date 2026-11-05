@@ -77,7 +77,7 @@
             </div>
             <form id="cancel-builder-form" method="POST" action="{{ route('wedding.cancel', $template->slug) }}">@csrf
                 <button class="cancel-btn" type="submit" id="cancel-builder" title="Cancel building">
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Cancel</span>
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Cancel building</span>
                 </button>
             </form>
         </div>
