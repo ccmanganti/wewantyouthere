@@ -28,4 +28,22 @@
 .photo-security-note{border-top:1px solid #e9d4c7;padding:16px 3px 6px;font:11px/1.7 'DM Sans',sans-serif;color:#786c65;margin-top:18px}
 .photo-security-note i{color:#a23541;margin-right:5px}
 @media(max-width:480px){.photo-slot-card{grid-template-columns:80px 1fr;gap:10px;padding:9px}.photo-slot-meta>strong{font-size:12px}.photo-slot-actions button,.photo-slot-upload{font-size:9px;padding:7px}}
+
+.photo-slot-card[hidden]{display:none!important}
+.photo-slot-card.is-uploading{border-color:#b16b6a;box-shadow:0 0 0 2px #ca85823b}
+.photo-slot-image{position:relative}
+.photo-upload-spinner{display:none!important}
+.photo-slot-card.is-uploading .photo-slot-image::before{content:"";position:absolute;inset:0;background:#fff9f0b8;z-index:4}
+.photo-slot-card.is-uploading .photo-slot-image::after{content:"";position:absolute;z-index:5;
+  left:calc(50% - 15px);top:calc(50% - 15px);width:30px;height:30px;
+  border:3px solid #d8b6ab;border-top-color:#7d2032;border-radius:50%;
+  animation:wwyt-photo-loading-spin .75s linear infinite}
+.photo-slot-card.is-uploading .photo-slot-upload{opacity:.65;cursor:wait;pointer-events:none}
+.photo-slot-card.is-uploading .photo-slot-status{font-weight:800;color:#813244}
+.photo-slot-card.is-uploading [data-photo-remove]{pointer-events:none;opacity:.4}
+@keyframes wwyt-photo-loading-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+ .photo-slot-card.is-uploading .photo-slot-image::after{animation-duration:2s}
+}
+
 </style>
