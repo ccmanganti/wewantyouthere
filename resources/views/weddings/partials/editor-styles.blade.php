@@ -490,4 +490,43 @@ body.builder-page > main{min-height:0}
  .builder-app .fine-tune-question-grid{padding:0 11px 12px}
 }
 
+
+/* Form rhythm: full-width event titles and venues; paired names, dates and
+   other short inputs. Column count depends on the form's actual available
+   width, rather than the full browser viewport. */
+.builder-app .editor-pane .question-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));
+    column-gap:14px;
+    row-gap:15px;
+    align-items:start;
+}
+.builder-app .editor-pane .question-grid > .field{
+    min-width:0;
+    margin:0;
+    align-self:start;
+}
+.builder-app .editor-pane .question-grid > .field.full,
+.builder-app .editor-pane .question-grid > .family-option.full{
+    grid-column:1 / -1;
+}
+.builder-app .editor-pane .field-heading{
+    min-height:17px;
+    margin:0 0 7px;
+}
+.builder-app .editor-pane .field-label{
+    line-height:1.45;
+    margin:0;
+}
+.builder-app .editor-pane .field input:not([type=checkbox]):not([type=radio]){
+    min-height:44px;
+}
+.builder-app .editor-pane .field textarea{
+    min-height:90px;
+    line-height:1.5;
+}
+.builder-app .editor-pane .family-fields .question-grid{
+    margin-top:10px;
+}
+
 </style>
