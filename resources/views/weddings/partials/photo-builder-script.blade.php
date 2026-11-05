@@ -88,11 +88,12 @@
                     img.src = url;
                     target.querySelector('.rb-photo-empty')?.remove();
                     target.querySelector('.rb-image-placeholder')?.remove();
+                    target.querySelector('.rbv-photo-empty')?.remove();
                 } else {
                     img?.remove();
-                    if (!target.querySelector('.rb-photo-empty') && !target.querySelector('.rb-image-placeholder')) {
+                    if (!target.querySelector('.rb-photo-empty') && !target.querySelector('.rb-image-placeholder') && !target.querySelector('.rbv-photo-empty')) {
                         const placeholder = document.createElement('div');
-                        placeholder.className = 'rb-image-placeholder rb-placeholder-photo';
+                        placeholder.className = 'rbv-photo-empty';
                         const symbol = document.createElement('span');
                         symbol.setAttribute('aria-hidden','true');
                         symbol.textContent = '✦';
