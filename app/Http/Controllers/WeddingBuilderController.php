@@ -239,8 +239,8 @@ class WeddingBuilderController extends Controller
         if (!$hasPremium) $answers = InvitationPremium::stripPremiumAnswers($answers);
         // Persist the explicit opt-in; users may supply some names, or omit them
         // all without showing placeholder family cards on the published site.
-        $answers['_show_parents'] = $request->boolean('show_parents') && (($template->settings['theme'] ?? '') === 'royal_burgundy');
-        if (($template->settings['theme'] ?? '') === 'royal_burgundy') {
+        $answers['_show_parents'] = $request->boolean('show_parents') && (in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true));
+        if (in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true)) {
             // Legacy duplicated inputs are retained in old published records but
             // never collected again by the simplified builder.
             unset($answers['bride_full_name'], $answers['groom_full_name'],
