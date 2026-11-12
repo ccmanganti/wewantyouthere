@@ -2,7 +2,16 @@
     <div class="mkt-template-cover">
         <img class="mkt-template-stamp" src="{{ asset('brand/wwyt/seal-flat.png') }}" width="43" height="43" loading="lazy" alt="" aria-hidden="true">
         <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM DESIGN' : 'FREE WEBSITE' }}</span>
-        @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+        @if(($template->settings['theme'] ?? '') === 'curated_editorial')
+            <div class="curated-catalogue" style="position:relative;min-height:330px;background:{{ data_get(config('wedding_curated_themes'), data_get($template->settings, 'design').'.paper', '#faf6ee') }};overflow:hidden;text-align:center;color:{{ data_get(config('wedding_curated_themes'), data_get($template->settings, 'design').'.accent', '#69253c') }}">
+                <img src="{{ data_get($template->settings, 'thumbnail_url') }}" loading="lazy" alt="Photographic mood of {{ $template->name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.58">
+                <div style="position:absolute;left:13%;right:13%;top:18%;bottom:15%;background:#fff9edee;padding:28px 10px;display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid #ffffffbd;box-shadow:0 9px 38px #0002">
+                    <span style="font:600 9px 'DM Sans',sans-serif;letter-spacing:.2em">WEDDING INVITATION</span>
+                    <strong style="font:italic 33px/1.05 Georgia,serif;margin:17px 0">Amelia <span style="font-weight:400">&amp;</span> Gabriel</strong>
+                    <span style="font:600 10px 'DM Sans',sans-serif;letter-spacing:.14em">12 · 12 · 2027</span>
+                </div>
+            </div>
+        @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
             <div class="rb-catalogue-poster" aria-hidden="true">
                 <span class="rb-catalogue-the">The</span>
                 <strong>WEDDING <em>day</em></strong>
