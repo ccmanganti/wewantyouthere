@@ -141,6 +141,9 @@ class RoyalBurgundyWeddingSeeder extends Seeder
         // The client wants one selectable design. Archive rather than delete:
         // older invitations retain their foreign keys, design and public URLs.
         InvitationTemplate::query()->where('id', '!=', $template->id)
+            ->where('slug', 'ever-after-classic')
             ->where('status', 'published')->update(['status' => 'archived']);
+        // The new visual collection is seeded after the original design.
+        $this->call(CuratedWeddingThemesSeeder::class);
     }
 }

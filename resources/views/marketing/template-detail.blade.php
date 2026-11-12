@@ -101,7 +101,7 @@
                         <li>Gift notes, dress code and guest reminders</li>
                         <li>Custom invitation wording &amp; visible sections</li>
                         <li>Shareable URL and downloadable QR code</li>
-                        @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+                        @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
                         <li>Wedding galleries and all 20 replaceable photo positions</li>
                         <li>Animated, click-to-open invitation envelope</li>
                         @endif
