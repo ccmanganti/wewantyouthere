@@ -32,14 +32,23 @@ class CuratedWeddingThemesTest extends TestCase
         }
     }
 
-    public function test_reseeding_preserves_template_admin_publication_and_pricing(): void
+    public function test_reseeding_publishes_existing_drafts_and_preserves_admin_pricing(): void
     {
         $this->seed(RoyalBurgundyWeddingSeeder::class);
         $template = InvitationTemplate::where('slug', 'olive-garden-wedding')->firstOrFail();
         $template->update(['status' => 'draft', 'premium_price_cents' => 23900]);
         $this->seed(RoyalBurgundyWeddingSeeder::class);
         $template->refresh();
-        $this->assertSame('draft', $template->status);
+        $this->assertSame('published', $template->status);
         $this->assertSame(23900, $template->premium_price_cents);
+    }
+
+    public function test_seeder_rejects_missing_configuration_instead_of_succeeding_silently(): void
+    {
+        $this->seed(RoyalBurgundyWeddingSeeder::class);
+        config()->set('wedding_curated_themes', []);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('five wedding designs are missing');
+        $this->seed(\Database\Seeders\CuratedWeddingThemesSeeder::class);
     }
 }
