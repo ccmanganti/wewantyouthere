@@ -20,6 +20,7 @@ on:
       - 'scripts/generate_royal_burgundy_assets.py'
       - 'config/wedding_builder.php'
       - 'config/wedding_photos.php'
+      - 'config/wedding_curated_themes.php'
       - 'tests/Feature/**'
       - 'app/Support/**'
       - 'database/migrations/**'
@@ -63,6 +64,7 @@ jobs:
           php artisan test --filter=GoogleLoginTest
           php artisan test --filter=BrandingExperienceTest
           php artisan test --filter=RoyalBurgundyWeddingTest
+          php artisan test --filter=CuratedWeddingThemesTest
           php artisan test --filter=WeddingMessageLibraryTest
           php artisan test --filter=GuestRsvpTest
           php artisan test --filter=InvitationPremiumTest
