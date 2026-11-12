@@ -42,6 +42,7 @@ class CuratedWeddingThemesTest extends TestCase
         $this->assertSame('published', $template->status);
         $this->assertSame(23900, $template->premium_price_cents);
     }
+
     public function test_seeder_rejects_missing_configuration_instead_of_succeeding_silently(): void
     {
         $this->seed(RoyalBurgundyWeddingSeeder::class);
