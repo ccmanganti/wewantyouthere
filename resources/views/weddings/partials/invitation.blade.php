@@ -25,6 +25,8 @@
 @endphp
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
     @include('weddings.themes.royal-burgundy')
+@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
+    @include('weddings.themes.curated-editorial')
 @else
 <div class="wedding-invite" id="wedding-invite">
     <nav class="invite-site-nav" aria-label="Wedding website sections">
