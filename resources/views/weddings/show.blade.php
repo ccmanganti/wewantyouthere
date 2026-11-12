@@ -10,6 +10,8 @@
 @include('weddings.themes.royal-v3-styles')
 <link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-front.webp') }}" as="image" type="image/webp">
 <link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-flap.webp') }}" as="image" type="image/webp">
+@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
+@include('weddings.themes.curated-editorial-styles')
 @endif
 <style>
     body.invitation-page{background:#fbf8f1}
@@ -99,6 +101,8 @@
 @push('scripts')
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-script')
+@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
+@include('weddings.themes.curated-editorial-script')
 @endif
 <script>
 (function () {
