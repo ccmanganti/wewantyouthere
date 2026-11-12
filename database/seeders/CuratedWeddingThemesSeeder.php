@@ -57,6 +57,7 @@ class CuratedWeddingThemesSeeder extends Seeder
                 'motion' => $design['animation'],
             ]);
             $template->forceFill([
+                'event_type_id' => $event->id,
                 'status' => 'published',
                 'settings' => $settings,
                 'version' => max(1, (int) $template->version),
