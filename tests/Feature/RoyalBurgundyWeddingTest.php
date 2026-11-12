@@ -51,7 +51,7 @@ class RoyalBurgundyWeddingTest extends TestCase
         ];
     }
 
-    public function test_seeder_only_offers_v3_design_and_preserves_previous_templates_for_existing_sites(): void
+    public function test_seeder_offers_curated_designs_and_preserves_previous_templates_for_existing_sites(): void
     {
         $this->assertSame('published', $this->royal()->status);
         $this->assertSame('builtin_wedding', $this->royal()->settings['renderer']);
@@ -69,8 +69,8 @@ class RoyalBurgundyWeddingTest extends TestCase
 
         $this->assertSame($count, EventQuestion::count());
         $this->assertFalse($question->fresh()->is_enabled);
-        $this->assertDatabaseCount('invitation_templates', 2);
-        $this->assertSame(1, InvitationTemplate::where('status','published')->count());
+        $this->assertDatabaseCount('invitation_templates', 7);
+        $this->assertSame(6, InvitationTemplate::where('status','published')->count());
         $this->assertSame('archived', InvitationTemplate::where('slug','ever-after-classic')->firstOrFail()->status);
     }
 
