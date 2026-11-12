@@ -7,8 +7,12 @@
 @push('styles')
 @include('weddings.partials.editor-styles')
 @include('weddings.partials.invitation-theme-styles')
+@if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-styles')
+@else
+@include('weddings.themes.curated-editorial-styles')
+@endif
 @include('weddings.partials.photo-builder-styles')
 @include('weddings.partials.royal-preview-refine-styles')
 @endif
@@ -35,7 +39,7 @@
     $currentSectionSelection['maps'] = $hasPremium && ($draft['sections']['maps'] ?? false);
     $currentSectionSelection['ceremony_details'] = $hasPremium && ($draft['sections']['ceremony_details'] ?? false);
 @endphp
-<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-has-premium="{{ $hasPremium ? '1' : '0' }}" data-upgrade-url="{{ route('premium.show', $template->slug) }}" data-mobile-view="edit" data-photos-enabled="{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}" data-generate-url="{{ route('wedding.messages.generate', $template->slug) }}">
+<div class="builder-app" id="wedding-builder" data-template="{{ $template->slug }}" data-has-premium="{{ $hasPremium ? '1' : '0' }}" data-upgrade-url="{{ route('premium.show', $template->slug) }}" data-mobile-view="edit" data-photos-enabled="{{ in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true) ? '1' : '0' }}" data-photo-upload-url="{{ route('wedding.photos.upload', $template->slug) }}" data-generate-url="{{ route('wedding.messages.generate', $template->slug) }}">
     {{-- The entire workspace uses ONE compact toolbar. The public topbar
          is hidden only on this route, freeing vertical room for both panes. --}}
     <header class="builder-utility" aria-label="Invitation builder toolbar">
@@ -60,7 +64,7 @@
             <button type="button" class="wizard-step" data-step-navigation="details" title="Add your details" aria-label="Add your details" disabled>
                 <span class="step-dot">2</span> <span class="wizard-step-label">Add your details</span>
             </button>
-            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+            @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
             <span class="wizard-arrow" aria-hidden="true">›</span>
             <button type="button" class="wizard-step" data-step-navigation="refine" title="Fine-tune template" aria-label="Fine-tune template" disabled>
                 <span class="step-dot">3</span> <span class="wizard-step-label">Fine-tune template</span>
@@ -72,7 +76,7 @@
             @endif
             <span class="wizard-arrow" aria-hidden="true">›</span>
             <button type="button" class="wizard-step" data-step-navigation="publish" title="Review and publish" aria-label="Review and publish" disabled>
-                <span class="step-dot">{{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 5 : 3 }}</span> <span class="wizard-step-label">Review & publish</span>
+                <span class="step-dot">{{ in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true) ? 5 : 3 }}</span> <span class="wizard-step-label">Review & publish</span>
             </button>
         </nav>
         <div class="builder-utility-right">
@@ -116,7 +120,7 @@
         <div class="editor-pane" aria-label="Invitation editor">
             <section class="editor-stage is-active" data-stage="sections" aria-labelledby="section-stage-title">
                 <div class="stage-top">
-                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '01 / 05' : '01 / 03' }} · Make it personal</span>
+                    <span class="stage-kicker">Step {{ in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true) ? '01 / 05' : '01 / 03' }} · Make it personal</span>
                     <h1 id="section-stage-title">What would you like to include?</h1>
                     <p>Choose what goes into your invitation.</p>
                     <div class="preview-link-tip"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i> Select a section to find it in the preview.</div>
@@ -207,7 +211,7 @@
                 <div class="stage-scroll detail-scroll" id="detail-scroll">
                     @foreach($groups as $key => $group)
                         @php
-                            $isRoyalBuilder = ($template->settings['theme'] ?? '') === 'royal_burgundy';
+                            $isRoyalBuilder = in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true);
                             $coreKeys = $isRoyalBuilder
                                 ? config('wedding_editor_basics.'.$key, [])
                                 : $group['questions']->pluck('key')->all();
@@ -260,14 +264,14 @@
                 </div>
             </section>
 
-            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+            @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
                 @include('weddings.partials.royal-preview-refine-stage')
                 @include('weddings.partials.photo-builder-stage')
             @endif
 
             <section class="editor-stage" data-stage="publish" aria-labelledby="publish-stage-title">
                 <div class="stage-top">
-                    <span class="stage-kicker">Step {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? '05 / 05' : '03 / 03' }} · Final review</span>
+                    <span class="stage-kicker">Step {{ in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true) ? '05 / 05' : '03 / 03' }} · Final review</span>
                     <h2 id="publish-stage-title">Review before you share.</h2>
                     <p>Check your details and preview before publishing.</p>
                 </div>
@@ -301,7 +305,7 @@
                     <div class="final-review-summary" aria-labelledby="final-review-messages-title">
                         <div class="final-review-heading">
                             <h3 id="final-review-messages-title">Messages and quotes</h3>
-                            @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+                            @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
                                 <button type="button" class="review-edit-link" data-review-edit="refine">Fine-tune wording</button>
                             @endif
                         </div>
@@ -357,8 +361,12 @@
 
 @push('scripts')
 @include('weddings.partials.editor-script')
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
 @include('weddings.partials.photo-builder-script')
+@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-script')
+@else
+@include('weddings.themes.curated-editorial-script')
+@endif
 @endif
 @endpush
