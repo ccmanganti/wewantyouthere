@@ -47,8 +47,8 @@ class CuratedWeddingThemesTest extends TestCase
     {
         $this->seed(RoyalBurgundyWeddingSeeder::class);
         config()->set('wedding_curated_themes', []);
-        $this->expectException(\\RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('five wedding designs are missing');
-        $this->seed(\\Database\\Seeders\\CuratedWeddingThemesSeeder::class);
+        $this->seed(\Database\Seeders\CuratedWeddingThemesSeeder::class);
     }
 }
