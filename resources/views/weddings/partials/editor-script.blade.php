@@ -108,6 +108,20 @@
             group: currentGroup,
             advancedOpen: advancedOpen,
             includeParents: !!document.getElementById('include-parents')?.checked,
+            audio: (() => {
+                const studio = app.querySelector('#wedding-music-studio');
+                if (!studio) return null;
+                const slots = {};
+                for (const slot of ['intro','main']) {
+                    slots[slot] = {
+                        source: studio.querySelector('input[name="audio['+slot+'][source]"]:checked')?.value || 'none',
+                        track: studio.querySelector('select[name="audio['+slot+'][track]"]')?.value || ''
+                    };
+                }
+                return {...slots,
+                    sfx: !!studio.querySelector('[data-music-sfx]')?.checked,
+                    volume: Number(studio.querySelector('[data-music-volume]')?.value || 45)};
+            })(),
             fineTuneOpen: Array.from(app.querySelectorAll('[data-fine-tune-group][open]')).map(node => node.dataset.fineTuneGroup),
             slug: slugInput.value,
             slugManual: slugWasEdited,
@@ -153,6 +167,29 @@
                 element.checked = saved.sections[element.dataset.sectionToggle];
             }
         });
+        if (saved.audio && typeof saved.audio === 'object') {
+            const studio = app.querySelector('#wedding-music-studio');
+            if (studio) {
+                for (const slot of ['intro','main']) {
+                    const settings = saved.audio[slot] || {};
+                    if (typeof settings.source === 'string') {
+                        const radio = Array.from(studio.querySelectorAll('input[name="audio['+slot+'][source]"]'))
+                            .find(input => input.value === settings.source);
+                        if (radio) radio.checked = true;
+                    }
+                    if (typeof settings.track === 'string') {
+                        const select = studio.querySelector('select[name="audio['+slot+'][track]"]');
+                        if (select && Array.from(select.options).some(item => item.value === settings.track))
+                            select.value = settings.track;
+                    }
+                }
+                const sfx = studio.querySelector('[data-music-sfx]');
+                if (sfx && typeof saved.audio.sfx === 'boolean') sfx.checked = saved.audio.sfx;
+                const volume = studio.querySelector('[data-music-volume]');
+                if (volume && Number.isFinite(Number(saved.audio.volume)))
+                    volume.value = String(Math.max(0,Math.min(100,Number(saved.audio.volume))));
+            }
+        }
         const includeParents = document.getElementById('include-parents');
         if (includeParents && typeof saved.includeParents === 'boolean') includeParents.checked = saved.includeParents;
         if (Array.isArray(saved.fineTuneOpen)) {
@@ -1171,6 +1208,7 @@
         draftIndicator.title = 'Your browser has blocked local storage. Please keep the builder open until publishing.';
     }
 
+    window.addEventListener('wwyt:music-changed', writeDraft);
     window.addEventListener('pagehide', function () {
         // No clear operation: preserve the latest form state across regular navigation/reloads.
         if (draftSupported) writeDraft();
