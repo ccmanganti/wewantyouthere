@@ -4,14 +4,15 @@
 (() => {
   'use strict';
   const bootstrap = document.getElementById('wwyt-audio-bootstrap');
-  const root = document.getElementById('wedding-invite');
+  const manager = document.getElementById('wedding-audio-manager');
+  const root = document.getElementById('wedding-invite') || manager;
   if (!bootstrap || !root) return;
   let data;
   try { data = JSON.parse(bootstrap.textContent || '{}'); } catch (_) { return; }
   if (!data.enabled) return;
 
   const audioCtor = window.AudioContext || window.webkitAudioContext;
-  const editor = document.getElementById('wedding-builder');
+  const editor = document.getElementById('wedding-builder') || manager;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
@@ -329,7 +330,7 @@
     updateVolume(){volume=selectedVolume();if(active && !muted){if(active.kind==='file')active.el.volume=volume;else if(ctx)active.bus.gain.setTargetAtTime(volume*.46,ctx.currentTime,.1);}},
     updateEffects(){effectsOn=Boolean(editor?.querySelector('[data-music-sfx]')?.checked);updateButtons();}
   };
-  buildControls();
+  if (!manager) buildControls();
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden || !started)return;
     // Background tabs go quiet; a returning guest must explicitly tap Play.
