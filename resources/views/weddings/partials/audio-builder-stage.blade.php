@@ -50,7 +50,7 @@
             <input type="file" id="music-upload-{{ $slot }}" data-music-upload="{{ $slot }}"
                    accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/mp4,audio/ogg,audio/wav">
             <span class="music-uploaded-file" data-music-uploaded-name="{{ $slot }}"
-                  data-uploaded-url="{{ $hasFile ? route('wedding.audio.draft', ['slug' => $template->slug, 'slot' => $slot]) : '' }}">
+                  data-uploaded-url="{{ $hasFile ? route('wedding.audio.draft', ['slug' => $template->slug, 'slot' => $slot]).'?v='.rawurlencode(basename($savedFile['path'])) : '' }}">
                 {{ $hasFile ? 'Saved: '.$uploadedName : 'No custom music uploaded yet.' }}
             </span>
             <button type="button" class="music-try-button" data-music-try="{{ $slot }}">
