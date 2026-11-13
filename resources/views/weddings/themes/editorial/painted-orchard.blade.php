@@ -53,7 +53,7 @@
             <div class="po-venue-note"><span>THE CEREMONY</span><h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Garden Chapel') }}</h3>
                 <p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful garden setting') }}</p></div>
         </article>
-        <article class="po-venue-card">
+        <article class="po-venue-card" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
             @include('weddings.themes.editorial.photo', ['slot'=>'venue_reception','class'=>'po-venue-image'])
             <div class="po-venue-note"><span>THE CELEBRATION</span><h3 data-field="reception_venue">{{ $copy('reception_venue','The Glass Conservatory') }}</h3>
                 <p data-field="reception_address">{{ $copy('reception_address','Dinner and dancing') }}</p>
