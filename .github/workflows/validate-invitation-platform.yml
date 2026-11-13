@@ -56,7 +56,7 @@ jobs:
           const files = [...base, ...designs.map(key => 'resources/views/weddings/themes/editorial/intros/'+key+'.blade.php')];
           for (const path of files) {
             const text = fs.readFileSync(path, 'utf8');
-            const blocks = [...text.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/g)];
+            const blocks = [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)];
             if (blocks.length !== 1) throw new Error(path+' must contain one JavaScript block; got '+blocks.length);
             new Function(blocks[0][1]);
             console.log(path+' syntax valid');
