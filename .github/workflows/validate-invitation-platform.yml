@@ -53,7 +53,8 @@ jobs:
             'resources/views/weddings/partials/photo-builder-script.blade.php',
             'resources/views/weddings/themes/royal-v3-script.blade.php',
             'resources/views/weddings/themes/curated-editorial-script.blade.php',
-            'resources/views/weddings/partials/audio-builder-script.blade.php'
+            'resources/views/weddings/partials/audio-builder-script.blade.php',
+            'resources/views/weddings/audio/manage.blade.php'
           ];
           const designs = ['burgundy-wax', 'olive-garden', 'painted-orchard', 'pearl-editorial', 'destination-ticket'];
           const files = [...base, ...designs.map(key => 'resources/views/weddings/themes/editorial/intros/'+key+'.blade.php')];
