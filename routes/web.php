@@ -20,6 +20,19 @@ Route::middleware('auth')->group(function () {
         ->name('premium.success');
 });
 Route::get('/', [WeddingBuilderController::class, 'home'])->name('home');
+// Serve the first-party audio engine through Laravel. On Hostinger, the
+// Laravel project and the public_html web root can be separate directories;
+// asset('js/...') may otherwise 404 even when the preview Blade is current.
+Route::get('/wwyt-assets/wedding-audio.js', static function () {
+    $path = base_path('public/js/wedding-audio.js');
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Cache-Control' => 'public, max-age=86400',
+        'X-Content-Type-Options' => 'nosniff',
+    ]);
+})->name('wedding.audio.script');
 Route::get('/wedding-invitation-templates', [MarketingController::class, 'templates'])->name('marketing.templates');
 Route::get('/wedding-invitation-templates/{slug}', [MarketingController::class, 'templateDetail'])
     ->where('slug', '[a-z0-9-]+')->name('marketing.templateDetail');
