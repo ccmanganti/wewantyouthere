@@ -57,11 +57,15 @@
     <div class="og-venue-note"><span class="og-tab">03 / THE GARDEN PATH</span>
         <h2>Where to find us</h2>
         <p class="og-field-label">CEREMONY</p><h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Garden Chapel') }}</h3><p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful place beneath the trees') }}</p>
+        <div class="og-reception-note" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
         <p class="og-field-label">CELEBRATION</p><h3 data-field="reception_venue">{{ $copy('reception_venue','The Garden Estate') }}</h3><p data-field="reception_address">{{ $copy('reception_address','Join us for an evening of joy') }}</p><p data-field="reception_time">{{ $display('reception_time','6:00 PM') }}</p>
+        </div>
     </div>
     <div class="og-venue-stack">
         @include('weddings.themes.editorial.photo', ['slot'=>'venue_ceremony','class'=>'og-venue-photo og-venue-photo-a','caption'=>'01 · THE CEREMONY'])
+        <div data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
         @include('weddings.themes.editorial.photo', ['slot'=>'venue_reception','class'=>'og-venue-photo og-venue-photo-b','caption'=>'02 · THE RECEPTION'])
+        </div>
     </div>
 </section>
 
