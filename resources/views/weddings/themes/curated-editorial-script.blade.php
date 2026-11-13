@@ -3,56 +3,11 @@
     'use strict';
     const root = document.getElementById('wedding-invite');
     if (!root || !root.classList.contains('ce2')) return;
-    const theme = root.dataset.curatedDesign;
+    // Shared nonvisual services only: date/calendar, map synchronization,
+    // premium RSVP form semantics and accessible public image viewing.
+    // Every opening is a separate script owned by its individual template.
     const builder = document.getElementById('wedding-builder');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const intro = root.querySelector('#ce2-intro');
-    const opener = root.querySelector('[data-ce2-open]');
-    const duration = {
-        'burgundy-wax': 2300,         // wax breaks; letter rises
-        'olive-garden': 2050,         // 3D hard-cover page turn
-        'painted-orchard': 2200,      // twin garden gates pivot
-        'pearl-editorial': 2150,      // velvet curtains part
-        'destination-ticket': 1800,  // tear-away stub and takeoff
-    }[theme] || 1500;
-
-    if (intro && !intro.hidden) document.body.classList.add('ce2-intro-open');
-    let opening = false;
-    let fadeTimer = null;
-    let hideTimer = null;
-    opener?.addEventListener('click', function(){
-        if (!intro || intro.hidden || opening) return;
-        opening = true;
-        opener.disabled = true;
-        intro.classList.add('is-opening');
-        const delay = reduced ? 0 : duration;
-        fadeTimer = window.setTimeout(function(){
-            intro.classList.add('ce2-dismissing');
-            document.body.classList.remove('ce2-intro-open');
-        }, delay);
-        hideTimer = window.setTimeout(function(){
-            intro.hidden = true;
-            intro.setAttribute('aria-hidden', 'true');
-            root.querySelector('a[href^="#"]')?.focus({ preventScroll: true });
-        }, delay + (reduced ? 0 : 750));
-    });
-
-    // Replay is a builder-only affordance; guests still see only the unique
-    // clickable invitation artwork, never an Open/Skip button.
-    if (builder){
-        document.getElementById('preview-envelope-intro')?.addEventListener('click',()=>{
-            if (!intro) return;
-            window.clearTimeout(fadeTimer);
-            window.clearTimeout(hideTimer);
-            opening = false;
-            opener.disabled = false;
-            intro.hidden = false;
-            intro.removeAttribute('aria-hidden');
-            intro.classList.remove('is-opening','ce2-dismissing');
-            document.body.classList.add('ce2-intro-open');
-            opener.focus({preventScroll:true});
-        });
-    }
 
     function validDate(){
         const raw = builder?.querySelector('[name="answers[event_date]"]')?.value || root.dataset.ce2Date;
@@ -228,3 +183,4 @@
     }
 })();
 </script>
+@include('weddings.themes.editorial.intros.'.\App\Support\CuratedWeddingDesign::forTemplate($template))

@@ -74,19 +74,32 @@
 .ce2-burgundy-wax .bw-footer{background:var(--bw);color:#fff5e9;padding:85px 24px;text-align:center}
 .ce2-burgundy-wax .bw-footer h2{font:400 70px/1 'Allura',cursive;margin:20px 0}
 .ce2-burgundy-wax .bw-footer a{display:inline-block;margin-top:30px;font:600 10px 'DM Sans',sans-serif;letter-spacing:.2em}
-.ce2-burgundy-wax .bw-intro{background:radial-gradient(circle,#45172d,#130711)}
-.ce2-burgundy-wax .bw-letter-trigger{border:0;background:transparent;width:min(400px,86vw);height:330px;position:relative;filter:drop-shadow(0 25px 28px #0009);animation:bw-float 3.5s ease-in-out infinite}
-.ce2-burgundy-wax .bw-outer-envelope{position:absolute;inset:0;display:block;perspective:1000px}
-.ce2-burgundy-wax .bw-insert{position:absolute;left:7%;right:7%;bottom:45px;height:260px;background:linear-gradient(110deg,#fff9ed,#e7d4c1);z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;transition:transform 1.25s .3s;box-shadow:0 0 8px #0002}
-.ce2-burgundy-wax .bw-insert small{font:700 10px 'DM Sans',sans-serif;letter-spacing:.2em;color:#8c7470}
-.ce2-burgundy-wax .bw-insert strong{font:400 39px 'Allura',cursive;color:var(--bw)}
-.ce2-burgundy-wax .bw-insert em{font:italic 20px Georgia,serif;color:#785e5e}
-.ce2-burgundy-wax .bw-flap{position:absolute;top:65px;left:0;right:0;height:180px;background:#8d314b;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;z-index:4;transition:transform 1s;backface-visibility:visible}
-.ce2-burgundy-wax .bw-envelope-face{position:absolute;inset:65px 0 0;background:linear-gradient(145deg,#701931,#9c405a);clip-path:polygon(0 0,50% 48%,100% 0,100% 100%,0 100%);z-index:3}
-.ce2-burgundy-wax .bw-seal{position:absolute;z-index:5;left:calc(50% - 30px);top:185px;width:60px;height:60px;background:radial-gradient(circle at 30% 25%,#c47380,#6b1b35);border:5px double #dba08e;border-radius:46%;display:grid;place-items:center;color:#f8d9ba;font-size:27px;box-shadow:0 5px 12px #0006}
-.ce2-burgundy-wax .bw-intro.is-opening .bw-flap{transform:rotateX(180deg);z-index:0}
-.ce2-burgundy-wax .bw-intro.is-opening .bw-insert{transform:translateY(-230px) scale(1.08)}
-.ce2-burgundy-wax .bw-intro.is-opening .bw-letter-trigger{animation:none}
+.ce2-burgundy-wax .bw-intro{background:#100611;perspective:1300px}
+.ce2-burgundy-wax .bw-scroll-scene{position:absolute;inset:0;background-position:center;background-size:cover;filter:saturate(.7)}
+.ce2-burgundy-wax .bw-scroll-trigger{position:relative;display:grid;place-items:center;width:min(460px,88vw);height:min(620px,85svh);min-height:420px;background:transparent;border:0;padding:32px 0;filter:drop-shadow(0 25px 30px #0009)}
+.ce2-burgundy-wax .bw-scroll-heading{position:absolute;top:1%;left:0;right:0;text-align:center;color:#e4c4b0;font:600 10px 'DM Sans',sans-serif;letter-spacing:.24em}
+.ce2-burgundy-wax .bw-scroll-paper{position:relative;width:83%;height:79%;background:linear-gradient(104deg,#dcc1a3,#fff2d9 14%,#fdf1dd 81%,#caa689);box-shadow:inset 0 0 0 1px #a28766,inset 0 0 45px #a57d5035,0 18px 35px #0004;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:55px 23px;clip-path:inset(43% 0 42% 0);transition:clip-path 1.9s cubic-bezier(.27,.87,.14,1),transform 2s}
+.ce2-burgundy-wax .bw-scroll-paper:before{content:'';position:absolute;inset:21px;border:1px solid #b6997d;pointer-events:none}
+.ce2-burgundy-wax .bw-scroll-paper:after{content:'';position:absolute;inset:34px;border:1px dotted #cbb49a;pointer-events:none}
+.ce2-burgundy-wax .bw-scroll-overline{font:600 10px/1.5 'DM Sans',sans-serif;letter-spacing:.15em;color:#8a735b}
+.ce2-burgundy-wax .bw-scroll-names{font:400 clamp(39px,8vw,65px)/1.05 'Cormorant Garamond',serif;color:#63172f}
+.ce2-burgundy-wax .bw-scroll-names em{display:block;font:400 40px 'Allura',cursive}
+.ce2-burgundy-wax .bw-scroll-date{font:500 18px 'Cormorant Garamond',serif;color:#634c43}
+.ce2-burgundy-wax .bw-scroll-ornament{font-size:40px;color:#a78668}
+.ce2-burgundy-wax .bw-scroll-roller{position:absolute;left:5%;right:5%;height:32px;border-radius:16px;background:linear-gradient(#dfc8a3 0,#936c43 26%,#d9bd91 62%,#815638);border:3px solid #a47c4c;box-shadow:0 5px 12px #0006;transition:transform 2s cubic-bezier(.27,.87,.14,1)}
+.ce2-burgundy-wax .bw-scroll-roller:before,.ce2-burgundy-wax .bw-scroll-roller:after{content:'';position:absolute;top:-7px;width:27px;height:40px;border-radius:7px;background:linear-gradient(90deg,#a67740,#e5c58a,#916436)}
+.ce2-burgundy-wax .bw-scroll-roller:before{left:-20px}.ce2-burgundy-wax .bw-scroll-roller:after{right:-20px}
+.ce2-burgundy-wax .bw-scroll-roller-top{top:calc(50% - 23px)}
+.ce2-burgundy-wax .bw-scroll-roller-bottom{top:calc(50% + 6px)}
+.ce2-burgundy-wax .bw-scroll-ribbon{position:absolute;z-index:2;top:calc(50% - 23px);width:70%;height:56px;background:linear-gradient(90deg,#66152f,#b04b64,#6c1a38);transform:rotate(-2deg);box-shadow:0 5px 16px #0007;transition:transform 1.1s ease,opacity .7s ease}
+.ce2-burgundy-wax .bw-scroll-seal{position:absolute;z-index:3;top:calc(50% - 29px);display:grid;place-items:center;width:65px;height:65px;background:radial-gradient(circle at 30% 25%,#c78186,#77203d 72%);border:6px double #d6a093;border-radius:42%;color:#f7dbc0;font-size:25px;box-shadow:0 9px 20px #18050c80;transition:transform .9s ease,opacity .8s}
+.ce2-burgundy-wax .bw-scroll-instruction{position:absolute;bottom:1%;left:0;right:0;text-align:center;color:#fff0d6;font:600 10px 'DM Sans',sans-serif;letter-spacing:.19em;transition:opacity .5s}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-seal{transform:rotate(50deg) scale(2.6);opacity:0}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-ribbon{transform:translateX(130%) rotate(29deg);opacity:0}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-paper{clip-path:inset(0 0 0 0);transform:scale(1.04)}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-roller-top{transform:translateY(calc(-1 * min(230px, 30svh)))}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-roller-bottom{transform:translateY(min(230px, 30svh))}
+.ce2-burgundy-wax .bw-intro.is-opening .bw-scroll-instruction{opacity:0}
 .ce2-burgundy-wax .ce2-animated{opacity:0;transform:translateY(25px) rotateX(-4deg)}
 .ce2-burgundy-wax .ce2-animated.ce2-in-view{opacity:1;transform:translateY(0) rotateX(0)}
 @keyframes bw-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
@@ -104,4 +117,9 @@
 .ce2-burgundy-wax .bw-album-grid{grid-template-rows:165px 165px;gap:8px}
 .ce2-burgundy-wax .bw-album-image{border-width:4px}
 }
+
+/* Portraits are set into the letter's antique oval frames. */
+.ce2-burgundy-wax .bw-cameo-frame{width:min(380px,75vw);aspect-ratio:4/5;overflow:hidden;border:15px ridge #ddbb93;border-radius:48% 48% 9% 9%;box-shadow:0 15px 30px #30161b55;margin:40px auto 5px;background:#d8c5b5}
+.ce2-burgundy-wax .bw-venue-cameo{width:min(310px,70%);aspect-ratio:4/3;border:12px ridge #c7a67d;margin:28px auto 6px;box-shadow:0 12px 30px #0006;background:#ddc6ad}
+@media(max-width:580px){.ce2-burgundy-wax .bw-venue-cameo{width:85%}}
 </style>

@@ -6,12 +6,12 @@
 
 @push('styles')
 @include('weddings.partials.invitation-theme-styles')
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@if(\App\Support\CuratedWeddingDesign::isCurated($template))
+@include('weddings.themes.curated-editorial-styles')
+@elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-styles')
 <link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-front.webp') }}" as="image" type="image/webp">
 <link rel="preload" href="{{ asset('wedding/royal-burgundy-v3/assets/envelope-flap.webp') }}" as="image" type="image/webp">
-@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
-@include('weddings.themes.curated-editorial-styles')
 @endif
 <style>
     body.invitation-page{background:#fbf8f1}
@@ -99,10 +99,10 @@
 @endsection
 
 @push('scripts')
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-@include('weddings.themes.royal-v3-script')
-@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
+@if(\App\Support\CuratedWeddingDesign::isCurated($template))
 @include('weddings.themes.curated-editorial-script')
+@elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-v3-script')
 @endif
 <script>
 (function () {

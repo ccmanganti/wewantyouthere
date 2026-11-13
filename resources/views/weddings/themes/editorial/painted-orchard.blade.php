@@ -129,8 +129,8 @@
     <p data-field="closing_message">{{ $copy('closing_message',"And so the next chapter blooms.") }}</p><a href="#po-garden">RETURN TO THE GARDEN ↑</a></footer>
 
 {{-- Two botanical conservatory gates unfold toward the guest. No envelope or skip. --}}
-<div class="po-intro ce2-intro" id="ce2-intro" @if($isPreview) hidden @endif>
-    <button type="button" class="po-gate-trigger" data-ce2-open aria-label="Open the garden gates to our invitation">
+<div class="po-intro ce2-intro" id="ce2-intro" data-intro-kind="conservatory-gate" @if($isPreview) hidden @endif>
+    <button type="button" class="po-gate-trigger" data-garden-gate-open aria-label="Open the garden gates to our invitation">
         <span class="po-gate-glow" aria-hidden="true"></span>
         <span class="po-gate-card"><small>BEHIND THESE GATES</small><strong>{{ $copy('bride_name','Amelia') }} &amp; {{ $copy('groom_name','Gabriel') }}</strong><em>{{ $date->format('F j, Y') }}</em></span>
         <span class="po-gate po-gate-left" style="background-image:linear-gradient(#0b241d80,#0b241d80),url('{{ $decoration('forest') }}')" aria-hidden="true"></span>

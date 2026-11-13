@@ -111,8 +111,8 @@
     <p data-field="closing_message">{{ $copy('closing_message','Our favorite journey begins with you there.') }}</p><a href="#dt-pass">RETURN TO DEPARTURES ↑</a></footer>
 
 {{-- A boarding pass physically tears along the perforation on click. --}}
-<div class="dt-intro ce2-intro" id="ce2-intro" @if($isPreview) hidden @endif>
-    <button type="button" class="dt-boarding-trigger" data-ce2-open aria-label="Board our wedding invitation">
+<div class="dt-intro ce2-intro" id="ce2-intro" data-intro-kind="tearaway-ticket" @if($isPreview) hidden @endif>
+    <button type="button" class="dt-boarding-trigger" data-boarding-ticket-open aria-label="Board our wedding invitation">
         <span class="dt-intro-header"><small>WE WANT YOU THERE · AIRLINES</small><strong>BOARDING PASS</strong><em>✈</em></span>
         <span class="dt-intro-body"><small>PASSENGERS</small><strong>{{ $copy('bride_name','Amelia') }} &amp; {{ $copy('groom_name','Gabriel') }}</strong><span>DESTINATION: FOREVER</span><small>DATE: {{ $date->format('d M Y') }}</small></span>
         <span class="dt-intro-stub"><span>FLIGHT 001</span><span class="dt-intro-code" aria-hidden="true"></span><strong>CLICK TO BOARD</strong></span>

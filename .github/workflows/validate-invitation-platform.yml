@@ -22,6 +22,7 @@ on:
       - 'config/wedding_photos.php'
       - 'config/wedding_curated_themes.php'
       - 'config/wedding_curated_assets.php'
+      - 'config/wedding_curated_showcases.php'
       - 'tests/Feature/**'
       - 'app/Support/**'
       - 'database/migrations/**'
@@ -41,14 +42,32 @@ jobs:
         with:
           php-version: '8.4'
           extensions: mbstring, xml, curl, zip, pdo_sqlite, intl, gd, bcmath
-      - name: Check wedding builder and envelope JavaScript syntax
+      - name: Validate JavaScript for each separate wedding experience
         run: |
-          node -e "const fs=require('fs'); for(const path of ['resources/views/weddings/partials/editor-script.blade.php','resources/views/weddings/partials/photo-builder-script.blade.php','resources/views/weddings/themes/royal-v3-script.blade.php','resources/views/weddings/themes/curated-editorial-script.blade.php']) { const src=fs.readFileSync(path,'utf8').replace(/^<script>\\s*/,'').replace(/\\s*<\\/script>\\s*$/,''); new Function(src); console.log(path+' syntax valid'); }"
+          node <<'NODE'
+          const fs = require('fs');
+          const base = [
+            'resources/views/weddings/partials/editor-script.blade.php',
+            'resources/views/weddings/partials/photo-builder-script.blade.php',
+            'resources/views/weddings/themes/royal-v3-script.blade.php',
+            'resources/views/weddings/themes/curated-editorial-script.blade.php'
+          ];
+          const designs = ['burgundy-wax', 'olive-garden', 'painted-orchard', 'pearl-editorial', 'destination-ticket'];
+          const files = [...base, ...designs.map(key => 'resources/views/weddings/themes/editorial/intros/'+key+'.blade.php')];
+          for (const path of files) {
+            const text = fs.readFileSync(path, 'utf8');
+            const blocks = [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)];
+            if (blocks.length !== 1) throw new Error(path+' must contain one JavaScript block; got '+blocks.length);
+            new Function(blocks[0][1]);
+            console.log(path+' syntax valid');
+          }
+          NODE
       - run: composer install --no-interaction --prefer-dist
       - run: |
           find app database -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l config/wedding_curated_assets.php
           php -l config/wedding_curated_themes.php
+          php -l config/wedding_curated_showcases.php
           cp .env.example .env
           php artisan key:generate
           touch database/database.sqlite

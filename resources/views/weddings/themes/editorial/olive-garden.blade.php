@@ -135,8 +135,8 @@
 </footer>
 
 {{-- The guest must OPEN THE BOOK. A page-turn replaces any envelope intro. --}}
-<div class="og-intro ce2-intro" id="ce2-intro" @if($isPreview) hidden @endif>
-    <div class="og-book-shadow"><button type="button" class="og-book-trigger" data-ce2-open aria-label="Open the wedding journal">
+<div class="og-intro ce2-intro" id="ce2-intro" data-intro-kind="turning-journal" @if($isPreview) hidden @endif>
+    <div class="og-book-shadow"><button type="button" class="og-book-trigger" data-journal-open aria-label="Open the wedding journal">
         <span class="og-book-back"></span><span class="og-book-pages"></span>
         <span class="og-book-cover"><span>THE BOTANICAL JOURNAL</span><strong>{{ $copy('bride_name','Amelia') }} <i>&amp;</i> {{ $copy('groom_name','Gabriel') }}</strong><small>OUR WEDDING STORY · VOL. I</small><span class="og-book-flower" aria-hidden="true">✿</span></span>
         <span class="og-book-first-page"><span>YOU ARE INVITED</span><strong>{{ $date->format('F j, Y') }}</strong></span>
