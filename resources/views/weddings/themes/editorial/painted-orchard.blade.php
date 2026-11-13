@@ -62,7 +62,7 @@
     </div>
 </section>
 
-@if($premiumAccess && $visible('ceremony_details'))
+@if($premiumAccess && ($visible('ceremony_details') || $isPreview))
 <section class="po-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details">
     <span class="po-eyebrow">BEFORE THE VOWS</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','A garden ceremony') }}</h2>
     <p data-field="ceremony_notes">{{ $copy('ceremony_notes','A little note for our wedding day.') }}</p>
@@ -70,7 +70,7 @@
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'po-maps'])
 
-@if($premiumAccess && $visible('program'))
+@if($premiumAccess && ($visible('program') || $isPreview))
 <section class="po-program ce2-section" id="po-program" data-preview-section="program" data-premium-section="program">
     <span class="po-eyebrow">FOLLOW THE PETAL PATH</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','The celebration awaits') }}</h2>
     <div class="po-path">
@@ -82,7 +82,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('entourage'))
+@if($premiumAccess && ($visible('entourage') || $isPreview))
 <section class="po-people ce2-section" id="po-people" data-preview-section="entourage" data-premium-section="entourage">
     <div class="po-people-arch"><span class="po-eyebrow">OUR BEAUTIFUL COMMUNITY</span>
         <h2 data-field="entourage_heading">{{ $copy('entourage_heading','The people beside us') }}</h2>
@@ -103,7 +103,7 @@
     <p data-field="gallery_quote">{{ $copy('gallery_quote',"Our story keeps growing with every beautiful moment.") }}</p>
 </section>
 
-@if($visible('details'))
+@if($visible('details') || $isPreview)
 <section class="po-dress ce2-section" id="po-dress" data-preview-section="details">
     <span class="po-eyebrow">BEFORE YOU JOIN OUR GARDEN</span><h2 data-field="dress_heading">{{ $copy('dress_heading','A note on attire') }}</h2>
     <p data-field="dress_code">{{ $copy('dress_code','Garden formal') }}</p>
@@ -115,7 +115,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('guests'))
+@if($premiumAccess && ($visible('guests') || $isPreview))
 <section class="po-rsvp ce2-section" id="po-rsvp" data-preview-section="guests" data-premium-section="guests" style="--po-rsvp-bg:url('{{ $decoration('forest') }}')">
     <div class="po-rsvp-arch"><span class="po-eyebrow">WE'VE SAVED YOU A PLACE</span>
         <h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','Meet us beneath the blossoms') }}</h2>
