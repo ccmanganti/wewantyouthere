@@ -22,7 +22,10 @@ class WeddingPhotoController extends Controller
             ->where('slug', $slug)
             ->where('status', 'published')
             ->where('settings->renderer', 'builtin_wedding')
-            ->where('settings->theme', 'royal_burgundy')
+            ->where(function ($query) {
+                $query->where('settings->theme', 'royal_burgundy')
+                    ->orWhereIn('slug', array_values(array_column(config('wedding_curated_themes', []), 'slug')));
+            })
             ->firstOrFail();
     }
 
@@ -49,6 +52,7 @@ class WeddingPhotoController extends Controller
         abort_if($request->user() && ! InvitationAccounts::canCreateWebsite($request->user()), 403);
         $this->validatePhoto($request);
         $slot = $request->string('slot')->toString();
+        abort_unless(array_key_exists($slot, \App\Support\CuratedWeddingDesign::photoSlots($template)), 422);
         $file = $request->file('photo');
 
         $mime = $file->getMimeType();
@@ -77,6 +81,7 @@ class WeddingPhotoController extends Controller
     {
         $template = $this->template($slug);
         $this->validSlot($slot);
+        abort_unless(array_key_exists($slot, \App\Support\CuratedWeddingDesign::photoSlots($template)), 404);
         $entry = $request->session()->get('wedding_uploads.' . $template->id . '.' . $slot);
         abort_unless(is_array($entry) && isset($entry['path'], $entry['mime'])
             && Storage::disk('local')->exists($entry['path']), 404);
@@ -88,6 +93,7 @@ class WeddingPhotoController extends Controller
     {
         $template = $this->template($slug);
         $this->validSlot($slot);
+        abort_unless(array_key_exists($slot, \App\Support\CuratedWeddingDesign::photoSlots($template)), 404);
         $key = 'wedding_uploads.' . $template->id;
         $existing = $request->session()->get($key, []);
         if (isset($existing[$slot]['path'])) {
