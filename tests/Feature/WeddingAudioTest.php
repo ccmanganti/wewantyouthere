@@ -64,14 +64,16 @@ class WeddingAudioTest extends TestCase
         $this->assertCount(10, $unique);
     }
 
-    public function test_free_templates_do_not_display_music_studio_or_load_music_player(): void
+    public function test_free_editor_only_shows_sample_preview_audio_not_premium_controls(): void
     {
         $template = InvitationTemplate::where('slug','olive-garden-wedding')->firstOrFail();
         $this->get('/templates/wedding/'.$template->slug)->assertOk()
             ->assertSee('Music & interactive sound effects', false)
             ->assertDontSee('data-music-upload="intro"', false)
-            ->assertDontSee('wwyt-audio-bootstrap')
-            ->assertDontSee('wedding-audio.js');
+            ->assertDontSee('id="wedding-music-studio"', false)
+            ->assertSee('wwyt-audio-bootstrap')
+            ->assertSee('wedding-audio.js')
+            ->assertSee('&quot;demo&quot;:true', false);
         $owner = $this->user();
         $this->actingAs($owner)
             ->postJson('/templates/wedding/'.$template->slug.'/audio', ['slot' => 'intro'])
@@ -84,6 +86,35 @@ class WeddingAudioTest extends TestCase
         $website = InvitationWebsite::where('slug','free-mira-theo')->firstOrFail();
         $this->assertEmpty($website->answers['_audio'] ?? []);
         $this->get('/i/free-mira-theo')->assertOk()->assertDontSee('wedding-audio.js');
+    }
+
+    public function test_public_sample_previews_play_distinct_theme_music_without_premium_purchase(): void
+    {
+        foreach (config('wedding_curated_themes') as $key => $design) {
+            $response = $this->get('/templates/'.$design['slug'].'/preview')->assertOk()
+                ->assertSee('wwyt-audio-bootstrap')
+                ->assertSee('wedding-audio.js')
+                ->assertSee('Sample design')
+                ->assertSee('&quot;demo&quot;:true', false)
+                ->assertSee(config('wedding_audio.defaults.'.$key.'.intro'))
+                ->assertSee(config('wedding_audio.defaults.'.$key.'.main'))
+                ->assertDontSee('/i/our-wedding/audio/intro');
+        }
+
+        $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
+            ->assertSee('wwyt-audio-bootstrap')
+            ->assertSee('royal-fanfare')
+            ->assertSee('royal-ballroom');
+    }
+
+    public function test_preview_buttons_are_labeled_preview_only(): void
+    {
+        $this->get('/wedding-invitation-templates')->assertOk()
+            ->assertSee('>Preview <i', false)
+            ->assertDontSee('>Live preview <i', false);
+        $this->get('/templates/wedding/olive-garden-wedding')->assertOk()
+            ->assertSee('class="review-preview-button"', false)
+            ->assertDontSee('> Open full preview', false);
     }
 
     public function test_paid_editor_has_both_independent_track_controls_and_audio_player(): void
