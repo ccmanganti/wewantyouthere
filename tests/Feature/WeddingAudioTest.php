@@ -193,4 +193,88 @@ class WeddingAudioTest extends TestCase
             'slot'=>'intro','audio'=>UploadedFile::fake()->create('danger.svg',30,'image/svg+xml'),
         ])->assertUnprocessable()->assertJsonValidationErrors('audio');
     }
+    public function test_published_site_music_can_be_changed_without_recreating_the_invitation(): void
+    {
+        $template=InvitationTemplate::where('slug','pearl-editorial-wedding')->firstOrFail();
+        $owner=$this->user();$this->purchase($owner,$template);
+        $site=InvitationWebsite::create([
+            'user_id'=>$owner->id, 'invitation_template_id'=>$template->id,
+            'name'=>'An Editorial Romance', 'slug'=>'owner-music-settings',
+            'status'=>'published','answers'=>array_merge($this->answers(), ['_sections'=>[]]),
+        ]);
+        $this->actingAs($owner)->get('/app/invitations/'.$site->id.'/music')->assertOk()
+            ->assertSee('Your invitation\'s soundtrack.')
+            ->assertSee('name="audio[intro][source]"',false)
+            ->assertSee('name="audio[main][source]"',false)
+            ->assertSee('wedding-audio.js');
+
+        $this->post('/app/invitations/'.$site->id.'/music',[
+            'audio'=>[
+                'intro'=>['source'=>'library','track'=>'pearl-reveal'],
+                'main'=>['source'=>'library','track'=>'afterglow-nocturne'],
+                'sfx'=>'0','volume'=>'70',
+            ],
+        ])->assertRedirect('/app/invitations/'.$site->id.'/music');
+
+        $site->refresh();
+        $this->assertSame('afterglow-nocturne',$site->answers['_audio']['main']['track']);
+        $this->assertFalse($site->answers['_audio']['sfx']);
+        $this->assertSame(70,$site->answers['_audio']['volume']);
+        $this->assertSame('owner-music-settings',$site->slug);
+        $this->assertDatabaseCount('invitation_websites',1);
+        $this->get('/i/owner-music-settings')->assertOk()->assertSee('afterglow-nocturne');
+    }
+
+    public function test_only_owner_with_premium_purchase_can_manage_published_audio(): void
+    {
+        $template=InvitationTemplate::where('slug','painted-orchard-wedding')->firstOrFail();
+        $owner=$this->user();$other=$this->user('unauthorized-music@example.test');
+        $site=InvitationWebsite::create([
+            'user_id'=>$owner->id,'invitation_template_id'=>$template->id,
+            'name'=>'A Garden Wedding','slug'=>'private-music-settings',
+            'status'=>'published','answers'=>$this->answers(),
+        ]);
+        $this->actingAs($other)->get('/app/invitations/'.$site->id.'/music')->assertForbidden();
+        $this->actingAs($owner)->get('/app/invitations/'.$site->id.'/music')->assertForbidden();
+        $this->purchase($owner,$template);
+        $this->get('/app/invitations/'.$site->id.'/music')->assertOk();
+    }
+
+    public function test_published_music_manager_can_replace_and_preview_owner_audio(): void
+    {
+        $template=InvitationTemplate::where('slug','burgundy-wax-wedding')->firstOrFail();
+        $owner=$this->user();$this->purchase($owner,$template);
+        $site=InvitationWebsite::create([
+            'user_id'=>$owner->id,'invitation_template_id'=>$template->id,
+            'name'=>'An Heirloom Wedding','slug'=>'change-the-song',
+            'status'=>'published','answers'=>$this->answers(),
+        ]);
+        $this->actingAs($owner);
+        $url='/app/invitations/'.$site->id.'/music';
+        $this->post($url,[
+            'audio'=>[
+                'intro'=>['source'=>'custom'],
+                'main'=>['source'=>'library','track'=>'heirloom-valse'],
+                'volume'=>'40','sfx'=>'1',
+            ],
+            'music_files'=>['intro'=>UploadedFile::fake()->create('custom-bells.mp3',92,'audio/mpeg')],
+        ])->assertRedirect($url);
+        $first=$site->fresh()->media['audio_intro']['path'];
+        Storage::disk('local')->assertExists($first);
+        $this->get($url.'/intro')->assertOk()->assertHeader('Content-Type','audio/mpeg');
+        $this->get('/i/change-the-song/audio/intro')->assertOk();
+
+        $this->post($url,[
+            'audio'=>[
+                'intro'=>['source'=>'custom'],
+                'main'=>['source'=>'library','track'=>'heirloom-valse'],
+            ],
+            'music_files'=>['intro'=>UploadedFile::fake()->create('replacement-bells.mp3',95,'audio/mpeg')],
+        ])->assertRedirect($url);
+        $second=$site->fresh()->media['audio_intro']['path'];
+        $this->assertNotSame($first,$second);
+        Storage::disk('local')->assertExists($second);
+        Storage::disk('local')->assertMissing($first);
+    }
+
 }
