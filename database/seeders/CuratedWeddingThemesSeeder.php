@@ -49,7 +49,7 @@ class CuratedWeddingThemesSeeder extends Seeder
                 'view' => 'weddings.themes.editorial.'.$key,
                 'description' => $design['description'],
                 'thumbnail_url' => config('wedding_curated_assets.'.$key.'.photos.hero') ?: $design['scenery'],
-                'photo_slots' => array_keys(config('wedding_curated_assets.'.$key.'.photos', [])),
+                'photo_slots' => array_keys(\App\Support\CuratedWeddingDesign::photoSlots($template)),
                 'layout_revision' => \App\Support\CuratedWeddingDesign::REVISION,
                 'sample_profile' => $key,
                 'engine' => 'independent_blade_v4',
