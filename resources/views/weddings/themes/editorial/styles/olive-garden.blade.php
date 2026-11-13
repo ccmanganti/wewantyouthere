@@ -107,4 +107,7 @@
 .ce2-olive-garden .ce2-animated.ce2-in-view{opacity:1;transform:scale(1) rotate(0)}
 @media(max-width:800px){.ce2-olive-garden .og-cover{grid-template-columns:1fr;padding:95px 20px 55px}.ce2-olive-garden .og-cover-photo{max-width:350px;margin:auto}.ce2-olive-garden .og-cover-right{width:min(100%,520px);margin:auto;min-height:460px}.ce2-olive-garden .og-story-layout,.ce2-olive-garden .og-venue,.ce2-olive-garden .og-calendar{grid-template-columns:1fr}.ce2-olive-garden .og-calendar-right{min-height:440px}}
 @media(max-width:570px){.ce2-olive-garden .og-notebook{padding:45px 20px 60px}.ce2-olive-garden .og-pressed{width:100px;height:155px;opacity:.35}.ce2-olive-garden .og-memory-row{gap:5px;margin:45px auto}.ce2-olive-garden .og-memory{padding:6px 6px 34px}.ce2-olive-garden .og-timeline-list>div{grid-template-columns:22px 100px 1fr;gap:9px}.ce2-olive-garden .og-people-grid{grid-template-columns:1fr}.ce2-olive-garden .og-scrapbook-grid{gap:10px}.ce2-olive-garden .og-scrapbook-photo{border-width:5px}.ce2-olive-garden .og-rsvp-notebook{padding:48px 18px;border-left-width:9px}}
+
+/* The journal book opens around its left spine; no envelope illustration. */
+.ce2-olive-garden .og-book-trigger{touch-action:manipulation}
 </style>
