@@ -60,6 +60,12 @@ class MarketingController extends Controller
             'gift_message' => 'Your presence is the greatest gift of all.',
         ];
 
+        // Each theme advertises a different sample wedding. No published
+        // invitation receives these showcase details.
+        if ($key = \App\Support\CuratedWeddingDesign::forTemplate($template)) {
+            $answers = array_replace($answers, config('wedding_curated_showcases.'.$key, []));
+        }
+
         return view('marketing.template-preview', [
             'template' => $template,
             'answers' => $answers,
