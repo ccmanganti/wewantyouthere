@@ -84,8 +84,13 @@ class WeddingAudioController extends Controller
         $template = $this->template($request, $slug);
         abort_unless(in_array($slot, WeddingAudio::SLOTS, true), 404);
         $entry = $request->session()->get('wedding_audio_uploads.'.$template->id.'.'.$slot, []);
-        abort_unless(is_array($entry) && str_starts_with($entry['path'] ?? '',
-            'wedding-audio-drafts/'.hash('sha256', $request->session()->getId()).'/'.$request->user()->id.'/'.$template->id.'/'), 404);
+        // Laravel can regenerate its session identifier between requests.
+        // The authenticated owner's session already owns this manifest entry;
+        // validate its stable owner/template path, not a rehashed session ID.
+        $path = is_array($entry) ? ($entry['path'] ?? '') : '';
+        abort_unless(is_string($path)
+            && preg_match('/\\Awedding-audio-drafts\\/[a-f0-9]{64}\\/'
+                .$request->user()->id.'\\/'.$template->id.'\\/[A-Za-z0-9]{36}\\.(mp3|wav|ogg|m4a)\\z/', $path), 404);
         return $this->entryResponse($entry, $slot);
     }
 
