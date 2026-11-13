@@ -21,6 +21,7 @@ on:
       - 'config/wedding_builder.php'
       - 'config/wedding_photos.php'
       - 'config/wedding_curated_themes.php'
+      - 'config/wedding_curated_assets.php'
       - 'tests/Feature/**'
       - 'app/Support/**'
       - 'database/migrations/**'
@@ -42,10 +43,12 @@ jobs:
           extensions: mbstring, xml, curl, zip, pdo_sqlite, intl, gd, bcmath
       - name: Check wedding builder and envelope JavaScript syntax
         run: |
-          node -e "const fs=require('fs'); for(const path of ['resources/views/weddings/partials/editor-script.blade.php','resources/views/weddings/partials/photo-builder-script.blade.php','resources/views/weddings/themes/royal-v3-script.blade.php']) { const src=fs.readFileSync(path,'utf8').replace(/^<script>\\s*/,'').replace(/\\s*<\\/script>\\s*$/,''); new Function(src); console.log(path+' syntax valid'); }"
+          node -e "const fs=require('fs'); for(const path of ['resources/views/weddings/partials/editor-script.blade.php','resources/views/weddings/partials/photo-builder-script.blade.php','resources/views/weddings/themes/royal-v3-script.blade.php','resources/views/weddings/themes/curated-editorial-script.blade.php']) { const src=fs.readFileSync(path,'utf8').replace(/^<script>\\s*/,'').replace(/\\s*<\\/script>\\s*$/,''); new Function(src); console.log(path+' syntax valid'); }"
       - run: composer install --no-interaction --prefer-dist
       - run: |
           find app database -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l config/wedding_curated_assets.php
+          php -l config/wedding_curated_themes.php
           cp .env.example .env
           php artisan key:generate
           touch database/database.sqlite
