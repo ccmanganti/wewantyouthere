@@ -20,6 +20,9 @@
     <span class="bw-overline">DEAR FRIENDS &amp; FAMILY</span>
     <h2 data-field="welcome_heading">{{ $copy('welcome_heading','You are warmly invited.') }}</h2>
     <p class="bw-handwriting" data-field="host_message">{{ $copy('host_message',"We would be so delighted if you were there as we start this next chapter of our lives.") }}</p>
+    <div class="bw-cameo-frame">
+        @include('weddings.themes.editorial.photo', ['slot'=>'hero','class'=>'bw-cameo-photo','eager'=>true])
+    </div>
     <div class="bw-polaroids">
         @include('weddings.themes.editorial.photo', ['slot'=>'portrait_one','class'=>'bw-polaroid bw-polaroid-left','caption'=>$copy('editorial_caption_one','One beautiful beginning')])
         @include('weddings.themes.editorial.photo', ['slot'=>'portrait_two','class'=>'bw-polaroid bw-polaroid-right','caption'=>$copy('editorial_caption_two','A lifetime to follow')])
@@ -39,6 +42,9 @@
         <span class="bw-line" aria-hidden="true"></span>
         <p data-field="event_time">{{ $display('event_time','3:00 PM') }}</p>
         <h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Glass Chapel') }}</h3>
+        <div class="bw-venue-cameo">
+            @include('weddings.themes.editorial.photo', ['slot'=>'venue_ceremony','class'=>'bw-chapel-photo'])
+        </div>
         <p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful place to say our vows') }}</p>
         <div class="bw-reception-note" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
         <span class="bw-overline">FOLLOWED BY AN EVENING TO REMEMBER</span>
