@@ -13,7 +13,6 @@
     $audioData = [
         'enabled' => ($isAudioPremium || $isAudioDemo) && $hasMusicFeature,
         'demo' => $isAudioDemo,
-        'previewSets' => $isAudioDemo ? config('wedding_audio.preview_sets.'.$audioTheme, []) : [],
         'theme' => $audioTheme,
         'settings' => $playerSettings,
         'tracks' => config('wedding_audio.tracks', []),
@@ -21,5 +20,5 @@
 @endphp
 @if($audioData['enabled'])
 <script type="application/json" id="wwyt-audio-bootstrap">{!! json_encode($audioData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) !!}</script>
-<script src="{{ route('wedding.audio.script') }}?v=4"></script>
+<script src="{{ route('wedding.audio.script') }}?v=5"></script>
 @endif

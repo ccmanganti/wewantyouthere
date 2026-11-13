@@ -1,6 +1,6 @@
-/* We Want You There - original premium instrumental score & UI sound engine.
-   Synthesized in Web Audio: no embedded third-party recordings or licenses.
-   Never starts audio until a visitor explicitly clicks or taps. */
+/* We Want You There - original wedding scores & optional premium audio engine.
+   Preview audio attempts autoplay when browser policy allows. If blocked,
+   the invitation-opening gesture unlocks it (without extra music controls). */
 (() => {
   'use strict';
   const bootstrap = document.getElementById('wwyt-audio-bootstrap');
@@ -17,7 +17,9 @@
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
   const sampleMode = Boolean(data.demo);
-  const demoControls = sampleMode ? document.getElementById('wwyt-sample-music') : null;
+  // Public samples are intentionally zero-UI: each wedding design has its
+  // own permanent opening and reception soundtrack.
+  const demoControls = null;
   const MASTER_GAIN = .66;
   const CROSSFADE_MS = 1050;
   const introTimes = {
@@ -25,11 +27,12 @@
     'pearl-editorial': 2270, 'destination-ticket': 1900, 'royal_burgundy': 2250
   };
   let ctx = null, started = false, paused = false, muted = false;
-  let effectsOn = Boolean(data.settings?.sfx ?? true);
+  let previewPrelude = false;
+  let effectsOn = !sampleMode && Boolean(data.settings?.sfx ?? true);
   let active = null, preparedMain = null, outgoing = null;
   let mainTimer = null, outgoingTimer = null, previewTimer = null, previewing = null;
   let audioFailure = false;
-  let volume = Math.max(0, Math.min(1, Number(sampleMode ? 75 : (data.settings?.volume ?? 45)) / 100));
+  let volume = Math.max(0, Math.min(1, Number(sampleMode ? 65 : (data.settings?.volume ?? 45)) / 100));
   let output, musicButton, effectsButton;
 
   function setStatus(text) {
@@ -58,27 +61,19 @@
     }
   }
   function choice(slot) {
-    if (sampleMode) {
-      const selected = demoControls?.querySelector('[data-demo-track="'+slot+'"]')?.value;
-      const allowed = data.previewSets?.[slot] || [];
-      if (selected && allowed.includes(selected) && tracks[selected]?.role === slot) {
-        return {source:'library',track:selected,url:''};
-      }
-      return data.settings?.[slot] || {source:'none'};
-    }
+    // No sample selectors or guest-facing music picker in live previews.
+    // The same wedding theme always uses the same default two-song set.
+    if (sampleMode) return data.settings?.[slot] || {source:'none'};
     if (editor?.querySelector('input[name="audio['+slot+'][source]"]')) {
       const source = editor.querySelector('input[name="audio['+slot+'][source]"]:checked')?.value || 'none';
       const track = editor.querySelector('[name="audio['+slot+'][track]"]')?.value || '';
       const file = editor.querySelector('[data-music-uploaded-name="'+slot+'"]');
-      return {source,track,url:source === 'custom' ? (file?.dataset.uploadedUrl || '') : ''};
+      return {source,track,url:source==='custom' ? (file?.dataset.uploadedUrl||'') : ''};
     }
     return data.settings?.[slot] || {source:'none'};
   }
   function selectedVolume() {
-    if (sampleMode) {
-      const value = demoControls?.querySelector('[data-demo-volume]')?.value ?? 75;
-      return Math.max(0,Math.min(1,Number(value)/100));
-    }
+    if (sampleMode) return .65;
     const editorVolume = editor?.querySelector('[data-music-volume]');
     return Math.max(0, Math.min(1, Number(editorVolume?.value ?? (data.settings?.volume ?? 45)) / 100));
   }
@@ -86,51 +81,83 @@
   function oscillator(note, at, length, kind, bus, strength) {
     const audio = getContext();
     if (!audio || !Number.isFinite(note)) return;
-    const osc = audio.createOscillator(), env = audio.createGain();
-    const isBell = kind === 'bell' || kind === 'glass';
-    const isPad = kind === 'pad';
-    osc.type = isBell ? 'sine' : isPad ? 'sine' : kind === 'marimba' ? 'sine' : 'triangle';
-    osc.frequency.setValueAtTime(midi(note),at);
-    if (kind === 'glass') osc.frequency.exponentialRampToValueAtTime(midi(note)*1.005,at+0.15);
-    const attack = isPad ? 0.14 : 0.012;
-    const decay = isPad ? Math.max(.8,length) : kind === 'marimba' ? .45 : isBell ? 1.2 : .85;
+    // Real instrument-inspired harmonic blends, not a single sine beep.
+    // Slow strings and organ have a held envelope; piano and harp decay.
+    const specs = {
+      piano:   {attack:.012, tail:.85, partials:[['triangle',1,.88],['sine',2,.21],['sine',3,.07]]},
+      harp:    {attack:.009, tail:1.10, partials:[['triangle',1,.65],['sine',2,.22],['sine',3,.10]]},
+      strings: {attack:.14, tail:.36, partials:[['sawtooth',1,.30],['triangle',1,.45],['sine',2,.12]]},
+      organ:   {attack:.10, tail:.32, partials:[['sine',1,.55],['triangle',1,.42],['sine',2,.22]]},
+      cello:   {attack:.10, tail:.27, partials:[['triangle',1,.72],['sine',2,.21]]},
+      flute:   {attack:.095,tail:.32, partials:[['sine',1,.90],['sine',2,.09]]}
+    };
+    const spec = specs[kind] || specs.piano;
+    const sustained = ['strings','organ','cello','flute'].includes(kind);
+    const hold = Math.max(.20, length * (sustained ? .92 : .68));
+    const release = sustained ? spec.tail : Math.min(1.28,Math.max(.32,length*.5+spec.tail*.35));
+    const end = at + Math.max(.06,spec.attack) + hold + release;
+    const env = audio.createGain();
     env.gain.setValueAtTime(.0001,at);
-    env.gain.exponentialRampToValueAtTime(Math.max(.0002,strength),at+attack);
-    env.gain.exponentialRampToValueAtTime(.0001,at+Math.max(attack+.06,decay));
-    osc.connect(env); env.connect(bus);
-    osc.start(at); osc.stop(at+Math.max(decay+.05,.23));
-    osc.onended = () => { try {osc.disconnect();env.disconnect();} catch(_) {} };
+    env.gain.exponentialRampToValueAtTime(Math.max(.0002,strength),at+spec.attack);
+    env.gain.setValueAtTime(Math.max(.0002,strength*(sustained?.72:.64)),at+spec.attack+hold);
+    env.gain.exponentialRampToValueAtTime(.0001,end);
+    env.connect(bus);
+    const oscs = [], nodes = [];
+    for (const [wave,harmonic,ratio] of spec.partials) {
+      const osc = audio.createOscillator(), partial = audio.createGain();
+      osc.type = wave;
+      osc.frequency.setValueAtTime(midi(note)*harmonic,at);
+      partial.gain.value = ratio;
+      osc.connect(partial);partial.connect(env);
+      osc.start(at);osc.stop(end+.05);
+      oscs.push(osc);nodes.push(partial);
+    }
+    oscs[0].onended = () => {
+      try {
+        oscs.forEach(osc=>osc.disconnect());
+        nodes.forEach(node=>node.disconnect());
+        env.disconnect();
+      } catch(_) {}
+    };
   }
   function synth(trackId, level) {
-    const track = tracks[trackId];
-    const audio = getContext();
+    const track=tracks[trackId], audio=getContext();
     if (!audio || !track || !Array.isArray(track.melody) || !track.melody.length) return null;
-    const bus = audio.createGain();
+    const bus=audio.createGain();
     bus.gain.setValueAtTime(.0001,audio.currentTime);
     bus.connect(audio.destination);
-    bus.gain.setTargetAtTime(Math.min(.9,level)*MASTER_GAIN,audio.currentTime,.11);
-    const bpm = Math.max(50,Math.min(130,Number(track.bpm)||80));
-    const beat = 60/bpm;
-    let index = 0, next = audio.currentTime+.035, timer;
+    bus.gain.setTargetAtTime(Math.min(.85,level)*MASTER_GAIN,audio.currentTime,.17);
+    const bpm=Math.max(55,Math.min(110,Number(track.bpm)||76));
+    const beat=60/bpm;
+    const meter=Number(track.meter)===3?3:4;
+    const voice=track.voice||'piano';
+    const backing=track.accompaniment||'strings';
+    const chords=Array.isArray(track.chords)?track.chords:[];
+    let index=0,next=audio.currentTime+.04,timer;
     function schedule() {
-      while (next < audio.currentTime+.36) {
-        const step = index % track.melody.length;
-        const note = track.melody[step];
-        const voice = track.voice || 'piano';
-        if (note !== null && note !== undefined) oscillator(Number(note), next, beat*.8, voice, bus, .25);
-        if (step % 4 === 0 && Array.isArray(track.chords)) {
-          const chord = track.chords[Math.floor(step/4)%track.chords.length] || [];
-          chord.forEach((pitch,j) => oscillator(Number(pitch)-12, next+j*.022,beat*3,
-            voice === 'marimba' ? 'piano' : 'pad',bus,.042));
-        }
-        if(step % 2 === 0 && Array.isArray(track.chords) && track.chords.length){
-          const chord = track.chords[Math.floor(step/4)%track.chords.length]||[];
-          if(chord.length) oscillator(Number(chord[0])-24,next,beat, 'sine',bus,.04);
+      while(next<audio.currentTime+.34){
+        const step=index%track.melody.length;
+        const note=track.melody[step];
+        const bar=Math.floor(step/meter);
+        const chord=chords.length?chords[bar%chords.length]:[];
+        const beatInBar=step%meter;
+        // The processional melody sings over sustained harmonic accompaniment.
+        if(Number.isFinite(note))oscillator(note,next,beat*1.12,voice,bus,.19);
+        if (chord.length && beatInBar===0) {
+          // Sustained wedding strings, with a cello bass note and soft arpeggio.
+          chord.forEach((pitch,j)=>oscillator(Number(pitch)-12,next+j*.035,
+            beat*(meter-.20),backing,bus,.037));
+          oscillator(Number(chord[0])-24,next,beat*1.2,'cello',bus,.072);
+        } else if (chord.length && (meter===3 || beatInBar===2)) {
+          // In a 3/4 wedding waltz, the accompaniment plays one-two-three.
+          const shift=meter===3?1:0;
+          const pitch=chord[(beatInBar+shift)%chord.length];
+          oscillator(Number(pitch)-12,next,beat*.70,backing==='strings'?'piano':backing,bus,.049);
         }
         next+=beat;index+=1;
       }
     }
-    schedule();timer=window.setInterval(schedule,150);
+    schedule();timer=window.setInterval(schedule,145);
     return {kind:'synth',bus,timer};
   }
   function stop(playing, fade=.17) {
@@ -218,6 +245,7 @@
     preparedMain = null;
     previewing = null;
     started = false;
+    previewPrelude = false;
   }
 
   function moveToMain(overlapMs) {
@@ -241,6 +269,37 @@
     updateButtons();
   }
 
+  function startPreviewPrelude() {
+    if (!sampleMode || started || !getContext()) return;
+    // Music plays by default on preview load (subject to browser policy).
+    // Keep the *opening* wedding score playing until the actual invitation
+    // opening. That preserves the intended opening-to-background transition.
+    stopAll();
+    volume = selectedVolume();
+    muted = false;
+    paused = false;
+    audioFailure = false;
+    effectsOn = false;
+    started = true;
+    previewPrelude = true;
+    active = playSelection('intro', volume * .72);
+    if (!active) {
+      active = playSelection('main',volume);
+      previewPrelude = false;
+    }
+  }
+
+  function transitionPreviewOnOpening() {
+    if (!sampleMode || !previewPrelude) return;
+    previewPrelude = false;
+    const introMs = reducedMotion ? 0 : (introTimes[theme] || 2250);
+    const overlapMs = Math.min(CROSSFADE_MS,Math.max(0,Math.floor(introMs*.48)));
+    mainTimer = window.setTimeout(
+      () => moveToMain(overlapMs),
+      Math.max(0,introMs-overlapMs)
+    );
+  }
+
   function prepareOpening() {
     if (!getContext()) {
       setStatus('Audio is unavailable in this browser');
@@ -252,7 +311,7 @@
     audioFailure = false;
     volume = selectedVolume();
     const sfxInput = editor?.querySelector('[data-music-sfx]');
-    effectsOn = sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx);
+    effectsOn = sampleMode ? false : (sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx));
     started = true;
 
     const opening = choice('intro');
@@ -397,13 +456,16 @@
   // Reset the soundtrack whenever the editor replays its unique intro.
   // A new intro tap will start its music once, without layered duplicates.
   document.getElementById('preview-envelope-intro')?.addEventListener('click', () => stopAll());
-  // The opening tap is the only implicit audio trigger, never page load.
+  // Every preview uses its assigned soundtrack automatically when the
+  // browser allows autoplay, or on the very first trusted tap/keyboard action.
+  // The animation's opening control remains the only visible intro action.
   document.addEventListener('click',event=>{
     if(!root.contains(event.target))return;
     const trigger=event.target.closest('[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]');
     if(trigger && !trigger.disabled){
       if(previewing){stop(previewing);previewing=null;}
-      prepareOpening();
+      if (sampleMode && previewPrelude) transitionPreviewOnOpening();
+      else if(!sampleMode || !started) prepareOpening();
       return;
     }
     if(!started)return;
@@ -437,53 +499,34 @@
     previewTimer=setTimeout(()=>{if(previewing){stop(previewing,.15);previewing=null;}},11000);
     return true;
   }
-  function setupDemoControls() {
-    if (!sampleMode || !demoControls) return;
-    for (const slot of ['intro','main']) {
-      const select = demoControls.querySelector('[data-demo-track="'+slot+'"]');
-      const button = demoControls.querySelector('[data-demo-listen="'+slot+'"]');
-      if (!select || !button) continue;
-      select.addEventListener('change',()=>{
-        stopAll();
-        const title=tracks[select.value]?.title || 'this selection';
-        setStatus('Selected '+title+'. Tap Listen to hear it.');
-        updateButtons();
-      });
-      button.addEventListener('click',()=>{
-        const selected=choice(slot);
-        if (!selected.track || tracks[selected.track]?.role!==slot) {
-          setStatus('Choose a track first.');
-          return;
-        }
-        const playing=preview(slot,selected);
-        setStatus(playing
-          ? 'Playing '+tracks[selected.track].title+'. Tap Listen again to stop.'
-          : 'Preview stopped. Tap Listen to play again.');
-        updateButtons();
-      });
+  function resumeSampleAfterGesture() {
+    if (!sampleMode) return;
+    if (!started) {
+      startPreviewPrelude();
+    } else if (muted) {
+      muted = false;
+      paused = false;
+      if (active?.kind === 'synth') ramp(active, volume, 350);
+      if (active?.kind === 'file') {
+        active.el.play().then(() => ramp(active,volume,350)).catch(()=>{});
+      }
     }
-    const slider=demoControls.querySelector('[data-demo-volume]');
-    slider?.addEventListener('input',()=>{
-      const label=demoControls.querySelector('[data-demo-volume-output]');
-      if(label) label.textContent=slider.value+'%';
-      volume=selectedVolume();
-      if(active&&!muted) ramp(active,volume,200);
-      if(previewing) ramp(previewing,volume,200);
-    });
-    demoControls.querySelector('[data-demo-experience]')?.addEventListener('click',()=>{
-      // Synchronous click under a user gesture unlocks audio in iframe previews.
-      const intro=root.querySelector('#ce2-intro,#rbv-intro');
-      const opener=intro?.querySelector(
-        '[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],'+
-        '[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]'
-      );
-      if(intro && !intro.hidden && !intro.classList.contains('ce2-dismissing')
-        && !intro.classList.contains('is-fading') && opener && !opener.disabled) {
-        opener.click();
-      } else prepareOpening();
-      setStatus('Playing opening music, then fading into invitation music.');
-    });
-    setStatus('Choose a track and tap Listen to hear a sample.');
+  }
+
+  function attemptPreviewAutoplay() {
+    if(!sampleMode || !audioCtor || document.hidden || started)return;
+    try {
+      if(!ctx)ctx=new audioCtor();
+      if(ctx.state==='running'){
+        startPreviewPrelude();
+        return;
+      }
+      // Desktop browsers with permitted autoplay can resolve this instantly.
+      // Restricted browsers leave playback pending until the opening tap.
+      Promise.resolve(ctx.resume()).then(()=>{
+        if(ctx?.state==='running' && !started && !document.hidden)startPreviewPrelude();
+      }).catch(()=>{});
+    } catch (_) {}
   }
 
   window.WWYTAudio = {
@@ -499,11 +542,22 @@
       updateButtons();
     }
   };
-  if (!manager) buildControls();
-  setupDemoControls();
+  // No overlay, selector, volume slider, play or mute button in live previews.
+  // Published premium invitations keep accessible playback controls.
+  if (!manager && !editor && !sampleMode) buildControls();
+  if (sampleMode) {
+    attemptPreviewAutoplay();
+    // Works for a click on the envelope, a gallery, or the preview iframe.
+    document.addEventListener('pointerdown',resumeSampleAfterGesture,{capture:true,passive:true});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Enter' || event.key===' '){
+        resumeSampleAfterGesture();
+      }
+    },{capture:true});
+  }
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden || !started)return;
-    // Background tabs go quiet; a returning guest must explicitly tap Play.
+    // Background tabs go quiet; on a preview the next tap resumes the music.
     muted=true;paused=true;
     if(active?.kind==='file')active.el.pause();
     if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(.0001,ctx.currentTime,.04);
