@@ -125,7 +125,7 @@ class WeddingPhotoController extends Controller
 
         return view('weddings.photos.manage', [
             'website' => $website,
-            'slots' => config('wedding_photos', []),
+            'slots' => \App\Support\CuratedWeddingDesign::photoSlots($website->template),
         ]);
     }
 
@@ -134,6 +134,7 @@ class WeddingPhotoController extends Controller
         abort_unless((int) $website->user_id === (int) $request->user()->id, 403);
         $this->validatePhoto($request);
         $slot = $request->string('slot')->toString();
+        abort_unless(array_key_exists($slot, \App\Support\CuratedWeddingDesign::photoSlots($website->template)), 422);
         $file = $request->file('photo');
         $mime = $file->getMimeType();
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mime] ?? null;
