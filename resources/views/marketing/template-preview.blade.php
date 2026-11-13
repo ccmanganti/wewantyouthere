@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     @include('partials.scrollbar-theme')
     @include('weddings.partials.invitation-theme-styles')
+    @include('weddings.partials.audio-builder-styles')
 @if(\App\Support\CuratedWeddingDesign::isCurated($template))
 @include('weddings.themes.curated-editorial-styles')
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
@@ -20,10 +21,11 @@
 </head>
 <body>
 @include('weddings.partials.invitation', ['isPreview' => false, 'answers' => $answers, 'sections' => $sections, 'questions' => $questions, 'template' => $template, 'photoUrls' => [], 'suppressEnvelopeIntro' => false])
-<div class="demo-notice">Sample design · Example names and details</div>
+<div class="demo-notice">Sample design · Music demonstration · Audio is a premium feature</div>
 @if(\App\Support\CuratedWeddingDesign::isCurated($template))
 @include('weddings.themes.curated-editorial-script')
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-script')
 @endif
+@include('weddings.partials.audio-runtime', ['audioDemo' => true])
 </body></html>
