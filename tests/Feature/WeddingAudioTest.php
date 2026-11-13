@@ -203,7 +203,7 @@ class WeddingAudioTest extends TestCase
             'status'=>'published','answers'=>array_merge($this->answers(), ['_sections'=>[]]),
         ]);
         $this->actingAs($owner)->get('/app/invitations/'.$site->id.'/music')->assertOk()
-            ->assertSee('Your invitation\'s soundtrack.')
+            ->assertSee('Your invitation\'s soundtrack.', false)
             ->assertSee('name="audio[intro][source]"',false)
             ->assertSee('name="audio[main][source]"',false)
             ->assertSee('wedding-audio.js');
