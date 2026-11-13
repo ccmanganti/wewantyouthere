@@ -53,4 +53,8 @@ body.ce2-intro-open{overflow:hidden!important}
 .ce2-photo-dialog>img{max-width:100%;max-height:calc(95vh - 90px);object-fit:contain;display:block;margin:auto;box-shadow:0 16px 55px #0008}
 .ce2-lightbox-close{position:absolute;right:15px;top:0;width:44px;height:44px;background:#fff;border:0;border-radius:50%;color:#272323;font:500 28px/1 'DM Sans',sans-serif;cursor:pointer}
 </style>
-@include('weddings.themes.editorial.styles.'.$template->settings['design'])
+@php
+    $curatedStyle = (string) ($template->settings['design'] ?? 'burgundy-wax');
+    if (!array_key_exists($curatedStyle, config('wedding_curated_themes', []))) $curatedStyle = 'burgundy-wax';
+@endphp
+@include('weddings.themes.editorial.styles.'.$curatedStyle)
