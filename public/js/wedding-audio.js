@@ -1,6 +1,6 @@
-/* We Want You There - original premium instrumental score & UI sound engine.
-   Synthesized in Web Audio: no embedded third-party recordings or licenses.
-   Never starts audio until a visitor explicitly clicks or taps. */
+/* We Want You There - original wedding scores & optional premium audio engine.
+   Preview audio attempts autoplay when browser policy allows. If blocked,
+   the invitation-opening gesture unlocks it (without extra music controls). */
 (() => {
   'use strict';
   const bootstrap = document.getElementById('wwyt-audio-bootstrap');
@@ -17,7 +17,9 @@
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
   const sampleMode = Boolean(data.demo);
-  const demoControls = sampleMode ? document.getElementById('wwyt-sample-music') : null;
+  // Public samples are intentionally zero-UI: each wedding design has its
+  // own permanent opening and reception soundtrack.
+  const demoControls = null;
   const MASTER_GAIN = .66;
   const CROSSFADE_MS = 1050;
   const introTimes = {
@@ -25,11 +27,11 @@
     'pearl-editorial': 2270, 'destination-ticket': 1900, 'royal_burgundy': 2250
   };
   let ctx = null, started = false, paused = false, muted = false;
-  let effectsOn = Boolean(data.settings?.sfx ?? true);
+  let effectsOn = !sampleMode && Boolean(data.settings?.sfx ?? true);
   let active = null, preparedMain = null, outgoing = null;
   let mainTimer = null, outgoingTimer = null, previewTimer = null, previewing = null;
   let audioFailure = false;
-  let volume = Math.max(0, Math.min(1, Number(sampleMode ? 75 : (data.settings?.volume ?? 45)) / 100));
+  let volume = Math.max(0, Math.min(1, Number(sampleMode ? 65 : (data.settings?.volume ?? 45)) / 100));
   let output, musicButton, effectsButton;
 
   function setStatus(text) {
@@ -58,27 +60,19 @@
     }
   }
   function choice(slot) {
-    if (sampleMode) {
-      const selected = demoControls?.querySelector('[data-demo-track="'+slot+'"]')?.value;
-      const allowed = data.previewSets?.[slot] || [];
-      if (selected && allowed.includes(selected) && tracks[selected]?.role === slot) {
-        return {source:'library',track:selected,url:''};
-      }
-      return data.settings?.[slot] || {source:'none'};
-    }
+    // No sample selectors or guest-facing music picker in live previews.
+    // The same wedding theme always uses the same default two-song set.
+    if (sampleMode) return data.settings?.[slot] || {source:'none'};
     if (editor?.querySelector('input[name="audio['+slot+'][source]"]')) {
       const source = editor.querySelector('input[name="audio['+slot+'][source]"]:checked')?.value || 'none';
       const track = editor.querySelector('[name="audio['+slot+'][track]"]')?.value || '';
       const file = editor.querySelector('[data-music-uploaded-name="'+slot+'"]');
-      return {source,track,url:source === 'custom' ? (file?.dataset.uploadedUrl || '') : ''};
+      return {source,track,url:source==='custom' ? (file?.dataset.uploadedUrl||'') : ''};
     }
     return data.settings?.[slot] || {source:'none'};
   }
   function selectedVolume() {
-    if (sampleMode) {
-      const value = demoControls?.querySelector('[data-demo-volume]')?.value ?? 75;
-      return Math.max(0,Math.min(1,Number(value)/100));
-    }
+    if (sampleMode) return .65;
     const editorVolume = editor?.querySelector('[data-music-volume]');
     return Math.max(0, Math.min(1, Number(editorVolume?.value ?? (data.settings?.volume ?? 45)) / 100));
   }
@@ -86,51 +80,83 @@
   function oscillator(note, at, length, kind, bus, strength) {
     const audio = getContext();
     if (!audio || !Number.isFinite(note)) return;
-    const osc = audio.createOscillator(), env = audio.createGain();
-    const isBell = kind === 'bell' || kind === 'glass';
-    const isPad = kind === 'pad';
-    osc.type = isBell ? 'sine' : isPad ? 'sine' : kind === 'marimba' ? 'sine' : 'triangle';
-    osc.frequency.setValueAtTime(midi(note),at);
-    if (kind === 'glass') osc.frequency.exponentialRampToValueAtTime(midi(note)*1.005,at+0.15);
-    const attack = isPad ? 0.14 : 0.012;
-    const decay = isPad ? Math.max(.8,length) : kind === 'marimba' ? .45 : isBell ? 1.2 : .85;
+    // Real instrument-inspired harmonic blends, not a single sine beep.
+    // Slow strings and organ have a held envelope; piano and harp decay.
+    const specs = {
+      piano:   {attack:.012, tail:.85, partials:[['triangle',1,.88],['sine',2,.21],['sine',3,.07]]},
+      harp:    {attack:.009, tail:1.10, partials:[['triangle',1,.65],['sine',2,.22],['sine',3,.10]]},
+      strings: {attack:.14, tail:.36, partials:[['sawtooth',1,.30],['triangle',1,.45],['sine',2,.12]]},
+      organ:   {attack:.10, tail:.32, partials:[['sine',1,.55],['triangle',1,.42],['sine',2,.22]]},
+      cello:   {attack:.10, tail:.27, partials:[['triangle',1,.72],['sine',2,.21]]},
+      flute:   {attack:.095,tail:.32, partials:[['sine',1,.90],['sine',2,.09]]}
+    };
+    const spec = specs[kind] || specs.piano;
+    const sustained = ['strings','organ','cello','flute'].includes(kind);
+    const hold = Math.max(.20, length * (sustained ? .92 : .68));
+    const release = sustained ? spec.tail : Math.min(1.28,Math.max(.32,length*.5+spec.tail*.35));
+    const end = at + Math.max(.06,spec.attack) + hold + release;
+    const env = audio.createGain();
     env.gain.setValueAtTime(.0001,at);
-    env.gain.exponentialRampToValueAtTime(Math.max(.0002,strength),at+attack);
-    env.gain.exponentialRampToValueAtTime(.0001,at+Math.max(attack+.06,decay));
-    osc.connect(env); env.connect(bus);
-    osc.start(at); osc.stop(at+Math.max(decay+.05,.23));
-    osc.onended = () => { try {osc.disconnect();env.disconnect();} catch(_) {} };
+    env.gain.exponentialRampToValueAtTime(Math.max(.0002,strength),at+spec.attack);
+    env.gain.setValueAtTime(Math.max(.0002,strength*(sustained?.72:.64)),at+spec.attack+hold);
+    env.gain.exponentialRampToValueAtTime(.0001,end);
+    env.connect(bus);
+    const oscs = [], nodes = [];
+    for (const [wave,harmonic,ratio] of spec.partials) {
+      const osc = audio.createOscillator(), partial = audio.createGain();
+      osc.type = wave;
+      osc.frequency.setValueAtTime(midi(note)*harmonic,at);
+      partial.gain.value = ratio;
+      osc.connect(partial);partial.connect(env);
+      osc.start(at);osc.stop(end+.05);
+      oscs.push(osc);nodes.push(partial);
+    }
+    oscs[0].onended = () => {
+      try {
+        oscs.forEach(osc=>osc.disconnect());
+        nodes.forEach(node=>node.disconnect());
+        env.disconnect();
+      } catch(_) {}
+    };
   }
   function synth(trackId, level) {
-    const track = tracks[trackId];
-    const audio = getContext();
+    const track=tracks[trackId], audio=getContext();
     if (!audio || !track || !Array.isArray(track.melody) || !track.melody.length) return null;
-    const bus = audio.createGain();
+    const bus=audio.createGain();
     bus.gain.setValueAtTime(.0001,audio.currentTime);
     bus.connect(audio.destination);
-    bus.gain.setTargetAtTime(Math.min(.9,level)*MASTER_GAIN,audio.currentTime,.11);
-    const bpm = Math.max(50,Math.min(130,Number(track.bpm)||80));
-    const beat = 60/bpm;
-    let index = 0, next = audio.currentTime+.035, timer;
+    bus.gain.setTargetAtTime(Math.min(.85,level)*MASTER_GAIN,audio.currentTime,.17);
+    const bpm=Math.max(55,Math.min(110,Number(track.bpm)||76));
+    const beat=60/bpm;
+    const meter=Number(track.meter)===3?3:4;
+    const voice=track.voice||'piano';
+    const backing=track.accompaniment||'strings';
+    const chords=Array.isArray(track.chords)?track.chords:[];
+    let index=0,next=audio.currentTime+.04,timer;
     function schedule() {
-      while (next < audio.currentTime+.36) {
-        const step = index % track.melody.length;
-        const note = track.melody[step];
-        const voice = track.voice || 'piano';
-        if (note !== null && note !== undefined) oscillator(Number(note), next, beat*.8, voice, bus, .25);
-        if (step % 4 === 0 && Array.isArray(track.chords)) {
-          const chord = track.chords[Math.floor(step/4)%track.chords.length] || [];
-          chord.forEach((pitch,j) => oscillator(Number(pitch)-12, next+j*.022,beat*3,
-            voice === 'marimba' ? 'piano' : 'pad',bus,.042));
-        }
-        if(step % 2 === 0 && Array.isArray(track.chords) && track.chords.length){
-          const chord = track.chords[Math.floor(step/4)%track.chords.length]||[];
-          if(chord.length) oscillator(Number(chord[0])-24,next,beat, 'sine',bus,.04);
+      while(next<audio.currentTime+.34){
+        const step=index%track.melody.length;
+        const note=track.melody[step];
+        const bar=Math.floor(step/meter);
+        const chord=chords.length?chords[bar%chords.length]:[];
+        const beatInBar=step%meter;
+        // The processional melody sings over sustained harmonic accompaniment.
+        if(Number.isFinite(note))oscillator(note,next,beat*1.12,voice,bus,.19);
+        if (chord.length && beatInBar===0) {
+          // Sustained wedding strings, with a cello bass note and soft arpeggio.
+          chord.forEach((pitch,j)=>oscillator(Number(pitch)-12,next+j*.035,
+            beat*(meter-.20),backing,bus,.037));
+          oscillator(Number(chord[0])-24,next,beat*1.2,'cello',bus,.072);
+        } else if (chord.length && (meter===3 || beatInBar===2)) {
+          // In a 3/4 wedding waltz, the accompaniment plays one-two-three.
+          const shift=meter===3?1:0;
+          const pitch=chord[(beatInBar+shift)%chord.length];
+          oscillator(Number(pitch)-12,next,beat*.70,backing==='strings'?'piano':backing,bus,.049);
         }
         next+=beat;index+=1;
       }
     }
-    schedule();timer=window.setInterval(schedule,150);
+    schedule();timer=window.setInterval(schedule,145);
     return {kind:'synth',bus,timer};
   }
   function stop(playing, fade=.17) {
