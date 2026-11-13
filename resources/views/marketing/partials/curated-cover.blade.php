@@ -1,5 +1,6 @@
 @php
-    $design = $template->settings['design'] ?? 'burgundy-wax';
+    $design = \App\Support\CuratedWeddingDesign::forTemplate($template);
+    if ($design === null) throw new \InvalidArgumentException('Unknown wedding cover.');
     $sample = config('wedding_curated_assets.'.$design.'.photos.hero');
     $art = config('wedding_curated_assets.'.$design.'.decor', []);
     $showcase = config('wedding_curated_showcases.'.$design, []);
