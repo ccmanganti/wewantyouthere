@@ -63,11 +63,11 @@
             @endforeach
         </div>
         <details class="fine-tune-envelope">
-            <summary><i class="fa-solid fa-envelope" aria-hidden="true"></i> Envelope opening preview <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
+            <summary><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{ ($template->settings['theme'] ?? '') === 'curated_editorial' ? 'Opening animation preview' : 'Envelope opening preview' }} <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
             <div class="fine-tune-envelope-inner">
                 <p>See how guests open the invitation.</p>
                 <button type="button" class="rb-refine-replay" id="preview-envelope-intro">
-                    <i class="fa-solid fa-play" aria-hidden="true"></i> Play envelope
+                    <i class="fa-solid fa-play" aria-hidden="true"></i> {{ ($template->settings['theme'] ?? '') === 'curated_editorial' ? 'Replay opening' : 'Play envelope' }}
                 </button>
             </div>
         </details>
