@@ -119,9 +119,22 @@
     <a href="#bw-front">BACK TO THE BEGINNING ↑</a>
 </footer>
 
-{{-- Click the seal to open a true paper letter. No skip button or auto-open. --}}
-<div class="bw-intro ce2-intro" id="ce2-intro" @if($isPreview) hidden @endif>
-    <button class="bw-letter-trigger" type="button" data-ce2-open aria-label="Open the wax-sealed invitation">
-        <span class="bw-outer-envelope"><span class="bw-flap"></span><span class="bw-insert"><small>THE WEDDING OF</small><strong>{{ $copy('bride_name','Amelia') }} &amp; {{ $copy('groom_name','Gabriel') }}</strong><em>{{ $date->format('F j, Y') }}</em></span><span class="bw-envelope-face"></span><span class="bw-seal" aria-hidden="true">✦</span></span>
+{{-- Heirloom scroll: an embossed medallion breaks and real parchment unrolls.
+     Deliberately not an envelope; the Royal Burgundy design owns that motif. --}}
+<div class="bw-intro ce2-intro" id="ce2-intro" data-intro-kind="parchment-unroll" @if($isPreview) hidden @endif>
+    <div class="bw-scroll-scene" aria-hidden="true" style="background-image:linear-gradient(#1b0719cc,#1b0719cc),url('{{ $decoration('flowers') }}')"></div>
+    <button class="bw-scroll-trigger" type="button" data-wax-scroll-open aria-label="Break the wax seal and unroll your wedding invitation">
+        <span class="bw-scroll-heading">A SEALED PROMISE FROM OUR HEARTS</span>
+        <span class="bw-scroll-paper">
+            <span class="bw-scroll-overline">TO OUR DEAREST FAMILY AND FRIENDS</span>
+            <span class="bw-scroll-names">{{ $copy('bride_name','Elena') }} <em>&amp;</em> {{ $copy('groom_name','Nicolas') }}</span>
+            <span class="bw-scroll-date">{{ $date->format('F j, Y') }}</span>
+            <span class="bw-scroll-ornament" aria-hidden="true">❦</span>
+        </span>
+        <span class="bw-scroll-roller bw-scroll-roller-top" aria-hidden="true"></span>
+        <span class="bw-scroll-roller bw-scroll-roller-bottom" aria-hidden="true"></span>
+        <span class="bw-scroll-ribbon" aria-hidden="true"></span>
+        <span class="bw-scroll-seal" aria-hidden="true">✦</span>
+        <span class="bw-scroll-instruction">BREAK THE SEAL TO UNROLL</span>
     </button>
 </div>
