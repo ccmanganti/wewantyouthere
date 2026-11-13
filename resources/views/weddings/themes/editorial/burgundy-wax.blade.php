@@ -40,10 +40,12 @@
         <p data-field="event_time">{{ $display('event_time','3:00 PM') }}</p>
         <h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Glass Chapel') }}</h3>
         <p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful place to say our vows') }}</p>
+        <div class="bw-reception-note" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
         <span class="bw-overline">FOLLOWED BY AN EVENING TO REMEMBER</span>
         <h3 data-field="reception_venue">{{ $copy('reception_venue','The Glass Garden') }}</h3>
         <p data-field="reception_time">{{ $display('reception_time','6:00 PM') }}</p>
         <p data-field="reception_address">{{ $copy('reception_address','Dinner and celebration') }}</p>
+        </div>
     </div>
 </section>
 
