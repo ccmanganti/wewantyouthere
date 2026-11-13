@@ -74,7 +74,7 @@ class WeddingBuilderController extends Controller
         $draft = ($draft['template_id'] ?? null) === $template->id ? $draft : [];
 
 
-        $photoSlots = config('wedding_photos', []);
+        $photoSlots = \App\Support\CuratedWeddingDesign::photoSlots($template);
         $photos = session('wedding_uploads.' . $template->id, []);
         $photoUrls = [];
         foreach ($photos as $slot => $item) {
