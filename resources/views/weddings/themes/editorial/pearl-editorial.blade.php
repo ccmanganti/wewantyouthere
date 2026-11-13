@@ -45,7 +45,7 @@
     <div class="pa-venue-layout">
         @include('weddings.themes.editorial.photo', ['slot'=>'venue_ceremony','class'=>'pa-venue-photo'])
         <div class="pa-venue-places"><div><span>01 / THE CEREMONY</span><h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Grand Chapel') }}</h3><p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful place to exchange vows') }}</p></div>
-            <div><span>02 / THE RECEPTION</span><h3 data-field="reception_venue">{{ $copy('reception_venue','The Grand Estate') }}</h3><p data-field="reception_address">{{ $copy('reception_address','Dinner and dancing') }}</p><p data-field="reception_time">{{ $display('reception_time','6:00 PM') }}</p></div>
+            <div data-preview-section="reception" @if(!$visible('reception')) hidden @endif><span>02 / THE RECEPTION</span><h3 data-field="reception_venue">{{ $copy('reception_venue','The Grand Estate') }}</h3><p data-field="reception_address">{{ $copy('reception_address','Dinner and dancing') }}</p><p data-field="reception_time">{{ $display('reception_time','6:00 PM') }}</p></div>
         </div>
     </div>
 </section>
