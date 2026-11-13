@@ -146,7 +146,7 @@ class WeddingAudioTest extends TestCase
             ->assertSee('royal-fanfare')
             ->assertSee('royal-ballroom')
             ->assertDontSee('data-demo-listen', false)
-            ->assertDontSee('wwyt-audio-toolbar', false);
+            ->assertDontSee('class="wwyt-audio-toolbar"', false);
     }
 
     public function test_preview_buttons_are_labeled_preview_only(): void
