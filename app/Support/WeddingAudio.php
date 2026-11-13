@@ -49,7 +49,7 @@ final class WeddingAudio
      * Never trust posted premium data without a paid entitlement. Custom track
      * selection must refer to an actual owner-scoped private session upload.
      */
-    public static function fromRequest(Request $request, InvitationTemplate $template, bool $premium): array
+    public static function fromRequest(Request $request, InvitationTemplate $template, bool $premium, ?InvitationWebsite $website = null): array
     {
         if (!$premium || !self::supported($template)) return [];
         $input = $request->input('audio', []);
@@ -73,9 +73,16 @@ final class WeddingAudio
             }
             if ($source === 'custom') {
                 $uploaded = $request->session()->get('wedding_audio_uploads.'.$template->id.'.'.$slot);
-                if (!is_array($uploaded) || !isset($uploaded['path'], $uploaded['mime'])
-                    || !Storage::disk('local')->exists($uploaded['path'])) {
-                    throw ValidationException::withMessages(['audio' => 'Please upload the custom '.($slot === 'intro'?'opening':'website').' music before publishing.']);
+                $draftReady = is_array($uploaded) && isset($uploaded['path'], $uploaded['mime'])
+                    && Storage::disk('local')->exists($uploaded['path']);
+                $websiteFile = $website ? (($website->media ?? [])['audio_'.$slot] ?? []) : [];
+                $publishedReady = $website && is_array($websiteFile)
+                    && isset($websiteFile['path'], $websiteFile['mime'])
+                    && str_starts_with($websiteFile['path'], 'wedding-sites/'.$website->id.'/audio/')
+                    && Storage::disk('local')->exists($websiteFile['path']);
+                $newFile = $website && $request->hasFile('music_files.'.$slot);
+                if (!$draftReady && !$publishedReady && !$newFile) {
+                    throw ValidationException::withMessages(['audio' => 'Please upload the custom '.($slot === 'intro'?'opening':'website').' music before saving.']);
                 }
             }
             $result[$slot] = ['source' => $source, 'track' => $track];
