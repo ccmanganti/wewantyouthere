@@ -195,7 +195,8 @@ assert.ok(oscillators>beforeFull,'Full experience must begin with its intro soun
 assert.ok(contextCreated>=1,'A real Web Audio context must be constructed.');
 assert.match(status.textContent,/opening music/);
 const beforeCrossfade=oscillators;
-const crossfade = scheduled.find(task => task.delay>=800 && task.delay<=1500);
+const expectedCrossfadeDelay=2100-Math.min(1050,Math.floor(2100*.48));
+const crossfade = scheduled.find(task => task.delay === expectedCrossfadeDelay);
 assert.ok(crossfade,'The crossfade into invitation music must be scheduled.');
 crossfade.cb();
 assert.ok(oscillators>beforeCrossfade,'The background track must start during crossfade.');
