@@ -1,8 +1,8 @@
-<article class="mkt-template-card mkt-reveal {{ ($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'mkt-template-royal' : '' }}" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' ' . ($template->settings['description'] ?? '') . ' invitation website') }}">
+<article class="mkt-template-card mkt-reveal {{ \App\Support\CuratedWeddingDesign::isCurated($template) ? 'mkt-template-curated' : (($template->settings['theme'] ?? '') === 'royal_burgundy' ? 'mkt-template-royal' : '') }}" data-template-card data-search="{{ strtolower($template->name . ' ' . $template->eventType->name . ' ' . ($template->settings['description'] ?? '') . ' invitation website') }}">
     <div class="mkt-template-cover">
         <img class="mkt-template-stamp" src="{{ asset('brand/wwyt/seal-flat.png') }}" width="43" height="43" loading="lazy" alt="" aria-hidden="true">
         <span class="mkt-template-feature">{{ $template->is_premium ? 'PREMIUM DESIGN' : 'FREE WEBSITE' }}</span>
-        @if(($template->settings['theme'] ?? '') === 'curated_editorial')
+        @if(\App\Support\CuratedWeddingDesign::isCurated($template))
             @include('marketing.partials.curated-cover')
         @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
             <div class="rb-catalogue-poster" aria-hidden="true">
