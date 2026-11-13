@@ -72,6 +72,7 @@ body.builder-page .wwyt-audio-toolbar button{min-height:37px;padding:8px 12px}
 .wwyt-sample-music-bottom input{width:100%;accent-color:#783a50}
 .wwyt-sample-experience{width:100%;min-height:39px}
 .wwyt-sample-audio-status{margin:9px 0 0!important;min-height:13px;color:#74655f;font:10px/1.45 'DM Sans',Arial,sans-serif!important}
+.preview-pane:has(> .wwyt-sample-music-builder){position:relative}
 .wwyt-sample-music-builder{position:absolute;bottom:53px;right:12px;z-index:11050;width:min(320px,calc(100% - 24px));max-height:60%;font-size:11px}
 .wwyt-sample-music-builder .wwyt-sample-music-head strong{font-size:20px}
 @media(max-width:640px){.wwyt-sample-music{bottom:10px;right:10px;padding:11px 12px 10px;width:min(300px,calc(100vw - 20px));max-height:51dvh}.wwyt-sample-music-head strong{font-size:20px}.wwyt-sample-music-builder{bottom:48px;right:9px;width:min(290px,calc(100% - 18px));max-height:57%}.wwyt-sample-premium{font-size:9px}}
