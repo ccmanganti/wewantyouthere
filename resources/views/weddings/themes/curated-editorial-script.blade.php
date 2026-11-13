@@ -18,22 +18,41 @@
 
     if (intro && !intro.hidden) document.body.classList.add('ce2-intro-open');
     let opening = false;
+    let fadeTimer = null;
+    let hideTimer = null;
     opener?.addEventListener('click', function(){
         if (!intro || intro.hidden || opening) return;
         opening = true;
         opener.disabled = true;
         intro.classList.add('is-opening');
         const delay = reduced ? 0 : duration;
-        window.setTimeout(function(){
+        fadeTimer = window.setTimeout(function(){
             intro.classList.add('ce2-dismissing');
             document.body.classList.remove('ce2-intro-open');
         }, delay);
-        window.setTimeout(function(){
+        hideTimer = window.setTimeout(function(){
             intro.hidden = true;
             intro.setAttribute('aria-hidden', 'true');
             root.querySelector('a[href^="#"]')?.focus({ preventScroll: true });
         }, delay + (reduced ? 0 : 750));
     });
+
+    // Replay is a builder-only affordance; guests still see only the unique
+    // clickable invitation artwork, never an Open/Skip button.
+    if (builder){
+        document.getElementById('preview-envelope-intro')?.addEventListener('click',()=>{
+            if (!intro) return;
+            window.clearTimeout(fadeTimer);
+            window.clearTimeout(hideTimer);
+            opening = false;
+            opener.disabled = false;
+            intro.hidden = false;
+            intro.removeAttribute('aria-hidden');
+            intro.classList.remove('is-opening','ce2-dismissing');
+            document.body.classList.add('ce2-intro-open');
+            opener.focus({preventScroll:true});
+        });
+    }
 
     function validDate(){
         const raw = builder?.querySelector('[name="answers[event_date]"]')?.value || root.dataset.ce2Date;
