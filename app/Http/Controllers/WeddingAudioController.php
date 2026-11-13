@@ -8,6 +8,8 @@ use App\Support\InvitationAccounts;
 use App\Support\InvitationPremium;
 use App\Support\WeddingAudio;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -104,6 +106,86 @@ class WeddingAudioController extends Controller
         unset($entries[$slot]);
         $request->session()->put($key, $entries);
         return response()->json(['slot' => $slot, 'removed' => true]);
+    }
+
+    private function ownedWebsite(Request $request, InvitationWebsite $website): InvitationWebsite
+    {
+        abort_unless((int) $website->user_id === (int) $request->user()->id, 403);
+        $website->loadMissing('template');
+        abort_unless($website->template && WeddingAudio::supported($website->template)
+            && InvitationPremium::has($request->user(), $website->template), 403);
+        return $website;
+    }
+
+    public function manage(Request $request, InvitationWebsite $website): View
+    {
+        $website = $this->ownedWebsite($request, $website);
+        $settings = WeddingAudio::forForm($website->template, [
+            'audio' => ($website->answers ?? [])['_audio'] ?? [],
+        ]);
+        return view('weddings.audio.manage', [
+            'website' => $website,
+            'template' => $website->template,
+            'musicSettings' => $settings,
+            'existingAudio' => $website->media ?? [],
+        ]);
+    }
+
+    public function update(Request $request, InvitationWebsite $website): RedirectResponse
+    {
+        $website = $this->ownedWebsite($request, $website);
+        $allowedMime = config('wedding_audio.uploads.mimes', []);
+        $request->validate([
+            'audio' => ['nullable','array'],
+            'music_files' => ['nullable','array'],
+            'music_files.intro' => ['nullable','file','mimetypes:'.implode(',',array_keys($allowedMime)),
+                'max:'.config('wedding_audio.uploads.max_kb',12288)],
+            'music_files.main' => ['nullable','file','mimetypes:'.implode(',',array_keys($allowedMime)),
+                'max:'.config('wedding_audio.uploads.max_kb',12288)],
+        ]);
+        $settings = WeddingAudio::fromRequest($request, $website->template, true, $website);
+        $media = $website->media ?? [];
+        $created = [];
+        $replaced = [];
+        try {
+            foreach (WeddingAudio::SLOTS as $slot) {
+                $file = $request->file('music_files.'.$slot);
+                if (!$file) continue;
+                $mime = $file->getMimeType();
+                $extension = $allowedMime[$mime] ?? null;
+                abort_unless($extension, 422);
+                $destination = 'wedding-sites/'.$website->id.'/audio/'.$slot.'-'.Str::random(14).'.'.$extension;
+                if (!Storage::disk('local')->putFileAs(dirname($destination), $file, basename($destination))) {
+                    throw new \RuntimeException('Could not save your music. Please try again.');
+                }
+                $created[] = $destination;
+                $existing = ($media['audio_'.$slot] ?? [])['path'] ?? null;
+                if ($existing && str_starts_with($existing,'wedding-sites/'.$website->id.'/audio/')) {
+                    $replaced[] = $existing;
+                }
+                $media['audio_'.$slot] = ['path'=>$destination,'mime'=>$mime];
+            }
+            $answers = $website->answers ?? [];
+            $answers['_audio'] = $settings;
+            $website->update(['answers'=>$answers,'media'=>$media]);
+        } catch (\Throwable $error) {
+            foreach ($created as $path) Storage::disk('local')->delete($path);
+            throw $error;
+        }
+        foreach ($replaced as $oldPath) Storage::disk('local')->delete($oldPath);
+
+        return redirect()->route('wedding.audio.manage', $website)
+            ->with('status','Your invitation soundtrack has been updated.');
+    }
+
+    public function ownerPreview(Request $request, InvitationWebsite $website, string $slot): BinaryFileResponse
+    {
+        $website = $this->ownedWebsite($request,$website);
+        abort_unless(in_array($slot,WeddingAudio::SLOTS,true),404);
+        $entry = ($website->media ?? [])['audio_'.$slot] ?? [];
+        abort_unless(is_array($entry)
+            && str_starts_with($entry['path'] ?? '','wedding-sites/'.$website->id.'/audio/'),404);
+        return $this->entryResponse($entry, $slot);
     }
 
     public function publicAudio(string $slug, string $slot): BinaryFileResponse
