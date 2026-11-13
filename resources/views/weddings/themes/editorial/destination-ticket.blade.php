@@ -50,14 +50,14 @@
 </section>
 
 @if($premiumAccess && ($visible('ceremony_details') || $isPreview))
-<section class="dt-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details"><span class="dt-section-number">TRAVEL ADVISORY</span>
+<section class="dt-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details" @if(!$visible('ceremony_details')) hidden @endif><span class="dt-section-number">TRAVEL ADVISORY</span>
     <h2 data-field="ceremony_type">{{ $copy('ceremony_type','Our ceremony') }}</h2><p data-field="ceremony_notes">{{ $copy('ceremony_notes','A note for our passengers.') }}</p>
 </section>
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'dt-maps'])
 
 @if($premiumAccess && ($visible('program') || $isPreview))
-<section class="dt-itinerary ce2-section" id="dt-itinerary" data-preview-section="program" data-premium-section="program">
+<section class="dt-itinerary ce2-section" id="dt-itinerary" data-preview-section="program" data-premium-section="program" @if(!$visible('program')) hidden @endif>
     <span class="dt-section-number">04 / THE FLIGHT ITINERARY</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','Our wedding itinerary') }}</h2>
     <div class="dt-flight-path">
         @foreach([['guest_arrival_time','2:00 PM','guest_arrival_note','Guest check-in'],['event_time','3:00 PM','ceremony_timeline_note','The wedding ceremony'],['reception_time','6:00 PM','reception_timeline_note','Dinner and celebration'],['celebration_time','9:00 PM','celebration_timeline_note','Late-night departures']] as [$time,$fallbackTime,$note,$fallbackNote])
@@ -69,7 +69,7 @@
 @endif
 
 @if($premiumAccess && ($visible('entourage') || $isPreview))
-<section class="dt-crew ce2-section" id="dt-crew" data-preview-section="entourage" data-premium-section="entourage">
+<section class="dt-crew ce2-section" id="dt-crew" data-preview-section="entourage" data-premium-section="entourage" @if(!$visible('entourage')) hidden @endif>
     <span class="dt-section-number">05 / OUR MOST IMPORTANT CREW</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','Meet our favorite people') }}</h2>
     <div class="dt-crew-manifest"><div><span>VIP PASSENGERS</span><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our honored ninongs and ninangs') }}</p></div>
         <div><span>THE BRIDAL CREW</span><h3>Bridesmaids</h3><p data-field="bridesmaids">{{ $copy('bridesmaids','Our favorite ladies') }}</p></div>
@@ -87,7 +87,7 @@
 </section>
 
 @if($visible('details') || $isPreview)
-<section class="dt-dress ce2-section" id="dt-dress" data-preview-section="details">
+<section class="dt-dress ce2-section" id="dt-dress" data-preview-section="details" @if(!$visible('details')) hidden @endif>
     <div class="dt-dress-card"><span class="dt-section-number">07 / WHAT TO PACK</span><h2 data-field="dress_heading">{{ $copy('dress_heading','Dress code') }}</h2>
         <p data-field="dress_code">{{ $copy('dress_code','Elegant destination attire') }}</p><p data-field="color_motif">{{ $copy('color_motif','Ivory, sand, navy and slate') }}</p>
         <div class="dt-dress-colors" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
@@ -98,7 +98,7 @@
 @endif
 
 @if($premiumAccess && ($visible('guests') || $isPreview))
-<section class="dt-rsvp ce2-section" id="dt-rsvp" data-preview-section="guests" data-premium-section="guests">
+<section class="dt-rsvp ce2-section" id="dt-rsvp" data-preview-section="guests" data-premium-section="guests" @if(!$visible('guests')) hidden @endif>
     <div class="dt-rsvp-heading"><span>08 / FINAL CHECK-IN</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','Ready for takeoff?') }}</h2>
         <p data-field="rsvp_message">{{ $copy('rsvp_message','Confirm your place on the most special flight of our lives.') }}</p></div>
     <div class="dt-rsvp-ticket"><div class="dt-rsvp-ticket-head"><span>BOARDING PASS / RSVP</span><span>FOREVER CLASS</span></div>
