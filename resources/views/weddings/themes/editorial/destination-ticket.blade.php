@@ -49,14 +49,14 @@
     </div>
 </section>
 
-@if($premiumAccess && $visible('ceremony_details'))
+@if($premiumAccess && ($visible('ceremony_details') || $isPreview))
 <section class="dt-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details"><span class="dt-section-number">TRAVEL ADVISORY</span>
     <h2 data-field="ceremony_type">{{ $copy('ceremony_type','Our ceremony') }}</h2><p data-field="ceremony_notes">{{ $copy('ceremony_notes','A note for our passengers.') }}</p>
 </section>
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'dt-maps'])
 
-@if($premiumAccess && $visible('program'))
+@if($premiumAccess && ($visible('program') || $isPreview))
 <section class="dt-itinerary ce2-section" id="dt-itinerary" data-preview-section="program" data-premium-section="program">
     <span class="dt-section-number">04 / THE FLIGHT ITINERARY</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','Our wedding itinerary') }}</h2>
     <div class="dt-flight-path">
@@ -68,7 +68,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('entourage'))
+@if($premiumAccess && ($visible('entourage') || $isPreview))
 <section class="dt-crew ce2-section" id="dt-crew" data-preview-section="entourage" data-premium-section="entourage">
     <span class="dt-section-number">05 / OUR MOST IMPORTANT CREW</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','Meet our favorite people') }}</h2>
     <div class="dt-crew-manifest"><div><span>VIP PASSENGERS</span><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our honored ninongs and ninangs') }}</p></div>
@@ -86,7 +86,7 @@
     </div><p data-field="gallery_quote">{{ $copy('gallery_quote','We have traveled so far just to find each other.') }}</p>
 </section>
 
-@if($visible('details'))
+@if($visible('details') || $isPreview)
 <section class="dt-dress ce2-section" id="dt-dress" data-preview-section="details">
     <div class="dt-dress-card"><span class="dt-section-number">07 / WHAT TO PACK</span><h2 data-field="dress_heading">{{ $copy('dress_heading','Dress code') }}</h2>
         <p data-field="dress_code">{{ $copy('dress_code','Elegant destination attire') }}</p><p data-field="color_motif">{{ $copy('color_motif','Ivory, sand, navy and slate') }}</p>
@@ -97,7 +97,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('guests'))
+@if($premiumAccess && ($visible('guests') || $isPreview))
 <section class="dt-rsvp ce2-section" id="dt-rsvp" data-preview-section="guests" data-premium-section="guests">
     <div class="dt-rsvp-heading"><span>08 / FINAL CHECK-IN</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','Ready for takeoff?') }}</h2>
         <p data-field="rsvp_message">{{ $copy('rsvp_message','Confirm your place on the most special flight of our lives.') }}</p></div>
