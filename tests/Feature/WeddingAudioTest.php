@@ -64,6 +64,26 @@ class WeddingAudioTest extends TestCase
         $this->assertCount(10, $unique);
     }
 
+    public function test_every_template_has_three_audible_sample_choices_per_soundtrack(): void
+    {
+        $sets = config('wedding_audio.preview_sets', []);
+        $defaults = config('wedding_audio.defaults', []);
+        $this->assertCount(6, $sets);
+        foreach ($defaults as $theme => $pair) {
+            $this->assertArrayHasKey($theme, $sets);
+            foreach (['intro', 'main'] as $slot) {
+                $tracks = $sets[$theme][$slot] ?? [];
+                $this->assertCount(3, $tracks, 'Three choices expected for '.$theme.' '.$slot);
+                $this->assertCount(3, array_unique($tracks));
+                $this->assertSame($pair[$slot], $tracks[0], 'First choice must be the default');
+                foreach ($tracks as $id) {
+                    $this->assertSame($slot, config('wedding_audio.tracks.'.$id.'.role'));
+                    $this->assertNotEmpty(config('wedding_audio.tracks.'.$id.'.melody'));
+                }
+            }
+        }
+    }
+
     public function test_free_editor_only_shows_sample_preview_audio_not_premium_controls(): void
     {
         $template = InvitationTemplate::where('slug','olive-garden-wedding')->firstOrFail();
@@ -73,7 +93,11 @@ class WeddingAudioTest extends TestCase
             ->assertDontSee('id="wedding-music-studio"', false)
             ->assertSee('wwyt-audio-bootstrap')
             ->assertSee('wedding-audio.js')
-            ->assertSee('"demo":true', false);
+            ->assertSee('"demo":true', false)
+            ->assertSee('id="wwyt-sample-music"', false)
+            ->assertSee('data-demo-track="intro"', false)
+            ->assertSee('data-demo-track="main"', false)
+            ->assertSee('data-demo-experience', false);
         $owner = $this->user();
         $this->actingAs($owner)
             ->postJson('/templates/wedding/'.$template->slug.'/audio', ['slot' => 'intro'])
@@ -85,7 +109,9 @@ class WeddingAudioTest extends TestCase
         ])->assertRedirect('/i/free-mira-theo');
         $website = InvitationWebsite::where('slug','free-mira-theo')->firstOrFail();
         $this->assertEmpty($website->answers['_audio'] ?? []);
-        $this->get('/i/free-mira-theo')->assertOk()->assertDontSee('wedding-audio.js');
+        $this->get('/i/free-mira-theo')->assertOk()
+            ->assertDontSee('wedding-audio.js')
+            ->assertDontSee('id="wwyt-sample-music"', false);
     }
 
     public function test_public_sample_previews_play_distinct_theme_music_without_premium_purchase(): void
@@ -98,19 +124,27 @@ class WeddingAudioTest extends TestCase
                 ->assertSee('"demo":true', false)
                 ->assertSee(config('wedding_audio.defaults.'.$key.'.intro'))
                 ->assertSee(config('wedding_audio.defaults.'.$key.'.main'))
+                ->assertSee('id="wwyt-sample-music"', false)
+                ->assertSee('data-demo-listen="intro"', false)
+                ->assertSee('data-demo-listen="main"', false)
+                ->assertSee('data-demo-experience', false)
+                ->assertSee('"previewSets"', false)
                 ->assertDontSee('/i/our-wedding/audio/intro');
         }
 
         $this->get('/templates/royal-burgundy-wedding/preview')->assertOk()
             ->assertSee('wwyt-audio-bootstrap')
             ->assertSee('royal-fanfare')
-            ->assertSee('royal-ballroom');
+            ->assertSee('royal-ballroom')
+            ->assertSee('data-demo-listen="intro"', false)
+            ->assertSee('data-demo-listen="main"', false);
     }
 
     public function test_preview_buttons_are_labeled_preview_only(): void
     {
         $this->get('/wedding-invitation-templates')->assertOk()
             ->assertSee('>Preview <i', false)
+            ->assertSee('allow="autoplay"', false)
             ->assertDontSee('>Live preview <i', false);
         $this->get('/templates/wedding/olive-garden-wedding')->assertOk()
             ->assertSee('class="review-preview-button"', false)
