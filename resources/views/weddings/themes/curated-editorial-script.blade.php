@@ -87,6 +87,48 @@
     window.addEventListener('wwyt:preview-updated',updateCalendar);
     builder?.querySelector('[name="answers[event_date]"]')?.addEventListener('input',updateCalendar);
 
+    // Update the existing paid map frames when addresses are edited, without
+    // rebuilding the preview or reloading an iframe on every keystroke.
+    let mapUpdateTimer = null;
+    function refreshMaps(){
+        if (!builder) return;
+        root.querySelectorAll('[data-ce2-map-kind]').forEach(card=>{
+            const kind = card.dataset.ce2MapKind;
+            const value = key => builder.querySelector('[name="answers['+key+']"]')?.value?.trim() || '';
+            const address = value(kind+'_address') || (kind==='ceremony' ? value('venue_address') : '');
+            const placeholder = card.querySelector('[data-ce2-map-placeholder]');
+            const iframe = card.querySelector('iframe');
+            const link = card.querySelector('a');
+            if(placeholder)placeholder.hidden=Boolean(address);
+            if(iframe){
+                iframe.hidden=!address;
+                if(address && card.dataset.ce2LastAddress!==address){
+                    iframe.src='https://maps.google.com/maps?q='+encodeURIComponent(address)+'&z=14&output=embed';
+                }
+                if(!address)iframe.removeAttribute('src');
+            }
+            if(link){
+                link.hidden=!address;
+                if(address){
+                    let href='';
+                    try{
+                        const custom=new URL(value(kind+'_map_url'));
+                        if(['https:','http:'].includes(custom.protocol))href=custom.href;
+                    }catch(e){}
+                    link.href=href||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address);
+                }else link.removeAttribute('href');
+            }
+            card.dataset.ce2LastAddress=address;
+        });
+    }
+    if(builder){
+        window.addEventListener('wwyt:preview-updated',()=>{
+            window.clearTimeout(mapUpdateTimer);
+            mapUpdateTimer=window.setTimeout(refreshMaps,450);
+        });
+        refreshMaps();
+    }
+
     root.querySelectorAll('[data-ce2-demo]').forEach(form=>{
         form.addEventListener('submit',event=>{
             event.preventDefault();
