@@ -19,6 +19,7 @@
 @endif
 @include('weddings.partials.photo-builder-styles')
 @include('weddings.partials.royal-preview-refine-styles')
+@include('weddings.partials.audio-builder-styles')
 @endif
 @include('weddings.partials.editor-uri-styles')
 @endpush
@@ -372,5 +373,9 @@
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-script')
 @endif
+@endif
+@if($hasPremium && $specialEditor)
+@include('weddings.partials.audio-runtime')
+@include('weddings.partials.audio-builder-script')
 @endif
 @endpush

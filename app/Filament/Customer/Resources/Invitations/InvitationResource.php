@@ -149,11 +149,19 @@ class InvitationResource extends Resource
                     ->url(fn (InvitationWebsite $record): string => route('wedding.rsvps.manage', $record))
                     ->visible(fn (InvitationWebsite $record): bool => $record->status === 'published'
                         && InvitationPremium::has(Filament::auth()->user(), $record->template)),
+                Action::make('manageMusic')
+                    ->label('Manage music')
+                    ->icon('heroicon-s-musical-note')
+                    ->url(fn (InvitationWebsite $record): string => route('wedding.audio.manage', $record))
+                    ->visible(fn (InvitationWebsite $record): bool =>
+                        $record->status === 'published'
+                        && \App\Support\WeddingAudio::supported($record->template)
+                        && InvitationPremium::has(Filament::auth()->user(), $record->template)),
                 Action::make('managePhotos')
                     ->label('Manage photos')
                     ->icon('heroicon-s-photo')
                     ->url(fn (InvitationWebsite $record): string => route('wedding.photos.manage', $record))
-                    ->visible(fn (InvitationWebsite $record): bool => ($record->template->settings['theme'] ?? '') === 'royal_burgundy'),
+                    ->visible(fn (InvitationWebsite $record): bool => \App\Support\CuratedWeddingDesign::isSpecialEditor($record->template)),
                 Action::make('editContent')
                     ->label('Edit details')
                     ->icon('heroicon-s-document-text')

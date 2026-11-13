@@ -6,6 +6,7 @@
 
 @push('styles')
 @include('weddings.partials.invitation-theme-styles')
+@include('weddings.partials.audio-builder-styles')
 @if(\App\Support\CuratedWeddingDesign::isCurated($template))
 @include('weddings.themes.curated-editorial-styles')
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
@@ -103,6 +104,9 @@
 @include('weddings.themes.curated-editorial-script')
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
 @include('weddings.themes.royal-v3-script')
+@endif
+@if($premiumAccess && \App\Support\WeddingAudio::supported($template))
+@include('weddings.partials.audio-runtime')
 @endif
 <script>
 (function () {

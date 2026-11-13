@@ -11,6 +11,7 @@ class InvitationPremium
     public const FEATURES = [
         'maps' => ['name' => 'Google Maps integration', 'detail' => 'Church, ceremony and reception maps', 'icon' => 'fa-map-location-dot'],
         'rsvp' => ['name' => 'RSVP + email notifications', 'detail' => 'Receive guest replies and owner alerts', 'icon' => 'fa-envelope-open-text'],
+        'music' => ['name' => 'Music & interactive sounds', 'detail' => 'Two music tracks, custom uploads and theme-specific effects', 'icon' => 'fa-music'],
         'video' => ['name' => 'Video embed', 'detail' => 'Prenup, teaser or a personal message', 'icon' => 'fa-film'],
         'program' => ['name' => 'Wedding programme', 'detail' => 'Ceremony schedule and event timeline', 'icon' => 'fa-list-check'],
         'entourage' => ['name' => 'Wedding entourage', 'detail' => 'Sponsors, ninong, ninang and wedding party', 'icon' => 'fa-people-group'],

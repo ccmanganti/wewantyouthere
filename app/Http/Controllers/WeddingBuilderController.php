@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Support\InvitationAccounts;
 use App\Support\InvitationWebsiteManager;
 use App\Support\InvitationPremium;
+use App\Support\WeddingAudio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
@@ -84,7 +85,10 @@ class WeddingBuilderController extends Controller
         }
 
         $hasPremium = InvitationPremium::has(Auth::user(), $template);
-        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls', 'hasPremium'));
+        $draftAudio = $hasPremium && WeddingAudio::supported($template)
+            ? session('wedding_audio_uploads.'.$template->id, []) : [];
+        $musicSettings = $hasPremium ? WeddingAudio::forForm($template, $draft) : [];
+        return view('weddings.editor', compact('template', 'groups', 'draft', 'questions', 'photos', 'photoSlots', 'photoUrls', 'hasPremium', 'draftAudio', 'musicSettings'));
     }
 
     /**
@@ -204,6 +208,7 @@ class WeddingBuilderController extends Controller
                 ->withErrors(['premium' => 'This design requires premium access before publishing.']);
         }
 
+        $musicSelections = WeddingAudio::fromRequest($request, $template, $hasPremium);
         $allowedGroups = config('wedding_builder.groups');
         $sections = [];
         foreach ($allowedGroups as $key => $group) {
@@ -257,6 +262,7 @@ class WeddingBuilderController extends Controller
             'slug' => $base['slug'] ?? null,
             'answers' => $answers,
             'sections' => $sections,
+            'audio' => $musicSelections,
         ];
 
         $request->session()->put('pending_wedding', $pending);
@@ -284,6 +290,11 @@ class WeddingBuilderController extends Controller
             if (isset($photo['path'])) Storage::disk('local')->delete($photo['path']);
         }
         $request->session()->forget($mediaKey);
+        $audioKey = 'wedding_audio_uploads.'.$template->id;
+        foreach ($request->session()->get($audioKey, []) as $item) {
+            if (isset($item['path'])) Storage::disk('local')->delete($item['path']);
+        }
+        $request->session()->forget($audioKey);
         $request->session()->forget('pending_wedding_attempted');
 
         return redirect()->route('home')
@@ -315,6 +326,7 @@ class WeddingBuilderController extends Controller
             $pending['sections']['maps'] = false;
             $pending['sections']['ceremony_details'] = false;
             $pending['answers'] = InvitationPremium::stripPremiumAnswers($pending['answers']);
+            $pending['audio'] = [];
         }
 
         $names = collect([$pending['answers']['bride_name'] ?? '', $pending['answers']['groom_name'] ?? ''])
@@ -349,7 +361,7 @@ class WeddingBuilderController extends Controller
                     'slug' => $slug,
                     'answers' => array_merge(
                         $pending['answers'],
-                        ['_sections' => $pending['sections']],
+                        ['_sections' => $pending['sections'], '_audio' => $pending['audio'] ?? []],
                     ),
                     'status' => 'published',
                 ]);
@@ -372,6 +384,24 @@ class WeddingBuilderController extends Controller
                     }
                     $manifest[$slot] = ['path' => $destination, 'mime' => $photo['mime']];
                 }
+                // Only selected premium custom tracks are copied into
+                // private permanent storage. Library choices need no files.
+                $audioUploads = $request->session()->get('wedding_audio_uploads.'.$template->id, []);
+                foreach (WeddingAudio::SLOTS as $slot) {
+                    if (($pending['audio'][$slot]['source'] ?? '') !== 'custom') continue;
+                    $uploaded = $audioUploads[$slot] ?? null;
+                    $mime = $uploaded['mime'] ?? '';
+                    $extension = config('wedding_audio.uploads.mimes.'.$mime);
+                    if (!is_array($uploaded) || !isset($uploaded['path'])
+                        || !$extension || !Storage::disk('local')->exists($uploaded['path'])) {
+                        throw new RuntimeException('Your custom '.$slot.' music is missing. Upload it again.');
+                    }
+                    $destination = 'wedding-sites/'.$website->id.'/audio/'.$slot.'-'.Str::random(12).'.'.$extension;
+                    if (!Storage::disk('local')->copy($uploaded['path'], $destination)) {
+                        throw new RuntimeException('Unable to save your custom wedding music.');
+                    }
+                    $manifest['audio_'.$slot] = ['path' => $destination, 'mime' => $mime];
+                }
                 if ($manifest) $website->update(['media' => $manifest]);
 
                 return $website;
@@ -393,6 +423,11 @@ class WeddingBuilderController extends Controller
             if (isset($photo['path'])) Storage::disk('local')->delete($photo['path']);
         }
         $request->session()->forget($mediaKey);
+        $audioKey = 'wedding_audio_uploads.'.$template->id;
+        foreach ($request->session()->get($audioKey, []) as $item) {
+            if (isset($item['path'])) Storage::disk('local')->delete($item['path']);
+        }
+        $request->session()->forget($audioKey);
         $request->session()->forget(['pending_wedding', 'wedding_builder_draft', 'pending_wedding_attempted']);
         return redirect()->route('wedding.show', $website->slug)
             ->with('status', 'Your free wedding website is live!')

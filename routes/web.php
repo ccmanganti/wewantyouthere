@@ -5,6 +5,7 @@ use App\Http\Controllers\WeddingBuilderController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\WeddingPhotoController;
+use App\Http\Controllers\WeddingAudioController;
 use App\Http\Controllers\WeddingRsvpController;
 use App\Http\Controllers\InvitationPremiumController;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,25 @@ Route::middleware('auth')->group(function () {
     Route::delete('/app/invitations/{website}/photos/{slot}', [WeddingPhotoController::class, 'remove'])
         ->name('wedding.photos.remove');
 });
+// Two distinct premium tracks: opening sequence and post-opening ambience.
+Route::middleware('auth')->group(function () {
+    Route::post('/templates/wedding/{slug}/audio', [WeddingAudioController::class, 'upload'])
+        ->middleware('throttle:12,1')->name('wedding.audio.upload');
+    Route::get('/templates/wedding/{slug}/audio/{slot}', [WeddingAudioController::class, 'draft'])
+        ->name('wedding.audio.draft');
+    Route::delete('/templates/wedding/{slug}/audio/{slot}', [WeddingAudioController::class, 'remove'])
+        ->middleware('throttle:24,1')->name('wedding.audio.remove');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/app/invitations/{website}/music', [WeddingAudioController::class, 'manage'])
+        ->name('wedding.audio.manage');
+    Route::post('/app/invitations/{website}/music', [WeddingAudioController::class, 'update'])
+        ->middleware('throttle:12,1')->name('wedding.audio.update');
+    Route::get('/app/invitations/{website}/music/{slot}', [WeddingAudioController::class, 'ownerPreview'])
+        ->name('wedding.audio.ownerPreview');
+});
+Route::get('/i/{slug}/audio/{slot}', [WeddingAudioController::class, 'publicAudio'])
+    ->middleware('throttle:180,1')->name('wedding.audio.site');
 Route::get('/i/{slug}/photos/{slot}', [WeddingPhotoController::class, 'publicPhoto'])
     ->name('wedding.photos.site');
 Route::get('/templates/wedding/{slug}/generate-message', [WeddingBuilderController::class, 'generateMessage'])
