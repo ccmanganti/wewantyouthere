@@ -50,14 +50,14 @@
     </div>
 </section>
 
-@if($premiumAccess && $visible('ceremony_details'))
+@if($premiumAccess && ($visible('ceremony_details') || $isPreview))
 <section class="pa-ceremony ce2-section" id="pa-ceremony" data-preview-section="ceremony" data-premium-section="ceremony_details">
     <span class="pa-issue">A PERSONAL NOTE</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','The ceremony') }}</h2><p data-field="ceremony_notes">{{ $copy('ceremony_notes','A beautiful note for a special moment.') }}</p>
 </section>
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'pa-maps'])
 
-@if($premiumAccess && $visible('program'))
+@if($premiumAccess && ($visible('program') || $isPreview))
 <section class="pa-program ce2-section" id="pa-program" data-preview-section="program" data-premium-section="program">
     <div class="pa-program-photo">
         @include('weddings.themes.editorial.photo', ['slot'=>'story_one','class'=>'pa-program-image'])
@@ -74,7 +74,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('entourage'))
+@if($premiumAccess && ($visible('entourage') || $isPreview))
 <section class="pa-people ce2-section" id="pa-people" data-preview-section="entourage" data-premium-section="entourage">
     <span class="pa-issue">VI / THE PEOPLE</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','Our inner circle.') }}</h2>
     <div class="pa-people-columns"><div><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our honored ninongs and ninangs') }}</p></div><div><h3>Bridesmaids</h3><p data-field="bridesmaids">{{ $copy('bridesmaids','The best women') }}</p></div><div><h3>Groomsmen</h3><p data-field="groomsmen">{{ $copy('groomsmen','The best men') }}</p></div></div>
@@ -92,7 +92,7 @@
     <p data-field="gallery_quote">{{ $copy('gallery_quote','The moments we never want to forget.') }}</p>
 </section>
 
-@if($visible('details'))
+@if($visible('details') || $isPreview)
 <section class="pa-attire ce2-section" id="pa-attire" data-preview-section="details">
     <div class="pa-attire-title"><span class="pa-issue">VIII / THE DETAILS</span><h2 data-field="dress_heading">{{ $copy('dress_heading','Dress beautifully.') }}</h2></div>
     <div class="pa-attire-info"><p data-field="dress_code">{{ $copy('dress_code','Formal evening attire') }}</p><p data-field="color_motif">{{ $copy('color_motif','Pearl, black, emerald and champagne') }}</p>
@@ -102,7 +102,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('guests'))
+@if($premiumAccess && ($visible('guests') || $isPreview))
 <section class="pa-rsvp ce2-section" id="pa-rsvp" data-preview-section="guests" data-premium-section="guests">
     <div class="pa-rsvp-black"><span>IX / KINDLY REPLY</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','You are invited.') }}</h2><p data-field="rsvp_message">{{ $copy('rsvp_message','The next chapter would not be the same without you.') }}</p></div>
     <div class="pa-rsvp-white">@include('weddings.themes.editorial.rsvp', ['formClass'=>'pa-rsvp-form','submitLabel'=>'CONFIRM ATTENDANCE'])</div>
