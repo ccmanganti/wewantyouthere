@@ -359,6 +359,9 @@
                 <span><span class="preview-dot" aria-hidden="true"></span><span id="preview-caption">Live preview · Changes saved on this browser</span></span>
                 <span>{{ $template->name }}</span>
             </div>
+            @if($specialEditor && !$hasPremium)
+                @include('weddings.partials.audio-demo-controls', ['insideBuilder' => true])
+            @endif
         </aside>
     </form>
 </div>
