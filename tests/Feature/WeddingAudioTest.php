@@ -44,7 +44,7 @@ class WeddingAudioTest extends TestCase
 
     private function answers(): array
     {
-        return ['bride_name' => 'Mira', 'groom_name' => 'Theo', 'event_date' => '2027-12-12', 'venue_name' => 'The Wedding Garden'];
+        return ['bride_name' => 'Mira', 'groom_name' => 'Theo', 'event_date' => '2027-12-12', 'event_title' => 'Our Wedding Celebration', 'venue_name' => 'The Wedding Garden'];
     }
 
     public function test_all_six_designs_have_distinct_paired_library_tracks(): void
@@ -68,7 +68,7 @@ class WeddingAudioTest extends TestCase
     {
         $template = InvitationTemplate::where('slug','olive-garden-wedding')->firstOrFail();
         $this->get('/templates/wedding/'.$template->slug)->assertOk()
-            ->assertSee('Music & interactive sound effects')
+            ->assertSee('Music & interactive sound effects', false)
             ->assertDontSee('data-music-upload="intro"', false)
             ->assertDontSee('wwyt-audio-bootstrap')
             ->assertDontSee('wedding-audio.js');
