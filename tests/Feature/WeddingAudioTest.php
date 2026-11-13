@@ -13,6 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
+/** Validation run for theme-specific music preview and overlapping crossfade. */
 class WeddingAudioTest extends TestCase
 {
     use RefreshDatabase;
