@@ -27,6 +27,7 @@
     'pearl-editorial': 2270, 'destination-ticket': 1900, 'royal_burgundy': 2250
   };
   let ctx = null, started = false, paused = false, muted = false;
+  let previewPrelude = false;
   let effectsOn = !sampleMode && Boolean(data.settings?.sfx ?? true);
   let active = null, preparedMain = null, outgoing = null;
   let mainTimer = null, outgoingTimer = null, previewTimer = null, previewing = null;
@@ -244,6 +245,7 @@
     preparedMain = null;
     previewing = null;
     started = false;
+    previewPrelude = false;
   }
 
   function moveToMain(overlapMs) {
@@ -265,6 +267,37 @@
     }
     if (active) ramp(active, muted ? 0 : volume, Math.max(60, overlapMs));
     updateButtons();
+  }
+
+  function startPreviewPrelude() {
+    if (!sampleMode || started || !getContext()) return;
+    // Music plays by default on preview load (subject to browser policy).
+    // Keep the *opening* wedding score playing until the actual invitation
+    // opening. That preserves the intended opening-to-background transition.
+    stopAll();
+    volume = selectedVolume();
+    muted = false;
+    paused = false;
+    audioFailure = false;
+    effectsOn = false;
+    started = true;
+    previewPrelude = true;
+    active = playSelection('intro', volume * .72);
+    if (!active) {
+      active = playSelection('main',volume);
+      previewPrelude = false;
+    }
+  }
+
+  function transitionPreviewOnOpening() {
+    if (!sampleMode || !previewPrelude) return;
+    previewPrelude = false;
+    const introMs = reducedMotion ? 0 : (introTimes[theme] || 2250);
+    const overlapMs = Math.min(CROSSFADE_MS,Math.max(0,Math.floor(introMs*.48)));
+    mainTimer = window.setTimeout(
+      () => moveToMain(overlapMs),
+      Math.max(0,introMs-overlapMs)
+    );
   }
 
   function prepareOpening() {
@@ -431,7 +464,8 @@
     const trigger=event.target.closest('[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]');
     if(trigger && !trigger.disabled){
       if(previewing){stop(previewing);previewing=null;}
-      if(!sampleMode || !started) prepareOpening();
+      if (sampleMode && previewPrelude) transitionPreviewOnOpening();
+      else if(!sampleMode || !started) prepareOpening();
       return;
     }
     if(!started)return;
@@ -468,7 +502,7 @@
   function resumeSampleAfterGesture() {
     if (!sampleMode) return;
     if (!started) {
-      prepareOpening();
+      startPreviewPrelude();
     } else if (muted) {
       muted = false;
       paused = false;
@@ -484,13 +518,13 @@
     try {
       if(!ctx)ctx=new audioCtor();
       if(ctx.state==='running'){
-        prepareOpening();
+        startPreviewPrelude();
         return;
       }
       // Desktop browsers with permitted autoplay can resolve this instantly.
       // Restricted browsers leave playback pending until the opening tap.
       Promise.resolve(ctx.resume()).then(()=>{
-        if(ctx?.state==='running' && !started && !document.hidden)prepareOpening();
+        if(ctx?.state==='running' && !started && !document.hidden)startPreviewPrelude();
       }).catch(()=>{});
     } catch (_) {}
   }
