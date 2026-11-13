@@ -125,7 +125,7 @@
     }
   }
   function fileAudio(url, level, loop, silent = false) {
-    if (!url || !/^(\\/|https?:\\/\\/|blob:)/.test(url)) return null;
+    if (!url || !/^(\/|https?:\/\/|blob:)/.test(url)) return null;
     const el=new Audio(url);
     el.preload='auto';el.loop=loop;el.volume=silent ? 0 : Math.max(0,Math.min(.8,level));
     el.play().catch(()=>{
