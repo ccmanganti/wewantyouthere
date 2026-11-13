@@ -108,4 +108,8 @@
 .ce2-pearl-editorial .ce2-animated.ce2-in-view{opacity:1;transform:none;filter:blur(0)}
 @media(max-width:800px){.ce2-pearl-editorial .pa-letter-grid,.ce2-pearl-editorial .pa-spread,.ce2-pearl-editorial .pa-date,.ce2-pearl-editorial .pa-venue-layout,.ce2-pearl-editorial .pa-program,.ce2-pearl-editorial .pa-attire,.ce2-pearl-editorial .pa-rsvp{grid-template-columns:1fr}.ce2-pearl-editorial .pa-spread-images{min-height:350px}.ce2-pearl-editorial .pa-program-photo{padding:30px}.ce2-pearl-editorial .pa-program-image{height:430px}.ce2-pearl-editorial .pa-people-columns{grid-template-columns:1fr}.ce2-pearl-editorial .pa-hero-footer{gap:8px}}
 @media(max-width:550px){.ce2-pearl-editorial .pa-nav{font-size:9px;gap:5px;padding:17px 12px}.ce2-pearl-editorial .pa-nav span:nth-child(2){display:none}.ce2-pearl-editorial .pa-hero{min-height:680px}.ce2-pearl-editorial .pa-hero h1{font-size:clamp(55px,14vw,110px)}.ce2-pearl-editorial .pa-hero-art{width:94%}.ce2-pearl-editorial .pa-hero-photo{height:260px}.ce2-pearl-editorial .pa-hero-footer{font-size:8px}.ce2-pearl-editorial .pa-letter{padding:80px 20px}.ce2-pearl-editorial .pa-letter-head{display:block}.ce2-pearl-editorial .pa-gallery-grid{grid-template-rows:150px 150px;gap:8px}.ce2-pearl-editorial .pa-venue-layout{gap:25px}.ce2-pearl-editorial .pa-rsvp-black,.ce2-pearl-editorial .pa-rsvp-white{padding:70px 23px}}
+
+/* Only the editorial introduction uses a theatrical flash. */
+.ce2-pearl-editorial .pa-intro.pa-flash-frame::after{content:'';pointer-events:none;position:absolute;inset:0;z-index:6;background:#fff;animation:pa-camera-flash .9s ease-out both}
+@keyframes pa-camera-flash{0%{opacity:.9}35%{opacity:.25}100%{opacity:0}}
 </style>
