@@ -12,6 +12,7 @@
 
   const audioCtor = window.AudioContext || window.webkitAudioContext;
   const editor = document.getElementById('wedding-builder');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
   const introTimes = {
@@ -190,7 +191,7 @@
         active=playSelection('main',muted?0:volume);
       } else active=null;
       updateButtons();
-    },introTimes[theme]||2250);
+    },reducedMotion ? 0 : (introTimes[theme]||2250));
     updateButtons();
   }
   function makeNoise(time,duration,bus,cutoff,gain) {
@@ -330,7 +331,11 @@
   };
   buildControls();
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden && active?.kind==='file')active.el.pause();
-    // Do not resume sound on tab focus without an explicit visitor gesture.
+    if(!document.hidden || !started)return;
+    // Background tabs go quiet; a returning guest must explicitly tap Play.
+    muted=true;paused=true;
+    if(active?.kind==='file')active.el.pause();
+    if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(.0001,ctx.currentTime,.04);
+    updateButtons();
   });
 })();
