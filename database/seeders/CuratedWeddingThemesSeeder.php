@@ -46,17 +46,19 @@ class CuratedWeddingThemesSeeder extends Seeder
                 'renderer' => 'builtin_wedding',
                 'theme' => 'curated_editorial',
                 'design' => $key,
-                'view' => 'weddings.themes.curated-editorial',
+                'view' => 'weddings.themes.editorial.'.$key,
                 'description' => $design['description'],
                 'thumbnail_url' => config('wedding_curated_assets.'.$key.'.photos.hero') ?: $design['scenery'],
                 'photo_slots' => array_keys(config('wedding_curated_assets.'.$key.'.photos', [])),
-                'layout_revision' => 2,
+                'layout_revision' => \App\Support\CuratedWeddingDesign::REVISION,
+                'sample_profile' => $key,
+                'engine' => 'independent_blade_v4',
                 'opening' => [
-                    'burgundy-wax' => 'unfolding_wax_letter',
-                    'olive-garden' => 'turning_botanical_book',
-                    'painted-orchard' => 'opening_conservatory_gates',
-                    'pearl-editorial' => 'cinematic_velvet_curtain',
-                    'destination-ticket' => 'tearing_boarding_pass',
+                    'burgundy-wax' => 'breaking_seal_unrolling_parchment',
+                    'olive-garden' => 'interactive_botanical_journal',
+                    'painted-orchard' => 'hinged_garden_gates_and_petals',
+                    'pearl-editorial' => 'cinematic_velvet_curtain_flash',
+                    'destination-ticket' => 'boarding_stub_drag_and_takeoff',
                 ][$key],
                 'features' => [
                     'free' => ['animated_introduction', 'unique_layout', 'photos', 'story', 'date', 'venues', 'dress_code', 'gift_note', 'share_url', 'qr_code'],
@@ -67,9 +69,11 @@ class CuratedWeddingThemesSeeder extends Seeder
             $template->forceFill([
                 'event_type_id' => $event->id,
                 'status' => 'published',
+                'is_premium' => false,
                 'settings' => $settings,
-                'version' => max(2, (int) $template->version),
+                'version' => max(\App\Support\CuratedWeddingDesign::REVISION, (int) $template->version),
             ])->save();
+            $this->command?->info("Updated {$template->slug}: design={$key}, layout=v".\App\Support\CuratedWeddingDesign::REVISION.", id={$template->id}");
         }
 
         // Prevent silent success when a stale or inconsistent DB record causes
@@ -86,5 +90,14 @@ class CuratedWeddingThemesSeeder extends Seeder
                 "Only {$visibleCount} of ".count($designs).' curated wedding designs are publicly eligible.'
             );
         }
+
+        foreach ($designs as $key => $design) {
+            $record = InvitationTemplate::where('slug', $design['slug'])->firstOrFail();
+            if (($record->settings['design'] ?? null) !== $key
+                || ($record->settings['layout_revision'] ?? null) !== \App\Support\CuratedWeddingDesign::REVISION) {
+                throw new RuntimeException("Template {$design['slug']} did not update to its independent v4 design.");
+            }
+        }
+        $this->command?->info('All 5 existing template records now point to distinct v4 layouts. No duplicates were created.');
     }
 }
