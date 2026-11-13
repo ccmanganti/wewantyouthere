@@ -84,6 +84,18 @@ class WeddingAudioTest extends TestCase
         }
     }
 
+    public function test_default_music_engine_is_served_even_with_separate_hostinger_public_html(): void
+    {
+        $this->assertFileExists(base_path('public/js/wedding-audio.js'));
+        $response = $this->get(route('wedding.audio.script'))->assertOk();
+        $this->assertStringContainsString(
+            'application/javascript',
+            (string) $response->headers->get('Content-Type')
+        );
+        $this->get('/templates/olive-garden-wedding/preview')->assertOk()
+            ->assertSee('/wwyt-assets/wedding-audio.js?v=4', false);
+    }
+
     public function test_free_editor_only_shows_sample_preview_audio_not_premium_controls(): void
     {
         $template = InvitationTemplate::where('slug','olive-garden-wedding')->firstOrFail();
