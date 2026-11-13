@@ -320,7 +320,7 @@
                         <strong>Review the full wedding website</strong>
                         <p>Inspect your invitation before sharing.</p>
                         <button type="button" class="review-preview-button" id="review-open-preview">
-                            <i class="fa-solid fa-expand" aria-hidden="true"></i> Open full preview
+                            <i class="fa-solid fa-expand" aria-hidden="true"></i> Preview
                         </button>
                     </div>
                     <h3 style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9f353c;margin:17px 0 12px">Sections you selected</h3>
@@ -337,7 +337,7 @@
 
         <aside class="preview-pane" aria-label="Live invitation preview">
             <div class="preview-top">
-                <div><strong>Live preview</strong></div>
+                <div><strong>Preview</strong></div>
                 <button type="button" class="preview-expand-btn" id="preview-expand"
                     aria-pressed="false" title="Use the full workspace to inspect the invitation">
                     <i class="fa-solid fa-expand" aria-hidden="true"></i>
@@ -374,8 +374,10 @@
 @include('weddings.themes.royal-v3-script')
 @endif
 @endif
-@if($hasPremium && $specialEditor)
-@include('weddings.partials.audio-runtime')
+@if($specialEditor)
+@include('weddings.partials.audio-runtime', ['audioDemo' => !$hasPremium])
+@if($hasPremium)
 @include('weddings.partials.audio-builder-script')
+@endif
 @endif
 @endpush
