@@ -170,7 +170,7 @@ const sandbox = {
 };
 vm.runInNewContext(fs.readFileSync('public/js/wedding-audio.js','utf8'),sandbox,{timeout:2000});
 
-assert.match(status.textContent,/Tap Listen/,'Audio controls should give an explicit interaction hint.');
+assert.match(status.textContent,/tap Listen/i,'Audio controls should give an explicit interaction hint.');
 introListen.click();
 assert.ok(oscillators>0,'Clicking Listen to opening music must schedule real audio notes.');
 assert.match(status.textContent,/Turning Leaves/);
