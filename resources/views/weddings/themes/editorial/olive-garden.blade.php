@@ -65,14 +65,14 @@
     </div>
 </section>
 
-@if($premiumAccess && $visible('ceremony_details'))
+@if($premiumAccess && ($visible('ceremony_details') || $isPreview))
 <section class="og-ceremony-notes ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details">
     <span class="og-tab">THE CEREMONY</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','Our vows') }}</h2><p data-field="ceremony_notes">{{ $copy('ceremony_notes','A special note for the day.') }}</p>
 </section>
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'og-maps'])
 
-@if($premiumAccess && $visible('program'))
+@if($premiumAccess && ($visible('program') || $isPreview))
 <section class="og-timeline ce2-section" id="og-program" data-preview-section="program" data-premium-section="program">
     <span class="og-tab">04 / THE CELEBRATION</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','A day in bloom') }}</h2>
     <div class="og-timeline-list">
@@ -84,7 +84,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('entourage'))
+@if($premiumAccess && ($visible('entourage') || $isPreview))
 <section class="og-people ce2-section" id="og-people" data-preview-section="entourage" data-premium-section="entourage">
     <span class="og-tab">05 / OUR PEOPLE</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','The hands that helped us grow') }}</h2>
     <div class="og-people-grid"><div><span>PRINCIPAL SPONSORS</span><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our honored ninongs and ninangs') }}</p></div>
@@ -104,7 +104,7 @@
     <p class="og-handwritten" data-field="gallery_quote">{{ $copy('gallery_quote','All of our beautiful seasons led us here.') }}</p>
 </section>
 
-@if($visible('details'))
+@if($visible('details') || $isPreview)
 <section class="og-attire ce2-section" id="og-look" data-preview-section="details"><span class="og-tab">07 / THE LITTLE DETAILS</span>
     <div class="og-attire-card"><div class="og-attire-bow" aria-hidden="true"></div><h2 data-field="dress_heading">{{ $copy('dress_heading','What to wear') }}</h2>
         <p data-field="dress_code">{{ $copy('dress_code','Garden formal') }}</p>
@@ -116,7 +116,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('guests'))
+@if($premiumAccess && ($visible('guests') || $isPreview))
 <section class="og-rsvp ce2-section" id="og-rsvp" data-preview-section="guests" data-premium-section="guests">
     <div class="og-rsvp-notebook"><span class="og-tab">08 / A LITTLE REPLY</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','Will you join our garden party?') }}</h2>
         <p data-field="rsvp_message">{{ $copy('rsvp_message','Kindly let us know if we should save you a place.') }}</p>
