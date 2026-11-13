@@ -56,6 +56,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/templates/wedding/{slug}/audio/{slot}', [WeddingAudioController::class, 'remove'])
         ->middleware('throttle:24,1')->name('wedding.audio.remove');
 });
+Route::middleware('auth')->group(function () {
+    Route::get('/app/invitations/{website}/music', [WeddingAudioController::class, 'manage'])
+        ->name('wedding.audio.manage');
+    Route::post('/app/invitations/{website}/music', [WeddingAudioController::class, 'update'])
+        ->middleware('throttle:12,1')->name('wedding.audio.update');
+    Route::get('/app/invitations/{website}/music/{slot}', [WeddingAudioController::class, 'ownerPreview'])
+        ->name('wedding.audio.ownerPreview');
+});
 Route::get('/i/{slug}/audio/{slot}', [WeddingAudioController::class, 'publicAudio'])
     ->middleware('throttle:180,1')->name('wedding.audio.site');
 Route::get('/i/{slug}/photos/{slot}', [WeddingPhotoController::class, 'publicPhoto'])
