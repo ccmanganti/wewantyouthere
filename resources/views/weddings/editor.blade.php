@@ -12,10 +12,10 @@
 @include('weddings.partials.editor-styles')
 @include('weddings.partials.invitation-theme-styles')
 @if($specialEditor)
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-@include('weddings.themes.royal-v3-styles')
-@elseif($isCurated)
+@if($isCurated)
 @include('weddings.themes.curated-editorial-styles')
+@elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-v3-styles')
 @endif
 @include('weddings.partials.photo-builder-styles')
 @include('weddings.partials.royal-preview-refine-styles')
@@ -367,10 +367,10 @@
 @include('weddings.partials.editor-script')
 @if($specialEditor)
 @include('weddings.partials.photo-builder-script')
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-@include('weddings.themes.royal-v3-script')
-@elseif($isCurated)
+@if($isCurated)
 @include('weddings.themes.curated-editorial-script')
+@elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
+@include('weddings.themes.royal-v3-script')
 @endif
 @endif
 @endpush
