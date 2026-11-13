@@ -23,6 +23,35 @@ return [
         'destination-ticket' => ['intro' => 'boarding-call', 'main' => 'coastal-horizon'],
         'royal_burgundy' => ['intro' => 'royal-fanfare', 'main' => 'royal-ballroom'],
     ],
+    // Each template has its own curated sample set. The first track in each
+    // group is also that template's unique default; other tracks are optional
+    // demonstrations, never changes to a customer's saved invitation.
+    'preview_sets' => [
+        'burgundy-wax' => [
+            'intro' => ['seal-whisper', 'royal-fanfare', 'pearl-reveal'],
+            'main' => ['heirloom-valse', 'royal-ballroom', 'afterglow-nocturne'],
+        ],
+        'olive-garden' => [
+            'intro' => ['botanical-page', 'woodland-gates', 'seal-whisper'],
+            'main' => ['garden-afternoon', 'orchard-bloom', 'heirloom-valse'],
+        ],
+        'painted-orchard' => [
+            'intro' => ['woodland-gates', 'botanical-page', 'pearl-reveal'],
+            'main' => ['orchard-bloom', 'garden-afternoon', 'afterglow-nocturne'],
+        ],
+        'pearl-editorial' => [
+            'intro' => ['pearl-reveal', 'seal-whisper', 'royal-fanfare'],
+            'main' => ['afterglow-nocturne', 'royal-ballroom', 'heirloom-valse'],
+        ],
+        'destination-ticket' => [
+            'intro' => ['boarding-call', 'botanical-page', 'pearl-reveal'],
+            'main' => ['coastal-horizon', 'garden-afternoon', 'orchard-bloom'],
+        ],
+        'royal_burgundy' => [
+            'intro' => ['royal-fanfare', 'seal-whisper', 'pearl-reveal'],
+            'main' => ['royal-ballroom', 'heirloom-valse', 'afterglow-nocturne'],
+        ],
+    ],
     'tracks' => [
         'seal-whisper' => [
             'title' => 'Seal & Silk', 'role' => 'intro',
