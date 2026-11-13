@@ -73,7 +73,7 @@ class WeddingAudioTest extends TestCase
             ->assertDontSee('id="wedding-music-studio"', false)
             ->assertSee('wwyt-audio-bootstrap')
             ->assertSee('wedding-audio.js')
-            ->assertSee('&quot;demo&quot;:true', false);
+            ->assertSee('"demo":true', false);
         $owner = $this->user();
         $this->actingAs($owner)
             ->postJson('/templates/wedding/'.$template->slug.'/audio', ['slot' => 'intro'])
@@ -95,7 +95,7 @@ class WeddingAudioTest extends TestCase
                 ->assertSee('wwyt-audio-bootstrap')
                 ->assertSee('wedding-audio.js')
                 ->assertSee('Sample design')
-                ->assertSee('&quot;demo&quot;:true', false)
+                ->assertSee('"demo":true', false)
                 ->assertSee(config('wedding_audio.defaults.'.$key.'.intro'))
                 ->assertSee(config('wedding_audio.defaults.'.$key.'.main'))
                 ->assertDontSee('/i/our-wedding/audio/intro');
