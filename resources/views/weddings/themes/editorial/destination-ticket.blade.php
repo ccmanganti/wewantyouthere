@@ -43,7 +43,7 @@
         @include('weddings.themes.editorial.photo', ['slot'=>'venue_ceremony','class'=>'dt-venue-photo'])
         <div><span>01 · CEREMONY STOP</span><h3 data-field="ceremony_venue">{{ $copy('ceremony_venue','The Lake Chapel') }}</h3><p data-field="ceremony_address">{{ $copy('ceremony_address','A beautiful destination for our vows') }}</p></div>
     </div>
-    <div class="dt-destination-card dt-destination-reverse">
+    <div class="dt-destination-card dt-destination-reverse" data-preview-section="reception" @if(!$visible('reception')) hidden @endif>
         @include('weddings.themes.editorial.photo', ['slot'=>'venue_reception','class'=>'dt-venue-photo'])
         <div><span>02 · RECEPTION STOP</span><h3 data-field="reception_venue">{{ $copy('reception_venue','The Lakeside Estate') }}</h3><p data-field="reception_address">{{ $copy('reception_address','Dinner and dancing by the water') }}</p><p data-field="reception_time">{{ $display('reception_time','6:00 PM') }}</p></div>
     </div>
