@@ -117,4 +117,9 @@
 .ce2-burgundy-wax .bw-album-grid{grid-template-rows:165px 165px;gap:8px}
 .ce2-burgundy-wax .bw-album-image{border-width:4px}
 }
+
+/* Portraits are set into the letter's antique oval frames. */
+.ce2-burgundy-wax .bw-cameo-frame{width:min(380px,75vw);aspect-ratio:4/5;overflow:hidden;border:15px ridge #ddbb93;border-radius:48% 48% 9% 9%;box-shadow:0 15px 30px #30161b55;margin:40px auto 5px;background:#d8c5b5}
+.ce2-burgundy-wax .bw-venue-cameo{width:min(310px,70%);aspect-ratio:4/3;border:12px ridge #c7a67d;margin:28px auto 6px;box-shadow:0 12px 30px #0006;background:#ddc6ad}
+@media(max-width:580px){.ce2-burgundy-wax .bw-venue-cameo{width:85%}}
 </style>
