@@ -278,7 +278,7 @@
     audioFailure = false;
     volume = selectedVolume();
     const sfxInput = editor?.querySelector('[data-music-sfx]');
-    effectsOn = sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx);
+    effectsOn = sampleMode ? false : (sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx));
     started = true;
 
     const opening = choice('intro');
@@ -423,13 +423,15 @@
   // Reset the soundtrack whenever the editor replays its unique intro.
   // A new intro tap will start its music once, without layered duplicates.
   document.getElementById('preview-envelope-intro')?.addEventListener('click', () => stopAll());
-  // The opening tap is the only implicit audio trigger, never page load.
+  // Every preview uses its assigned soundtrack automatically when the
+  // browser allows autoplay, or on the very first trusted tap/keyboard action.
+  // The animation's opening control remains the only visible intro action.
   document.addEventListener('click',event=>{
     if(!root.contains(event.target))return;
     const trigger=event.target.closest('[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]');
     if(trigger && !trigger.disabled){
       if(previewing){stop(previewing);previewing=null;}
-      prepareOpening();
+      if(!sampleMode || !started) prepareOpening();
       return;
     }
     if(!started)return;
@@ -463,53 +465,34 @@
     previewTimer=setTimeout(()=>{if(previewing){stop(previewing,.15);previewing=null;}},11000);
     return true;
   }
-  function setupDemoControls() {
-    if (!sampleMode || !demoControls) return;
-    for (const slot of ['intro','main']) {
-      const select = demoControls.querySelector('[data-demo-track="'+slot+'"]');
-      const button = demoControls.querySelector('[data-demo-listen="'+slot+'"]');
-      if (!select || !button) continue;
-      select.addEventListener('change',()=>{
-        stopAll();
-        const title=tracks[select.value]?.title || 'this selection';
-        setStatus('Selected '+title+'. Tap Listen to hear it.');
-        updateButtons();
-      });
-      button.addEventListener('click',()=>{
-        const selected=choice(slot);
-        if (!selected.track || tracks[selected.track]?.role!==slot) {
-          setStatus('Choose a track first.');
-          return;
-        }
-        const playing=preview(slot,selected);
-        setStatus(playing
-          ? 'Playing '+tracks[selected.track].title+'. Tap Listen again to stop.'
-          : 'Preview stopped. Tap Listen to play again.');
-        updateButtons();
-      });
+  function resumeSampleAfterGesture() {
+    if (!sampleMode) return;
+    if (!started) {
+      prepareOpening();
+    } else if (muted) {
+      muted = false;
+      paused = false;
+      if (active?.kind === 'synth') ramp(active, volume, 350);
+      if (active?.kind === 'file') {
+        active.el.play().then(() => ramp(active,volume,350)).catch(()=>{});
+      }
     }
-    const slider=demoControls.querySelector('[data-demo-volume]');
-    slider?.addEventListener('input',()=>{
-      const label=demoControls.querySelector('[data-demo-volume-output]');
-      if(label) label.textContent=slider.value+'%';
-      volume=selectedVolume();
-      if(active&&!muted) ramp(active,volume,200);
-      if(previewing) ramp(previewing,volume,200);
-    });
-    demoControls.querySelector('[data-demo-experience]')?.addEventListener('click',()=>{
-      // Synchronous click under a user gesture unlocks audio in iframe previews.
-      const intro=root.querySelector('#ce2-intro,#rbv-intro');
-      const opener=intro?.querySelector(
-        '[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],'+
-        '[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]'
-      );
-      if(intro && !intro.hidden && !intro.classList.contains('ce2-dismissing')
-        && !intro.classList.contains('is-fading') && opener && !opener.disabled) {
-        opener.click();
-      } else prepareOpening();
-      setStatus('Playing opening music, then fading into invitation music.');
-    });
-    setStatus('Choose a track and tap Listen to hear a sample.');
+  }
+
+  function attemptPreviewAutoplay() {
+    if(!sampleMode || !audioCtor || document.hidden || started)return;
+    try {
+      if(!ctx)ctx=new audioCtor();
+      if(ctx.state==='running'){
+        prepareOpening();
+        return;
+      }
+      // Desktop browsers with permitted autoplay can resolve this instantly.
+      // Restricted browsers leave playback pending until the opening tap.
+      Promise.resolve(ctx.resume()).then(()=>{
+        if(ctx?.state==='running' && !started && !document.hidden)prepareOpening();
+      }).catch(()=>{});
+    } catch (_) {}
   }
 
   window.WWYTAudio = {
@@ -525,11 +508,22 @@
       updateButtons();
     }
   };
-  if (!manager) buildControls();
-  setupDemoControls();
+  // No overlay, selector, volume slider, play or mute button in live previews.
+  // Published premium invitations keep accessible playback controls.
+  if (!manager && !editor && !sampleMode) buildControls();
+  if (sampleMode) {
+    attemptPreviewAutoplay();
+    // Works for a click on the envelope, a gallery, or the preview iframe.
+    document.addEventListener('pointerdown',resumeSampleAfterGesture,{capture:true,passive:true});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Enter' || event.key===' '){
+        resumeSampleAfterGesture();
+      }
+    },{capture:true});
+  }
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden || !started)return;
-    // Background tabs go quiet; a returning guest must explicitly tap Play.
+    // Background tabs go quiet; on a preview the next tap resumes the music.
     muted=true;paused=true;
     if(active?.kind==='file')active.el.pause();
     if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(.0001,ctx.currentTime,.04);
