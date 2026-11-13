@@ -101,7 +101,7 @@
                         <li>Gift notes, dress code and guest reminders</li>
                         <li>Custom invitation wording &amp; visible sections</li>
                         <li>Shareable URL and downloadable QR code</li>
-                        @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
+                        @if(\App\Support\CuratedWeddingDesign::isSpecialEditor($template))
                         <li>Editable photographic galleries and dedicated image placements</li>
                         <li>Interactive opening animation unique to this design</li>
                         @endif
