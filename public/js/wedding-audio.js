@@ -17,6 +17,8 @@
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
   const sampleMode = Boolean(data.demo);
+  const demoControls = sampleMode ? document.getElementById('wwyt-sample-music') : null;
+  const MASTER_GAIN = .66;
   const CROSSFADE_MS = 1050;
   const introTimes = {
     'burgundy-wax': 2550, 'olive-garden': 2100, 'painted-orchard': 2300,
@@ -27,22 +29,43 @@
   let active = null, preparedMain = null, outgoing = null;
   let mainTimer = null, outgoingTimer = null, previewTimer = null, previewing = null;
   let audioFailure = false;
-  let volume = Math.max(0, Math.min(1, Number(data.settings?.volume ?? 45) / 100));
+  let volume = Math.max(0, Math.min(1, Number(sampleMode ? 75 : (data.settings?.volume ?? 45)) / 100));
   let output, musicButton, effectsButton;
 
   function setStatus(text) {
-    if (!output) return;
-    output.textContent = text;
+    if (output) output.textContent = text;
+    const status = demoControls?.querySelector('[data-demo-audio-status]');
+    if (status && text) status.textContent = text;
   }
   function getContext() {
-    if (!audioCtor) return null;
-    if (!ctx) ctx = new audioCtor();
-    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
-    return ctx;
+    if (!audioCtor) {
+      setStatus('This browser does not support audio playback.');
+      return null;
+    }
+    try {
+      if (!ctx) ctx = new audioCtor();
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {
+          audioFailure = true;
+          setStatus('Audio was blocked. Tap Listen again or check your browser sound settings.');
+          updateButtons();
+        });
+      }
+      return ctx;
+    } catch (_) {
+      setStatus('Audio could not be started in this browser.');
+      return null;
+    }
   }
   function choice(slot) {
-    // In a demo-only builder preview there are no premium inputs. Use the
-    // theme's original example music rather than treating the slot as silent.
+    if (sampleMode) {
+      const selected = demoControls?.querySelector('[data-demo-track="'+slot+'"]')?.value;
+      const allowed = data.previewSets?.[slot] || [];
+      if (selected && allowed.includes(selected) && tracks[selected]?.role === slot) {
+        return {source:'library',track:selected,url:''};
+      }
+      return data.settings?.[slot] || {source:'none'};
+    }
     if (editor?.querySelector('input[name="audio['+slot+'][source]"]')) {
       const source = editor.querySelector('input[name="audio['+slot+'][source]"]:checked')?.value || 'none';
       const track = editor.querySelector('[name="audio['+slot+'][track]"]')?.value || '';
@@ -52,6 +75,10 @@
     return data.settings?.[slot] || {source:'none'};
   }
   function selectedVolume() {
+    if (sampleMode) {
+      const value = demoControls?.querySelector('[data-demo-volume]')?.value ?? 75;
+      return Math.max(0,Math.min(1,Number(value)/100));
+    }
     const editorVolume = editor?.querySelector('[data-music-volume]');
     return Math.max(0, Math.min(1, Number(editorVolume?.value ?? (data.settings?.volume ?? 45)) / 100));
   }
@@ -81,7 +108,7 @@
     const bus = audio.createGain();
     bus.gain.setValueAtTime(.0001,audio.currentTime);
     bus.connect(audio.destination);
-    bus.gain.setTargetAtTime(Math.min(.7,level)*.46,audio.currentTime,.14);
+    bus.gain.setTargetAtTime(Math.min(.9,level)*MASTER_GAIN,audio.currentTime,.11);
     const bpm = Math.max(50,Math.min(130,Number(track.bpm)||80));
     const beat = 60/bpm;
     let index = 0, next = audio.currentTime+.035, timer;
@@ -90,11 +117,11 @@
         const step = index % track.melody.length;
         const note = track.melody[step];
         const voice = track.voice || 'piano';
-        if (note !== null && note !== undefined) oscillator(Number(note), next, beat*.8, voice, bus, .18);
+        if (note !== null && note !== undefined) oscillator(Number(note), next, beat*.8, voice, bus, .25);
         if (step % 4 === 0 && Array.isArray(track.chords)) {
           const chord = track.chords[Math.floor(step/4)%track.chords.length] || [];
           chord.forEach((pitch,j) => oscillator(Number(pitch)-12, next+j*.022,beat*3,
-            voice === 'marimba' ? 'piano' : 'pad',bus,.028));
+            voice === 'marimba' ? 'piano' : 'pad',bus,.042));
         }
         if(step % 2 === 0 && Array.isArray(track.chords) && track.chords.length){
           const chord = track.chords[Math.floor(step/4)%track.chords.length]||[];
@@ -162,7 +189,7 @@
       const now = ctx.currentTime;
       gain.cancelScheduledValues(now);
       gain.setValueAtTime(Math.max(0, gain.value), now);
-      gain.linearRampToValueAtTime(target * .46, now + duration / 1000);
+      gain.linearRampToValueAtTime(target * MASTER_GAIN, now + duration / 1000);
     } else if (entry.kind === 'file' && entry.el) {
       if (entry.fadeTimer) window.clearInterval(entry.fadeTimer);
       const element = entry.el;
@@ -395,7 +422,11 @@
     if(previewing){stop(previewing,.08);previewing=null;}
     clearTimeout(previewTimer);
     if(same)return false;
-    if(!getContext())return false;
+    if(!getContext()) {
+      setStatus('Audio is unavailable. Check your browser sound settings.');
+      return false;
+    }
+    if (sampleMode && started) stopAll();
     const auditionVolume=selectedVolume();
     if(selected.source==='library'&&tracks[selected.track]?.role===slot)
       previewing=synth(selected.track,auditionVolume);
@@ -406,6 +437,55 @@
     previewTimer=setTimeout(()=>{if(previewing){stop(previewing,.15);previewing=null;}},11000);
     return true;
   }
+  function setupDemoControls() {
+    if (!sampleMode || !demoControls) return;
+    for (const slot of ['intro','main']) {
+      const select = demoControls.querySelector('[data-demo-track="'+slot+'"]');
+      const button = demoControls.querySelector('[data-demo-listen="'+slot+'"]');
+      if (!select || !button) continue;
+      select.addEventListener('change',()=>{
+        stopAll();
+        const title=tracks[select.value]?.title || 'this selection';
+        setStatus('Selected '+title+'. Tap Listen to hear it.');
+        updateButtons();
+      });
+      button.addEventListener('click',()=>{
+        const selected=choice(slot);
+        if (!selected.track || tracks[selected.track]?.role!==slot) {
+          setStatus('Choose a track first.');
+          return;
+        }
+        const playing=preview(slot,selected);
+        setStatus(playing
+          ? 'Playing '+tracks[selected.track].title+'. Tap Listen again to stop.'
+          : 'Preview stopped. Tap Listen to play again.');
+        updateButtons();
+      });
+    }
+    const slider=demoControls.querySelector('[data-demo-volume]');
+    slider?.addEventListener('input',()=>{
+      const label=demoControls.querySelector('[data-demo-volume-output]');
+      if(label) label.textContent=slider.value+'%';
+      volume=selectedVolume();
+      if(active&&!muted) ramp(active,volume,200);
+      if(previewing) ramp(previewing,volume,200);
+    });
+    demoControls.querySelector('[data-demo-experience]')?.addEventListener('click',()=>{
+      // Synchronous click under a user gesture unlocks audio in iframe previews.
+      const intro=root.querySelector('#ce2-intro,#rbv-intro');
+      const opener=intro?.querySelector(
+        '[data-wax-scroll-open],[data-journal-open],[data-garden-gate-open],'+
+        '[data-editorial-reveal],[data-boarding-ticket-open],[data-rbv-open]'
+      );
+      if(intro && !intro.hidden && !intro.classList.contains('ce2-dismissing')
+        && !intro.classList.contains('is-fading') && opener && !opener.disabled) {
+        opener.click();
+      } else prepareOpening();
+      setStatus('Playing opening music, then fading into invitation music.');
+    });
+    setStatus('Choose a track and tap Listen to hear a sample.');
+  }
+
   window.WWYTAudio = {
     preview,stopPreview(){if(previewing){stop(previewing);previewing=null;}clearTimeout(previewTimer);},
     updateVolume(){
@@ -420,6 +500,7 @@
     }
   };
   if (!manager) buildControls();
+  setupDemoControls();
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden || !started)return;
     // Background tabs go quiet; a returning guest must explicitly tap Play.
