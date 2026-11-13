@@ -25,6 +25,7 @@ on:
       - 'config/wedding_curated_showcases.php'
       - 'config/wedding_audio.php'
       - 'public/js/wedding-audio.js'
+      - 'tests/js/**'
       - 'tests/Feature/**'
       - 'app/Support/**'
       - 'database/migrations/**'
@@ -67,6 +68,7 @@ jobs:
           }
           NODE
           node --check public/js/wedding-audio.js
+          node tests/js/wedding-audio-preview.test.cjs
       - run: composer install --no-interaction --prefer-dist
       - run: |
           find app database -name '*.php' -print0 | xargs -0 -n1 php -l
