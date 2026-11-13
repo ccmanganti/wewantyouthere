@@ -23,10 +23,10 @@
         return $value;
     };
 @endphp
-@if(($template->settings['theme'] ?? '') === 'royal_burgundy')
-    @include('weddings.themes.royal-burgundy')
-@elseif(\App\Support\CuratedWeddingDesign::isCurated($template))
+@if(\App\Support\CuratedWeddingDesign::isCurated($template))
     @include('weddings.themes.curated-editorial')
+@elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
+    @include('weddings.themes.royal-burgundy')
 @else
 <div class="wedding-invite" id="wedding-invite">
     <nav class="invite-site-nav" aria-label="Wedding website sections">
