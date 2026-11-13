@@ -35,7 +35,7 @@
      data-ce2-date="{{ $date->format('Y-m-d') }}"
      data-ce2-motion="{{ config('wedding_curated_themes.'.$designKey.'.animation') }}">
     @include('weddings.themes.editorial.'.$designKey)
-    @if($premiumAccess && $visible('video'))
+    @if($premiumAccess && ($visible('video') || $isPreview))
         @include('weddings.partials.premium-video')
     @endif
 </div>
