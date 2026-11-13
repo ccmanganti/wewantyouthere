@@ -1,93 +1,230 @@
 <script>
 (function(){
     'use strict';
-    const root=document.querySelector('.ce-invite');
-    if(!root) return;
-    const builder=document.getElementById('wedding-builder');
-    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const intro=root.querySelector('#ce-intro');
-    const opener=root.querySelector('[data-ce-open]');
-    let opening=false;
-    opener?.addEventListener('click',function(){
-        if(opening)return;opening=true;
-        intro.classList.add('ce-opening');
-        opener.disabled=true;
-        window.setTimeout(function(){intro.classList.add('ce-opened');intro.setAttribute('aria-hidden','true');},reduced?0:1400);
-        window.setTimeout(function(){intro.hidden=true;},reduced?0:2200);
+    const root = document.getElementById('wedding-invite');
+    if (!root || !root.classList.contains('ce2')) return;
+    const theme = root.dataset.curatedDesign;
+    const builder = document.getElementById('wedding-builder');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const intro = root.querySelector('#ce2-intro');
+    const opener = root.querySelector('[data-ce2-open]');
+    const duration = {
+        'burgundy-wax': 2300,         // wax breaks; letter rises
+        'olive-garden': 2050,         // 3D hard-cover page turn
+        'painted-orchard': 2200,      // twin garden gates pivot
+        'pearl-editorial': 2150,      // velvet curtains part
+        'destination-ticket': 1800,  // tear-away stub and takeoff
+    }[theme] || 1500;
+
+    if (intro && !intro.hidden) document.body.classList.add('ce2-intro-open');
+    let opening = false;
+    let fadeTimer = null;
+    let hideTimer = null;
+    opener?.addEventListener('click', function(){
+        if (!intro || intro.hidden || opening) return;
+        opening = true;
+        opener.disabled = true;
+        intro.classList.add('is-opening');
+        const delay = reduced ? 0 : duration;
+        fadeTimer = window.setTimeout(function(){
+            intro.classList.add('ce2-dismissing');
+            document.body.classList.remove('ce2-intro-open');
+        }, delay);
+        hideTimer = window.setTimeout(function(){
+            intro.hidden = true;
+            intro.setAttribute('aria-hidden', 'true');
+            root.querySelector('a[href^="#"]')?.focus({ preventScroll: true });
+        }, delay + (reduced ? 0 : 750));
     });
-    // The intro never automatically opens: guest clicks the envelope.
-    root.querySelectorAll('.ce-menu nav a').forEach(a=>a.addEventListener('click',()=>{
-        const details=root.querySelector('.ce-menu');if(details)details.open=false;
-    }));
-    function weddingDate(){
-        const value=builder?.querySelector('[name="answers[event_date]"]')?.value
-            || root.querySelector('[data-ce-calendar]')?.dataset.ceCalendar;
-        if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return null;
-        const [y,m,d]=value.split('-').map(Number);
-        const parsed=new Date(y,m-1,d);
-        if(parsed.getFullYear()!==y||parsed.getMonth()!==m-1||parsed.getDate()!==d)return null;
-        return parsed;
-    }
-    function refreshCalendar(){
-        const calendar=root.querySelector('[data-ce-calendar-grid]');
-        const date=weddingDate();
-        if(!calendar||!date)return;
-        const first=new Date(date.getFullYear(),date.getMonth(),1);
-        const end=new Date(date.getFullYear(),date.getMonth()+1,0).getDate();
-        const offset=(first.getDay()+6)%7;
-        const fragment=document.createDocumentFragment();
-        ['M','T','W','T','F','S','S'].forEach(day=>{
-            const item=document.createElement('span');item.textContent=day;item.setAttribute('aria-hidden','true');fragment.append(item);
+
+    // Replay is a builder-only affordance; guests still see only the unique
+    // clickable invitation artwork, never an Open/Skip button.
+    if (builder){
+        document.getElementById('preview-envelope-intro')?.addEventListener('click',()=>{
+            if (!intro) return;
+            window.clearTimeout(fadeTimer);
+            window.clearTimeout(hideTimer);
+            opening = false;
+            opener.disabled = false;
+            intro.hidden = false;
+            intro.removeAttribute('aria-hidden');
+            intro.classList.remove('is-opening','ce2-dismissing');
+            document.body.classList.add('ce2-intro-open');
+            opener.focus({preventScroll:true});
         });
-        for(let n=0;n<offset;n++){const item=document.createElement('span');item.setAttribute('aria-hidden','true');fragment.append(item);}
-        for(let n=1;n<=end;n++){
-            const item=document.createElement('span');item.textContent=String(n);
-            if(n===date.getDate()){item.className='ce-today';item.setAttribute('aria-current','date');}
-            fragment.append(item);
-        }
-        calendar.replaceChildren(fragment);
-        const month=root.querySelector('.ce-calendar-month');
-        if(month)month.textContent=date.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-        refreshCountdown();
     }
-    function refreshCountdown(){
-        const wedding=weddingDate();
-        if(!wedding)return;
-        const time=builder?.querySelector('[name="answers[event_time]"]')?.value || '15:00';
-        if(/^\d{2}:\d{2}$/.test(time)){
-            const [h,m]=time.split(':').map(Number);wedding.setHours(h,m,0,0);
-        }
-        const remain=Math.max(0,wedding.getTime()-Date.now());
-        const days=Math.floor(remain/86400000);
-        const hours=Math.floor(remain%86400000/3600000);
-        const minutes=Math.floor(remain%3600000/60000);
-        const paint=(selector,n)=>{const el=root.querySelector(selector);if(el)el.textContent=String(n).padStart(2,'0');};
-        paint('[data-ce-days]',days);paint('[data-ce-hours]',hours);paint('[data-ce-minutes]',minutes);
+
+    function validDate(){
+        const raw = builder?.querySelector('[name="answers[event_date]"]')?.value || root.dataset.ce2Date;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(raw || '')) return null;
+        const [year,month,day] = raw.split('-').map(Number);
+        const result = new Date(year, month - 1, day);
+        if (result.getFullYear() !== year || result.getMonth() !== month - 1 || result.getDate() !== day) return null;
+        return result;
     }
-    refreshCalendar();
-    if(!builder)window.setInterval(refreshCountdown,60000);
-    window.addEventListener('wwyt:preview-updated',refreshCalendar);
-    builder?.querySelector('[name="answers[event_date]"]')?.addEventListener('input',refreshCalendar);
-    builder?.querySelector('[name="answers[event_time]"]')?.addEventListener('input',refreshCountdown);
-    root.querySelectorAll('[data-ce-demo]').forEach(form=>{
-        form.addEventListener('submit',function(e){
-            e.preventDefault();
-            if(!form.reportValidity())return;
-            const feedback=form.querySelector('[data-ce-form-feedback]');
-            if(feedback)feedback.textContent='This is a sample preview. No RSVP was submitted.';
+
+    function updateCalendar(){
+        const date = validDate();
+        if (!date) return;
+        root.querySelectorAll('[data-ce2-calendar]').forEach(host=>{
+            const month = document.createElement('div');
+            month.className = 'ce2-calendar-month';
+            month.textContent = date.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+            const grid = document.createElement('div');
+            grid.className = 'ce2-calendar-grid';
+            for (const label of ['M','T','W','T','F','S','S']){
+                const cell = document.createElement('span');
+                cell.textContent = label;
+                cell.setAttribute('aria-hidden','true');
+                grid.append(cell);
+            }
+            const offset = (new Date(date.getFullYear(),date.getMonth(),1).getDay()+6)%7;
+            for (let i=0;i<offset;i++){
+                const cell = document.createElement('span');
+                cell.setAttribute('aria-hidden','true');
+                grid.append(cell);
+            }
+            const days = new Date(date.getFullYear(),date.getMonth()+1,0).getDate();
+            for (let day=1;day<=days;day++){
+                const cell = document.createElement('span');
+                if(day === date.getDate()){
+                    cell.className = 'ce2-calendar-selected';
+                    cell.setAttribute('aria-current','date');
+                    const content = document.createElement('b');
+                    content.textContent = String(day);
+                    cell.append(content);
+                }else{
+                    cell.textContent = String(day);
+                }
+                grid.append(cell);
+            }
+            host.replaceChildren(month,grid);
+        });
+    }
+
+    updateCalendar();
+    window.addEventListener('wwyt:preview-updated',updateCalendar);
+    builder?.querySelector('[name="answers[event_date]"]')?.addEventListener('input',updateCalendar);
+
+    // Update the existing paid map frames when addresses are edited, without
+    // rebuilding the preview or reloading an iframe on every keystroke.
+    let mapUpdateTimer = null;
+    function refreshMaps(){
+        if (!builder) return;
+        root.querySelectorAll('[data-ce2-map-kind]').forEach(card=>{
+            const kind = card.dataset.ce2MapKind;
+            const value = key => builder.querySelector('[name="answers['+key+']"]')?.value?.trim() || '';
+            const address = value(kind+'_address') || (kind==='ceremony' ? value('venue_address') : '');
+            const placeholder = card.querySelector('[data-ce2-map-placeholder]');
+            const iframe = card.querySelector('iframe');
+            const link = card.querySelector('a');
+            if(placeholder)placeholder.hidden=Boolean(address);
+            if(iframe){
+                iframe.hidden=!address;
+                if(address && card.dataset.ce2LastAddress!==address){
+                    iframe.src='https://maps.google.com/maps?q='+encodeURIComponent(address)+'&z=14&output=embed';
+                }
+                if(!address)iframe.removeAttribute('src');
+            }
+            if(link){
+                link.hidden=!address;
+                if(address){
+                    let href='';
+                    try{
+                        const custom=new URL(value(kind+'_map_url'));
+                        if(['https:','http:'].includes(custom.protocol))href=custom.href;
+                    }catch(e){}
+                    link.href=href||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address);
+                }else link.removeAttribute('href');
+            }
+            card.dataset.ce2LastAddress=address;
+        });
+    }
+    if(builder){
+        window.addEventListener('wwyt:preview-updated',()=>{
+            window.clearTimeout(mapUpdateTimer);
+            mapUpdateTimer=window.setTimeout(refreshMaps,450);
+        });
+        refreshMaps();
+    }
+
+    root.querySelectorAll('[data-ce2-demo]').forEach(form=>{
+        form.addEventListener('submit',event=>{
+            event.preventDefault();
+            if (!form.reportValidity()) return;
+            const name = form.querySelector('input[name="guest_name"]')?.value?.trim() || 'Guest';
+            const feedback = form.querySelector('[data-ce2-form-feedback]');
+            if (feedback) feedback.textContent = 'Preview only, '+name+'. Your response was not sent.';
         });
     });
-    if(!reduced&&'IntersectionObserver' in window){
-        const targets=root.querySelectorAll('.ce-section:not(.ce-cover) h2,.ce-picture,.ce-calendar-shell,.ce-program-item,.ce-entourage-grid>div,.ce-gift');
-        const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-            if(!entry.isIntersecting)return;
-            entry.target.classList.add('ce-visible');observer.unobserve(entry.target);
-        }),{threshold:.08,rootMargin:'0px 0px 50px 0px'});
-        targets.forEach(el=>{
-            el.classList.add('ce-reveal');
-            if(el.getBoundingClientRect().top<window.innerHeight)el.classList.add('ce-visible');
+
+    root.querySelectorAll('.ce2-form').forEach(form=>{
+        const updateParty = ()=>{
+            const declined = form.querySelector('input[name="attendance"]:checked')?.value === 'declined';
+            const group = form.querySelector('[data-ce2-guests]');
+            const select = group?.querySelector('select');
+            if (group) group.hidden = declined;
+            if (select){ select.disabled = declined; select.required = !declined; }
+        };
+        form.querySelectorAll('input[name="attendance"]').forEach(input=>input.addEventListener('change',updateParty));
+        updateParty();
+    });
+
+    // Each theme supplies its own reveal geometry in its dedicated stylesheet:
+    // letter settles, book page unfolds, garden grows, print focuses, ticket arrives.
+    const panels = Array.from(root.querySelectorAll(
+        '.ce2-section:not(:first-child) h2, .ce2-section .ce2-photo, .ce2-section blockquote, .og-timeline-list>div, .po-path article, .pa-program-table>div, .dt-flight-stop'
+    )).filter(el=>!el.closest('#ce2-intro'));
+    if (!reduced && 'IntersectionObserver' in window){
+        const observer = new IntersectionObserver(entries=>{
+            for(const entry of entries){
+                if(!entry.isIntersecting) continue;
+                entry.target.classList.add('ce2-in-view');
+                observer.unobserve(entry.target);
+            }
+        },{threshold:0.06,rootMargin:'0px 0px 70px 0px'});
+        for(const el of panels){
+            el.classList.add('ce2-animated');
+            if(el.getBoundingClientRect().top < window.innerHeight && el.getBoundingClientRect().bottom > 0){
+                el.classList.add('ce2-in-view');
+            }
             observer.observe(el);
-        });
+        }
+    }
+
+    // Non-destructive public gallery overlay. Builder interactions remain
+    // dedicated to the existing photo-slot editor and upload workflow.
+    if (!builder){
+        const shots = Array.from(root.querySelectorAll('.ce2-photo img'));
+        if(shots.length){
+            const lightbox = document.createElement('dialog');
+            lightbox.className = 'ce2-photo-dialog';
+            lightbox.setAttribute('aria-label','Wedding photo viewer');
+            const close = document.createElement('button');
+            close.type = 'button'; close.className = 'ce2-lightbox-close';
+            close.setAttribute('aria-label','Close wedding photo'); close.textContent = '×';
+            const picture = document.createElement('img'); picture.alt = '';
+            lightbox.append(close,picture); document.body.append(lightbox);
+            close.addEventListener('click',()=>lightbox.close());
+            lightbox.addEventListener('click',e=>{if(e.target === lightbox)lightbox.close();});
+            function showPicture(img){
+                picture.src = img.currentSrc || img.src;
+                picture.alt = img.alt || 'Wedding photograph';
+                if(typeof lightbox.showModal==='function')lightbox.showModal();
+            }
+            shots.forEach(img=>{
+                const frame = img.closest('.ce2-photo');
+                if (!frame) return;
+                frame.classList.add('ce2-viewable');
+                frame.tabIndex = 0;
+                frame.setAttribute('role','button');
+                frame.setAttribute('aria-label','View '+(img.alt || 'wedding photo'));
+                frame.addEventListener('click',()=>showPicture(img));
+                frame.addEventListener('keydown',e=>{
+                    if(e.key==='Enter'||e.key===' '){e.preventDefault();showPicture(img);}
+                });
+            });
+        }
     }
 })();
 </script>

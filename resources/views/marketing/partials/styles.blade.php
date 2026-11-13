@@ -303,3 +303,4 @@ filter:blur(9px)}
 @media(max-width:620px){.mkt .mkt-sample-photo-grid{grid-template-columns:1fr}.mkt .mkt-sample-photo-frame{aspect-ratio:1.65}}
 
 </style>
+@include('marketing.partials.curated-cover-styles')

@@ -102,8 +102,8 @@
                         <li>Custom invitation wording &amp; visible sections</li>
                         <li>Shareable URL and downloadable QR code</li>
                         @if(in_array(($template->settings['theme'] ?? ''), ['royal_burgundy', 'curated_editorial'], true))
-                        <li>Wedding galleries and all 20 replaceable photo positions</li>
-                        <li>Animated, click-to-open invitation envelope</li>
+                        <li>Editable photographic galleries and dedicated image placements</li>
+                        <li>Interactive opening animation unique to this design</li>
                         @endif
                     </ul>
                 </details>

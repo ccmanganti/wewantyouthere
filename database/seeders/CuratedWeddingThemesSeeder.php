@@ -48,10 +48,18 @@ class CuratedWeddingThemesSeeder extends Seeder
                 'design' => $key,
                 'view' => 'weddings.themes.curated-editorial',
                 'description' => $design['description'],
-                'thumbnail_url' => $design['scenery'],
-                'photo_slots' => array_keys(config('wedding_photos', [])),
+                'thumbnail_url' => config('wedding_curated_assets.'.$key.'.photos.hero') ?: $design['scenery'],
+                'photo_slots' => array_keys(config('wedding_curated_assets.'.$key.'.photos', [])),
+                'layout_revision' => 2,
+                'opening' => [
+                    'burgundy-wax' => 'unfolding_wax_letter',
+                    'olive-garden' => 'turning_botanical_book',
+                    'painted-orchard' => 'opening_conservatory_gates',
+                    'pearl-editorial' => 'cinematic_velvet_curtain',
+                    'destination-ticket' => 'tearing_boarding_pass',
+                ][$key],
                 'features' => [
-                    'free' => ['cover', 'envelope', 'photos', 'story', 'date', 'venues', 'dress_code', 'gift_note', 'share_url', 'qr_code'],
+                    'free' => ['animated_introduction', 'unique_layout', 'photos', 'story', 'date', 'venues', 'dress_code', 'gift_note', 'share_url', 'qr_code'],
                     'premium' => array_keys(\App\Support\InvitationPremium::FEATURES),
                 ],
                 'motion' => $design['animation'],
@@ -60,7 +68,7 @@ class CuratedWeddingThemesSeeder extends Seeder
                 'event_type_id' => $event->id,
                 'status' => 'published',
                 'settings' => $settings,
-                'version' => max(1, (int) $template->version),
+                'version' => max(2, (int) $template->version),
             ])->save();
         }
 
