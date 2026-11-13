@@ -22,6 +22,7 @@
 <body>
 @include('weddings.partials.invitation', ['isPreview' => false, 'answers' => $answers, 'sections' => $sections, 'questions' => $questions, 'template' => $template, 'photoUrls' => [], 'suppressEnvelopeIntro' => false])
 <div class="demo-notice">Sample design · Music demonstration · Audio is a premium feature</div>
+@include('weddings.partials.audio-demo-controls')
 @if(\App\Support\CuratedWeddingDesign::isCurated($template))
 @include('weddings.themes.curated-editorial-script')
 @elseif(($template->settings['theme'] ?? '') === 'royal_burgundy')
