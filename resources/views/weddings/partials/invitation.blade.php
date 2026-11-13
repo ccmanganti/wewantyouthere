@@ -25,7 +25,7 @@
 @endphp
 @if(($template->settings['theme'] ?? '') === 'royal_burgundy')
     @include('weddings.themes.royal-burgundy')
-@elseif(($template->settings['theme'] ?? '') === 'curated_editorial')
+@elseif(\App\Support\CuratedWeddingDesign::isCurated($template))
     @include('weddings.themes.curated-editorial')
 @else
 <div class="wedding-invite" id="wedding-invite">
