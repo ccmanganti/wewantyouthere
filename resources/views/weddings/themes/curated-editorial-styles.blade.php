@@ -54,7 +54,7 @@ body.ce2-intro-open{overflow:hidden!important}
 .ce2-lightbox-close{position:absolute;right:15px;top:0;width:44px;height:44px;background:#fff;border:0;border-radius:50%;color:#272323;font:500 28px/1 'DM Sans',sans-serif;cursor:pointer}
 </style>
 @php
-    $curatedStyle = (string) ($template->settings['design'] ?? 'burgundy-wax');
-    if (!array_key_exists($curatedStyle, config('wedding_curated_themes', []))) $curatedStyle = 'burgundy-wax';
+    $curatedStyle = \App\Support\CuratedWeddingDesign::forTemplate($template);
+    if ($curatedStyle === null) throw new \InvalidArgumentException('Unknown curated wedding stylesheet.');
 @endphp
 @include('weddings.themes.editorial.styles.'.$curatedStyle)
