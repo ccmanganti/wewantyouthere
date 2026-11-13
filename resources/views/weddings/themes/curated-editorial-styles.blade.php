@@ -44,5 +44,13 @@
  .ce2 *, .ce2 *::before,.ce2 *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
  .ce2 .ce2-animated{opacity:1!important;filter:none!important;transform:none!important}
 }
+body.ce2-intro-open{overflow:hidden!important}
+.ce2 .ce2-calendar-month{text-align:center;font:500 21px/1.3 Georgia,serif;margin-bottom:22px}
+.ce2 .ce2-photo.ce2-viewable{cursor:zoom-in}
+.ce2 .ce2-photo.ce2-viewable:focus-visible{outline:4px solid #bd9c65;outline-offset:3px}
+.ce2-photo-dialog{background:transparent;border:0;padding:55px 15px 15px;max-width:min(96vw,1100px);max-height:95vh;position:fixed;overflow:visible}
+.ce2-photo-dialog::backdrop{background:#090b0dde;backdrop-filter:blur(7px)}
+.ce2-photo-dialog>img{max-width:100%;max-height:calc(95vh - 90px);object-fit:contain;display:block;margin:auto;box-shadow:0 16px 55px #0008}
+.ce2-lightbox-close{position:absolute;right:15px;top:0;width:44px;height:44px;background:#fff;border:0;border-radius:50%;color:#272323;font:500 28px/1 'DM Sans',sans-serif;cursor:pointer}
 </style>
 @include('weddings.themes.editorial.styles.'.$template->settings['design'])
