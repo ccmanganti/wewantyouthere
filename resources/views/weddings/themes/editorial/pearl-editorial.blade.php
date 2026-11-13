@@ -113,8 +113,8 @@
     <p data-field="closing_message">{{ $copy('closing_message','Always, together.') }}</p><a href="#pa-cover">BACK TO THE COVER ↑</a></footer>
 
 {{-- A cinema-editorial opening: velvet curtains pull away to reveal a monochrome portrait. --}}
-<div class="pa-intro ce2-intro" id="ce2-intro" @if($isPreview) hidden @endif>
-    <button type="button" class="pa-curtain-trigger" data-ce2-open aria-label="Reveal our wedding invitation">
+<div class="pa-intro ce2-intro" id="ce2-intro" data-intro-kind="velvet-curtain" @if($isPreview) hidden @endif>
+    <button type="button" class="pa-curtain-trigger" data-editorial-reveal aria-label="Reveal our wedding invitation">
         <span class="pa-intro-photo" style="background-image:url('{{ $decoration('cinema') }}')" aria-hidden="true"></span>
         <span class="pa-intro-copy"><small>THE WEDDING ISSUE</small><strong>{{ $copy('bride_name','Amelia') }} &amp; {{ $copy('groom_name','Gabriel') }}</strong><em>AN EDITORIAL ROMANCE</em><span>REVEAL OUR INVITATION</span></span>
         <span class="pa-curtain pa-curtain-left" aria-hidden="true"></span><span class="pa-curtain pa-curtain-right" aria-hidden="true"></span>
