@@ -48,7 +48,7 @@
 </section>
 
 @if($premiumAccess && ($visible('ceremony_details') || $isPreview))
-<section class="bw-ceremony ce2-section" id="bw-ceremony" data-preview-section="ceremony" data-premium-section="ceremony_details">
+<section class="bw-ceremony ce2-section" id="bw-ceremony" data-preview-section="ceremony" data-premium-section="ceremony_details" @if(!$visible('ceremony_details')) hidden @endif>
     <span class="bw-overline">THE SACRED MOMENT</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','Our ceremony') }}</h2>
     <p data-field="ceremony_notes">{{ $copy('ceremony_notes','A special note from the couple.') }}</p>
 </section>
@@ -56,7 +56,7 @@
 @include('weddings.themes.editorial.maps', ['mapClass'=>'bw-maps'])
 
 @if($premiumAccess && ($visible('program') || $isPreview))
-<section class="bw-schedule ce2-section" id="bw-program" data-preview-section="program" data-premium-section="program">
+<section class="bw-schedule ce2-section" id="bw-program" data-preview-section="program" data-premium-section="program" @if(!$visible('program')) hidden @endif>
     <span class="bw-overline">INSIDE THIS LITTLE LETTER</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','Our wedding day') }}</h2>
     <div class="bw-schedule-cards">
         @foreach([['event_time','3:00 PM','ceremony_timeline_note','A promise of forever'],['reception_time','6:00 PM','reception_timeline_note','Dinner by candlelight'],['celebration_time','9:00 PM','celebration_timeline_note','Dancing until late']] as [$time,$sampleTime,$note,$sampleNote])
@@ -68,7 +68,7 @@
 @endif
 
 @if($premiumAccess && ($visible('entourage') || $isPreview))
-<section class="bw-family ce2-section" id="bw-family" data-preview-section="entourage" data-premium-section="entourage">
+<section class="bw-family ce2-section" id="bw-family" data-preview-section="entourage" data-premium-section="entourage" @if(!$visible('entourage')) hidden @endif>
     <span class="bw-overline">SEALED WITH LOVE, SHARED WITH FAMILY</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','Our cherished people') }}</h2>
     <div class="bw-family-list"><div><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our dearest ninongs and ninangs') }}</p></div>
     <div><h3>Bridesmaids</h3><p data-field="bridesmaids">{{ $copy('bridesmaids','Our favorite friends') }}</p></div>
@@ -88,7 +88,7 @@
 </section>
 
 @if($visible('details') || $isPreview)
-<section class="bw-dress ce2-section" id="bw-dress" data-preview-section="details">
+<section class="bw-dress ce2-section" id="bw-dress" data-preview-section="details" @if(!$visible('details')) hidden @endif>
     <div class="bw-dress-stationery"><span class="bw-overline">AN EVENING OF ELEGANCE</span><h2 data-field="dress_heading">{{ $copy('dress_heading','Dress code') }}</h2>
         <p data-field="dress_code">{{ $copy('dress_code','Formal attire') }}</p>
         <p data-field="color_motif">{{ $copy('color_motif','Burgundy, blush and champagne') }}</p>
@@ -101,7 +101,7 @@
 @endif
 
 @if($premiumAccess && ($visible('guests') || $isPreview))
-<section class="bw-rsvp ce2-section" id="bw-reply" data-preview-section="guests" data-premium-section="guests">
+<section class="bw-rsvp ce2-section" id="bw-reply" data-preview-section="guests" data-premium-section="guests" @if(!$visible('guests')) hidden @endif>
     <div class="bw-rsvp-flower" aria-hidden="true" style="background-image:url('{{ $decoration('flowers') }}')"></div>
     <div class="bw-rsvp-letter"><span class="bw-overline">RETURN THIS LITTLE NOTE</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','A reply from the heart') }}</h2>
         <p data-field="rsvp_message">{{ $copy('rsvp_message',"We can't wait to celebrate with you.") }}</p>
