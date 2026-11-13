@@ -134,10 +134,12 @@ function simulate(autoplayAllowed) {
     assert.ok(oscillatorStarts>0,'A browser that permits autoplay must play wedding music on preview load.');
   }
   const initial=oscillatorStarts;
+  const expectedDelay=2100-Math.min(1050,Math.floor(2100*.48));
+  assert.equal(timers.filter(timer=>timer.delay===expectedDelay).length,0,
+    'Opening music should continue until the invitation is actually opened.');
   for(const listener of eventHandlers.click||[])listener({target:opening});
   assert.equal(oscillatorStarts,initial,'Opening click must not restart an already-playing wedding intro.');
 
-  const expectedDelay=2100-Math.min(1050,Math.floor(2100*.48));
   const transition=timers.find(timer=>timer.delay===expectedDelay);
   assert.ok(transition,'Opening-to-wedding-background crossfade must be scheduled.');
   transition.cb();
