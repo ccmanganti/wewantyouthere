@@ -21,6 +21,13 @@ class CuratedWeddingThemesSeeder extends Seeder
             );
         }
 
+        if (count(config('wedding_curated_assets', [])) !== count($designs)
+            || count(config('wedding_curated_showcases', [])) !== count($designs)) {
+            throw new RuntimeException(
+                'The v4 theme photos or sample data are missing. Deploy current code and run php artisan config:clear.'
+            );
+        }
+
         $event = EventType::where('slug', 'wedding')->firstOrFail();
         if (!$event->is_active) {
             throw new RuntimeException('Wedding event type is inactive; enable it before publishing designs.');
