@@ -47,7 +47,7 @@
     </div>
 </section>
 
-@if($premiumAccess && $visible('ceremony_details'))
+@if($premiumAccess && ($visible('ceremony_details') || $isPreview))
 <section class="bw-ceremony ce2-section" id="bw-ceremony" data-preview-section="ceremony" data-premium-section="ceremony_details">
     <span class="bw-overline">THE SACRED MOMENT</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','Our ceremony') }}</h2>
     <p data-field="ceremony_notes">{{ $copy('ceremony_notes','A special note from the couple.') }}</p>
@@ -55,7 +55,7 @@
 @endif
 @include('weddings.themes.editorial.maps', ['mapClass'=>'bw-maps'])
 
-@if($premiumAccess && $visible('program'))
+@if($premiumAccess && ($visible('program') || $isPreview))
 <section class="bw-schedule ce2-section" id="bw-program" data-preview-section="program" data-premium-section="program">
     <span class="bw-overline">INSIDE THIS LITTLE LETTER</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','Our wedding day') }}</h2>
     <div class="bw-schedule-cards">
@@ -67,7 +67,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('entourage'))
+@if($premiumAccess && ($visible('entourage') || $isPreview))
 <section class="bw-family ce2-section" id="bw-family" data-preview-section="entourage" data-premium-section="entourage">
     <span class="bw-overline">SEALED WITH LOVE, SHARED WITH FAMILY</span><h2 data-field="entourage_heading">{{ $copy('entourage_heading','Our cherished people') }}</h2>
     <div class="bw-family-list"><div><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our dearest ninongs and ninangs') }}</p></div>
@@ -87,7 +87,7 @@
     <p class="bw-album-quote" data-field="gallery_quote">{{ $copy('gallery_quote','Every photograph is a little piece of our story.') }}</p>
 </section>
 
-@if($visible('details'))
+@if($visible('details') || $isPreview)
 <section class="bw-dress ce2-section" id="bw-dress" data-preview-section="details">
     <div class="bw-dress-stationery"><span class="bw-overline">AN EVENING OF ELEGANCE</span><h2 data-field="dress_heading">{{ $copy('dress_heading','Dress code') }}</h2>
         <p data-field="dress_code">{{ $copy('dress_code','Formal attire') }}</p>
@@ -100,7 +100,7 @@
 </section>
 @endif
 
-@if($premiumAccess && $visible('guests'))
+@if($premiumAccess && ($visible('guests') || $isPreview))
 <section class="bw-rsvp ce2-section" id="bw-reply" data-preview-section="guests" data-premium-section="guests">
     <div class="bw-rsvp-flower" aria-hidden="true" style="background-image:url('{{ $decoration('flowers') }}')"></div>
     <div class="bw-rsvp-letter"><span class="bw-overline">RETURN THIS LITTLE NOTE</span><h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','A reply from the heart') }}</h2>
