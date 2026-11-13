@@ -16,14 +16,16 @@
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const theme = data.theme || 'royal_burgundy';
   const tracks = data.tracks || {};
+  const sampleMode = Boolean(data.demo);
+  const CROSSFADE_MS = 1050;
   const introTimes = {
     'burgundy-wax': 2550, 'olive-garden': 2100, 'painted-orchard': 2300,
     'pearl-editorial': 2270, 'destination-ticket': 1900, 'royal_burgundy': 2250
   };
   let ctx = null, started = false, paused = false, muted = false;
   let effectsOn = Boolean(data.settings?.sfx ?? true);
-  let active = null, customIntro = null, preparedMain = null;
-  let mainTimer = null, previewTimer = null, previewing = null, fadeTimer = null;
+  let active = null, preparedMain = null, outgoing = null;
+  let mainTimer = null, outgoingTimer = null, previewTimer = null, previewing = null;
   let audioFailure = false;
   let volume = Math.max(0, Math.min(1, Number(data.settings?.volume ?? 45) / 100));
   let output, musicButton, effectsButton;
@@ -39,7 +41,9 @@
     return ctx;
   }
   function choice(slot) {
-    if (editor) {
+    // In a demo-only builder preview there are no premium inputs. Use the
+    // theme's original example music rather than treating the slot as silent.
+    if (editor?.querySelector('input[name="audio['+slot+'][source]"]')) {
       const source = editor.querySelector('input[name="audio['+slot+'][source]"]:checked')?.value || 'none';
       const track = editor.querySelector('[name="audio['+slot+'][track]"]')?.value || '';
       const file = editor.querySelector('[data-music-uploaded-name="'+slot+'"]');
@@ -104,6 +108,10 @@
   }
   function stop(playing, fade=.17) {
     if (!playing) return;
+    if (playing.fadeTimer) {
+      window.clearInterval(playing.fadeTimer);
+      playing.fadeTimer = null;
+    }
     if (playing.kind === 'synth') {
       window.clearInterval(playing.timer);
       if(ctx) {
@@ -141,58 +149,105 @@
     if(selected.source==='custom')return fileAudio(selected.url,initialLevel,slot==='main',silent);
     return null;
   }
-  function softFadeIn(entry, finalLevel) {
-    if(!entry)return;
-    if(entry.kind==='synth') {
-      if(ctx){entry.bus.gain.cancelScheduledValues(ctx.currentTime);
-        entry.bus.gain.setTargetAtTime(finalLevel*.46,ctx.currentTime,.25);}
-    } else if(entry.el) {
-      const began=performance.now();
-      const timer=setInterval(()=>{
-        const ratio=Math.min(1,(performance.now()-began)/900);
-        entry.el.volume=Math.max(0,Math.min(.8,finalLevel*ratio));
-        if(ratio>=1)clearInterval(timer);
-      },50);
+  // Crossfade is a real overlap: the next track starts quietly while the
+  // opening track is still audible. It uses one gain envelope per track,
+  // whether the source is synthesized or a customer-uploaded audio file.
+  function ramp(entry, level, milliseconds = CROSSFADE_MS) {
+    if (!entry) return;
+    const target = Math.max(0, Math.min(.8, level));
+    const duration = Math.max(60, milliseconds);
+    if (entry.kind === 'synth') {
+      if (!ctx) return;
+      const gain = entry.bus.gain;
+      const now = ctx.currentTime;
+      gain.cancelScheduledValues(now);
+      gain.setValueAtTime(Math.max(0, gain.value), now);
+      gain.linearRampToValueAtTime(target * .46, now + duration / 1000);
+    } else if (entry.kind === 'file' && entry.el) {
+      if (entry.fadeTimer) window.clearInterval(entry.fadeTimer);
+      const element = entry.el;
+      const initial = element.volume;
+      const startedAt = performance.now();
+      entry.fadeTimer = window.setInterval(() => {
+        const fraction = Math.min(1, (performance.now() - startedAt) / duration);
+        element.volume = Math.max(0, Math.min(.8, initial + (target - initial) * fraction));
+        if (fraction === 1) {
+          window.clearInterval(entry.fadeTimer);
+          entry.fadeTimer = null;
+        }
+      }, 40);
     }
   }
+
   function stopAll() {
-    window.clearTimeout(mainTimer);window.clearTimeout(previewTimer);
-    if(active){stop(active,.12);active=null;}
-    if(customIntro){stop(customIntro,.12);customIntro=null;}
-    if(preparedMain){stop(preparedMain,.12);preparedMain=null;}
-    if(previewing){stop(previewing,.12);previewing=null;}
-    started=false;
+    window.clearTimeout(mainTimer);
+    window.clearTimeout(outgoingTimer);
+    window.clearTimeout(previewTimer);
+    for (const entry of [active, outgoing, preparedMain, previewing]) {
+      if (entry) stop(entry, .08);
+    }
+    active = null;
+    outgoing = null;
+    preparedMain = null;
+    previewing = null;
+    started = false;
   }
+
+  function moveToMain(overlapMs) {
+    if (!started) return;
+    const background = choice('main');
+    const next = preparedMain || (background.source !== 'none' ? playSelection('main', 0, true) : null);
+    preparedMain = null;
+    outgoing = active;
+    active = next;
+
+    // Begin both fades immediately. Do not wait for the intro to reach zero
+    // before introducing the next melody.
+    if (outgoing) {
+      ramp(outgoing, 0, Math.max(60, overlapMs));
+      outgoingTimer = window.setTimeout(() => {
+        if (outgoing) stop(outgoing, .04);
+        outgoing = null;
+      }, overlapMs + 100);
+    }
+    if (active) ramp(active, muted ? 0 : volume, Math.max(60, overlapMs));
+    updateButtons();
+  }
+
   function prepareOpening() {
-    if(!getContext()) {
+    if (!getContext()) {
       setStatus('Audio is unavailable in this browser');
       return;
     }
-    stopAll();paused=false;muted=false;audioFailure=false;
-    volume=selectedVolume();
-    effectsOn=editor ? Boolean(editor.querySelector('[data-music-sfx]')?.checked) : Boolean(data.settings?.sfx);
-    started=true;
-    const opening=choice('intro');
-    const background=choice('main');
-    if(opening.source!=='none') {
-      if(opening.source==='custom') customIntro=fileAudio(opening.url,volume*.72,false);
-      else active=playSelection('intro',volume*.72);
+    stopAll();
+    paused = false;
+    muted = false;
+    audioFailure = false;
+    volume = selectedVolume();
+    const sfxInput = editor?.querySelector('[data-music-sfx]');
+    effectsOn = sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx);
+    started = true;
+
+    const opening = choice('intro');
+    const background = choice('main');
+    if (opening.source !== 'none') {
+      active = playSelection('intro', volume * .72);
     }
-    // Unlock the custom background AudioElement in the same direct gesture.
-    // Safari may not allow a delayed play() from the transition timer.
-    if(background.source==='custom')preparedMain=fileAudio(background.url,volume,true,true);
+
+    // Mobile Safari may reject Audio.play() inside a delayed timer. If the
+    // main track is uploaded music, start its element silently *now*, inside
+    // the envelope/gate/journal tap gesture, then gradually raise volume.
+    if (background.source === 'custom') {
+      preparedMain = fileAudio(background.url, 0, true, true);
+    }
     sound('open');
-    mainTimer=setTimeout(()=>{
-      if(active){stop(active,.4);active=null;}
-      if(customIntro){stop(customIntro,.4);customIntro=null;}
-      if(preparedMain){
-        active=preparedMain;preparedMain=null;
-        if(!muted)softFadeIn(active,volume);
-      } else if(background.source==='library'){
-        active=playSelection('main',muted?0:volume);
-      } else active=null;
-      updateButtons();
-    },reducedMotion ? 0 : (introTimes[theme]||2250));
+
+    const introMs = reducedMotion ? 0 : (introTimes[theme] || 2250);
+    const overlapMs = Math.min(CROSSFADE_MS, Math.max(0, Math.floor(introMs * .48)));
+    mainTimer = window.setTimeout(
+      () => moveToMain(overlapMs),
+      Math.max(0, introMs - overlapMs)
+    );
     updateButtons();
   }
   function makeNoise(time,duration,bus,cutoff,gain) {
@@ -248,22 +303,38 @@
     }
   }
   function togglePlayback() {
-    if (!started || audioFailure){
-      audioFailure=false;prepareOpening();
-      window.clearTimeout(mainTimer);
-      if(active){stop(active,.1);active=null;}
-      if(customIntro){stop(customIntro,.1);customIntro=null;}
-      if(preparedMain){stop(preparedMain,.1);preparedMain=null;}
-      active=playSelection('main',volume);
-      started=true;muted=false;paused=false;
-    } else if(!muted){
-      muted=true;paused=true;
-      if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(.0001,ctx.currentTime,.08);
-      if(active?.kind==='file')active.el.pause();
+    if (!started || audioFailure) {
+      if (!getContext()) {
+        setStatus('Audio is unavailable in this browser');
+        return;
+      }
+      stopAll();
+      volume = selectedVolume();
+      const sfxInput = editor?.querySelector('[data-music-sfx]');
+      effectsOn = sfxInput ? sfxInput.checked : Boolean(data.settings?.sfx);
+      started = true;
+      muted = false;
+      paused = false;
+      audioFailure = false;
+      // The toolbar's Play control starts the post-opening track directly.
+      // It never accidentally restarts the opening or schedules a duplicate.
+      active = playSelection('main', volume);
+    } else if (!muted) {
+      muted = true;
+      paused = true;
+      if (active?.kind === 'synth' && ctx)
+        active.bus.gain.setTargetAtTime(.0001, ctx.currentTime, .06);
+      if (active?.kind === 'file') active.el.pause();
+      if (outgoing) ramp(outgoing, 0, 100);
     } else {
-      muted=false;paused=false;
-      if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(volume*.46,ctx.currentTime,.14);
-      if(active?.kind==='file')active.el.play().then(()=>{active.el.volume=volume;}).catch(()=>setStatus('Tap Play to enable audio'));
+      muted = false;
+      paused = false;
+      if (active?.kind === 'synth' && ctx) ramp(active, volume, 250);
+      if (active?.kind === 'file') {
+        active.el.play().then(() => {
+          ramp(active, volume, 250);
+        }).catch(() => setStatus('Tap Play to enable audio'));
+      }
     }
     updateButtons();
   }
@@ -279,6 +350,13 @@
     effectsButton.type='button';effectsButton.className='wwyt-audio-sfx';
     output=document.createElement('span');output.className='wwyt-audio-caption';output.setAttribute('aria-live','polite');
     toolbar.append(musicButton,effectsButton,output);
+    if (sampleMode) {
+      const note = document.createElement('span');
+      note.className = 'wwyt-audio-caption';
+      note.textContent = 'Sample · Premium';
+      toolbar.append(note);
+      toolbar.setAttribute('aria-label', 'Sample premium wedding music controls');
+    }
     (editor?.querySelector('.preview-pane') || document.body).append(toolbar);
     musicButton.addEventListener('click',togglePlayback);
     effectsButton.addEventListener('click',()=>{
@@ -289,6 +367,9 @@
     updateButtons();
   }
 
+  // Reset the soundtrack whenever the editor replays its unique intro.
+  // A new intro tap will start its music once, without layered duplicates.
+  document.getElementById('preview-envelope-intro')?.addEventListener('click', () => stopAll());
   // The opening tap is the only implicit audio trigger, never page load.
   document.addEventListener('click',event=>{
     if(!root.contains(event.target))return;
@@ -327,8 +408,16 @@
   }
   window.WWYTAudio = {
     preview,stopPreview(){if(previewing){stop(previewing);previewing=null;}clearTimeout(previewTimer);},
-    updateVolume(){volume=selectedVolume();if(active && !muted){if(active.kind==='file')active.el.volume=volume;else if(ctx)active.bus.gain.setTargetAtTime(volume*.46,ctx.currentTime,.1);}},
-    updateEffects(){effectsOn=Boolean(editor?.querySelector('[data-music-sfx]')?.checked);updateButtons();}
+    updateVolume(){
+      volume = selectedVolume();
+      if (active && !muted) ramp(active, volume, 220);
+      if (outgoing) ramp(outgoing, 0, 180);
+    },
+    updateEffects(){
+      const input = editor?.querySelector('[data-music-sfx]');
+      effectsOn = input ? input.checked : effectsOn;
+      updateButtons();
+    }
   };
   if (!manager) buildControls();
   document.addEventListener('visibilitychange',()=>{
@@ -337,6 +426,7 @@
     muted=true;paused=true;
     if(active?.kind==='file')active.el.pause();
     if(active?.kind==='synth' && ctx)active.bus.gain.setTargetAtTime(.0001,ctx.currentTime,.04);
+    if(outgoing) ramp(outgoing, 0, 100);
     updateButtons();
   });
 })();

@@ -1058,6 +1058,9 @@
             document.getElementById('preview-expand')?.click();
         }
         document.getElementById('preview-scroll').scrollTop = 0;
+        // Reopen the unique intro for an authentic full-preview experience.
+        // Music itself starts only when the visitor taps the opening artwork.
+        document.getElementById('preview-envelope-intro')?.click();
     });
     if (app.dataset.photosEnabled === '1') {
         document.getElementById('refine-back')?.addEventListener('click', function () {
