@@ -71,6 +71,7 @@
                 </button>
             </div>
         </details>
+        @include('weddings.partials.audio-builder-stage')
     </div>
     <div class="stage-footer">
         <button type="button" class="back-btn" id="refine-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
