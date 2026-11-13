@@ -63,7 +63,7 @@
 </section>
 
 @if($premiumAccess && ($visible('ceremony_details') || $isPreview))
-<section class="po-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details">
+<section class="po-ceremony ce2-section" data-preview-section="ceremony" data-premium-section="ceremony_details" @if(!$visible('ceremony_details')) hidden @endif>
     <span class="po-eyebrow">BEFORE THE VOWS</span><h2 data-field="ceremony_type">{{ $copy('ceremony_type','A garden ceremony') }}</h2>
     <p data-field="ceremony_notes">{{ $copy('ceremony_notes','A little note for our wedding day.') }}</p>
 </section>
@@ -71,7 +71,7 @@
 @include('weddings.themes.editorial.maps', ['mapClass'=>'po-maps'])
 
 @if($premiumAccess && ($visible('program') || $isPreview))
-<section class="po-program ce2-section" id="po-program" data-preview-section="program" data-premium-section="program">
+<section class="po-program ce2-section" id="po-program" data-preview-section="program" data-premium-section="program" @if(!$visible('program')) hidden @endif>
     <span class="po-eyebrow">FOLLOW THE PETAL PATH</span><h2 data-field="timeline_heading">{{ $copy('timeline_heading','The celebration awaits') }}</h2>
     <div class="po-path">
         @foreach([['guest_arrival_time','2:00 PM','guest_arrival_note','Welcome to our garden'],['event_time','3:00 PM','ceremony_timeline_note','Our ceremony'],['reception_time','6:00 PM','reception_timeline_note','Dinner and dancing'],['celebration_time','9:00 PM','celebration_timeline_note','A night among the stars']] as [$time,$timeFallback,$note,$noteFallback])
@@ -83,7 +83,7 @@
 @endif
 
 @if($premiumAccess && ($visible('entourage') || $isPreview))
-<section class="po-people ce2-section" id="po-people" data-preview-section="entourage" data-premium-section="entourage">
+<section class="po-people ce2-section" id="po-people" data-preview-section="entourage" data-premium-section="entourage" @if(!$visible('entourage')) hidden @endif>
     <div class="po-people-arch"><span class="po-eyebrow">OUR BEAUTIFUL COMMUNITY</span>
         <h2 data-field="entourage_heading">{{ $copy('entourage_heading','The people beside us') }}</h2>
         <div class="po-people-list"><div><h3>Principal sponsors</h3><p data-field="principal_sponsors">{{ $copy('principal_sponsors','Our beloved ninongs and ninangs') }}</p></div>
@@ -104,7 +104,7 @@
 </section>
 
 @if($visible('details') || $isPreview)
-<section class="po-dress ce2-section" id="po-dress" data-preview-section="details">
+<section class="po-dress ce2-section" id="po-dress" data-preview-section="details" @if(!$visible('details')) hidden @endif>
     <span class="po-eyebrow">BEFORE YOU JOIN OUR GARDEN</span><h2 data-field="dress_heading">{{ $copy('dress_heading','A note on attire') }}</h2>
     <p data-field="dress_code">{{ $copy('dress_code','Garden formal') }}</p>
     <p data-field="color_motif">{{ $copy('color_motif','Peach, moss, champagne and sage') }}</p>
@@ -116,7 +116,7 @@
 @endif
 
 @if($premiumAccess && ($visible('guests') || $isPreview))
-<section class="po-rsvp ce2-section" id="po-rsvp" data-preview-section="guests" data-premium-section="guests" style="--po-rsvp-bg:url('{{ $decoration('forest') }}')">
+<section class="po-rsvp ce2-section" id="po-rsvp" data-preview-section="guests" data-premium-section="guests" style="--po-rsvp-bg:url('{{ $decoration('forest') }}')" @if(!$visible('guests')) hidden @endif>
     <div class="po-rsvp-arch"><span class="po-eyebrow">WE'VE SAVED YOU A PLACE</span>
         <h2 data-field="rsvp_heading">{{ $copy('rsvp_heading','Meet us beneath the blossoms') }}</h2>
         <p data-field="rsvp_message">{{ $copy('rsvp_message',"Will we see you at our garden celebration?") }}</p>
