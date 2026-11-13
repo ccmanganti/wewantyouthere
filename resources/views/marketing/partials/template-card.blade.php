@@ -32,7 +32,7 @@
             <a class="mkt-button small ghost" href="{{ route('marketing.templateDetail', $template->slug) }}">Details</a>
             <button class="mkt-button small ghost" type="button" data-preview-open
                 data-preview-url="{{ route('marketing.templatePreview', $template->slug) }}"
-                data-preview-title="{{ $template->name }}">Live preview <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button>
+                data-preview-title="{{ $template->name }}">Preview <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button>
             @if(!$canCreate)
                 <a class="mkt-button small" href="{{ url('/app/invitations') }}">Manage site <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             @elseif($template->is_premium)
