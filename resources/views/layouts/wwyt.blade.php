@@ -7,14 +7,46 @@
     <meta name="robots" content="@yield('robots', 'index,follow')">
     <meta name="description" content="@yield('meta_description', 'Create elegant wedding invitation websites in minutes. Choose a template, customize every detail and publish your wedding invitation for free.')">
     <title>@yield('title', 'We Want You There — Wedding Invitation Websites & RSVP')</title>
-    <link rel="canonical" href="{{ url()->current() }}">
+    @php
+        $seoPublic = !str_contains(trim($__env->yieldContent('robots', 'index,follow')), 'noindex') && request()->routeIs('home', 'marketing.*') && !request()->routeIs('marketing.templatePreview');
+        $seoBase = rtrim(config('seo.canonical_base') ?: config('app.url'), '/');
+        $seoCanonical = $seoBase . (request()->path() === '/' ? '/' : '/' . request()->path());
+    @endphp
+    @if($seoPublic)
+        <link rel="canonical" href="{{ $seoCanonical }}">
+        @if(config('seo.google_verification'))
+            <meta name="google-site-verification" content="{{ config('seo.google_verification') }}">
+        @endif
+        @if(config('seo.bing_verification'))
+            <meta name="msvalidate.01" content="{{ config('seo.bing_verification') }}">
+        @endif
+    @endif
     <link rel="icon" type="image/png" href="{{ asset('brand/wwyt/favicon.png') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="We Want You There">
     <meta property="og:title" content="@yield('title', 'We Want You There — Digital Invitation Websites')">
     <meta property="og:description" content="@yield('meta_description', 'Create a beautiful digital wedding invitation website for free.')">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ $seoPublic ? $seoCanonical : url()->current() }}">
     <meta name="twitter:card" content="summary">
+    @if($seoPublic)
+        @php
+            $seoGraph = [
+                ['@type' => 'Organization', '@id' => $seoBase . '/#organization', 'name' => 'We Want You There', 'url' => $seoBase . '/'],
+                ['@type' => 'WebSite', '@id' => $seoBase . '/#website', 'name' => 'We Want You There', 'url' => $seoBase . '/', 'publisher' => ['@id' => $seoBase . '/#organization']],
+            ];
+            if(request()->routeIs('marketing.templates', 'marketing.templateDetail')) {
+                $crumbs = [
+                    ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $seoBase . '/'],
+                    ['@type' => 'ListItem', 'position' => 2, 'name' => 'Wedding invitation templates', 'item' => $seoBase . '/wedding-invitation-templates'],
+                ];
+                if(request()->routeIs('marketing.templateDetail')) {
+                    $crumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $template->name, 'item' => $seoCanonical];
+                }
+                $seoGraph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => $crumbs];
+            }
+        @endphp
+        <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $seoGraph], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>
+    @endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">

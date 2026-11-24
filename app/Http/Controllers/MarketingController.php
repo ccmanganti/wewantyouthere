@@ -95,7 +95,7 @@ class MarketingController extends Controller
 
     public function sitemap(): Response
     {
-        $base = rtrim(config('app.url'), '/');
+        $base = rtrim(config('seo.canonical_base') ?: config('app.url'), '/');
         $paths = ['/', '/wedding-invitation-templates', '/privacy', '/terms'];
 
         foreach ($this->publicTemplates()->pluck('slug') as $slug) {
@@ -119,7 +119,7 @@ class MarketingController extends Controller
 
     public function robots(): Response
     {
-        $base = rtrim(config('app.url'), '/');
+        $base = rtrim(config('seo.canonical_base') ?: config('app.url'), '/');
 
         return response(
             "User-agent: *\n"
