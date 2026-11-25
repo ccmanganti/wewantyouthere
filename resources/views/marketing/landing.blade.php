@@ -30,6 +30,8 @@
 .mkt .seo-faq details{background:#fffdf7;border:1px solid #d8c9ba;border-radius:9px;padding:16px 20px;margin:10px 0}
 .mkt .seo-faq summary{cursor:pointer;font-weight:700}
 .mkt .seo-faq p{margin:12px 0 0;color:#554b47;line-height:1.8}
+.mkt .seo-preview-grid{display:grid;grid-template-columns:1fr minmax(0,430px);align-items:center;gap:38px}
+.mkt .seo-preview-grid p{color:#554b47;line-height:1.85;max-width:560px}
 .mkt .seo-compare{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 .mkt .seo-compare ul{padding-left:20px}
 .mkt .seo-compare li{margin:8px 0}
@@ -38,7 +40,7 @@
 .mkt .seo-price-row a:not(.mkt-button){font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .mkt .seo-last{background:#1b1717;color:#fff;text-align:center;padding:56px 0}
 .mkt .seo-last h2{font-size:clamp(32px,4.5vw,55px);margin:0 0 18px}
-@media(max-width:760px){.mkt .seo-hero{padding:38px 0 45px}.mkt .seo-hero-grid,.mkt .seo-grid,.mkt .seo-compare,.mkt .seo-related{grid-template-columns:1fr;gap:16px}.mkt .seo-content{padding:42px 0}.mkt .seo-card,.mkt .seo-example{padding:22px}.mkt .seo-hero-grid{gap:28px}}
+@media(max-width:760px){.mkt .seo-hero{padding:38px 0 45px}.mkt .seo-hero-grid,.mkt .seo-grid,.mkt .seo-compare,.mkt .seo-related,.mkt .seo-preview-grid{grid-template-columns:1fr;gap:16px}.mkt .seo-content{padding:42px 0}.mkt .seo-card,.mkt .seo-example{padding:22px}.mkt .seo-hero-grid{gap:28px}}
 </style>
 @endpush
 @section('content')
@@ -86,7 +88,6 @@
                 @if($templates->isEmpty())<p>No sample designs are currently available. Please check the template collection for updates.</p>@endif
             </div>
         </section>
-        @include('marketing.partials.preview-dialog')
     @elseif(($page['mode'] ?? '') === 'pricing')
         <section class="seo-content" style="padding-top:0">
             <div class="mkt-wrap">
@@ -119,6 +120,21 @@
                 @endunless
             </div>
         </section>
+    @elseif($featuredExample)
+        <section class="seo-content" style="padding-top:0">
+            <div class="mkt-wrap seo-preview-grid">
+                <div>
+                    <div class="mkt-kicker red">SEE A REAL TEMPLATE</div>
+                    <h2 style="margin-top:10px">Explore an interactive invitation</h2>
+                    <p>Open an available sample design to see how its layout, artwork, wedding details and optional premium sections work. The example uses illustrative content, not a customer's private invitation.</p>
+                    <a class="mkt-button ghost" href="{{ route('marketing.landing', ['page' => 'wedding-website-examples']) }}">Compare more website examples</a>
+                </div>
+                @include('marketing.partials.template-card', ['template' => $featuredExample, 'canCreate' => $canCreate])
+            </div>
+        </section>
+    @endif
+    @if(($page['mode'] ?? '') === 'examples' || $featuredExample)
+        @include('marketing.partials.preview-dialog')
     @endif
     <section class="seo-content" style="padding-top:0">
         <div class="mkt-wrap seo-faq">
@@ -143,7 +159,7 @@
 </div>
 @endsection
 @push('scripts')
-@if(($page['mode'] ?? '') === 'examples')
+@if(($page['mode'] ?? '') === 'examples' || $featuredExample)
 @include('marketing.partials.interactions')
 @endif
 @endpush

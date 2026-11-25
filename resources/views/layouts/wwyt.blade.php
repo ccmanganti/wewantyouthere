@@ -79,6 +79,7 @@
         .fa-solid,.fa-brands{font-size:.95em;flex:none}
         .wwyt-brand-mark img{height:55px;width:auto;max-width:min(252px,39vw);object-fit:contain}
         .wwyt-foot-brand img{height:53px;width:auto;max-width:215px;object-fit:contain}
+        @media(max-width:960px){.nav .seo-nav-secondary{display:none}}
         @media(max-width:700px){.wwyt-brand-mark img{height:43px;max-width:155px}}
         @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
         label.field-label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field{margin-bottom:14px}.field-error{font-size:12px;color:#9b433c;margin-top:5px}
@@ -106,8 +107,8 @@
         <a class="hide-mobile" href="{{ route('marketing.templates') }}">Templates</a>
         @if($seoPublic)
             <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'how-it-works']) }}">How it works</a>
-            <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'pricing']) }}">Pricing</a>
-            <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'guides']) }}">Guides</a>
+            <a class="hide-mobile seo-nav-secondary" href="{{ route('marketing.landing', ['page' => 'pricing']) }}">Pricing</a>
+            <a class="hide-mobile seo-nav-secondary" href="{{ route('marketing.landing', ['page' => 'guides']) }}">Guides</a>
         @else
             <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
         @endif

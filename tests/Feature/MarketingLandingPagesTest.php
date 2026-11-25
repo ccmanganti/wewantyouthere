@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\InvitationTemplate;
 use Database\Seeders\WeddingBuilderSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -52,6 +53,18 @@ class MarketingLandingPagesTest extends TestCase
             ->assertSee('noindex,nofollow');
         $this->get('/pricing')->assertOk()->assertSee('RSVP + email notifications');
         $this->get('/wedding-website-examples')->assertOk()->assertSee('Ever After');
+    }
+
+    public function test_template_prices_are_dynamic_and_unpublished_designs_are_excluded(): void
+    {
+        $template = InvitationTemplate::where('slug', 'ever-after-classic')->firstOrFail();
+        $template->update(['premium_price_cents' => 123456]);
+        $this->get('/pricing')->assertOk()->assertSee('₱1,234.56');
+        $template->update(['status' => 'draft']);
+        $this->get('/pricing')->assertOk()->assertDontSee('ever-after-classic');
+        $this->get('/wedding-website-examples')->assertOk()->assertDontSee('ever-after-classic');
+        $this->get('/wedding-invitation-templates/ever-after-classic')->assertNotFound();
+        $this->get('/sitemap.xml')->assertOk()->assertDontSee('/wedding-invitation-templates/ever-after-classic', false);
     }
 
     public function test_homepage_links_to_each_marketing_page(): void

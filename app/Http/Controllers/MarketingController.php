@@ -26,13 +26,15 @@ class MarketingController extends Controller
         $pages = config('marketing_pages', []);
         abort_unless(isset($pages[$page]), 404);
         $content = $pages[$page];
-        $templates = in_array($content['mode'] ?? '', ['examples', 'pricing'], true)
-            ? $this->publicTemplates()->get()
-            : collect();
+        $showCollection = in_array($content['mode'] ?? '', ['examples', 'pricing'], true);
+        $templates = $showCollection ? $this->publicTemplates()->get() : collect();
+        $featuredExample = $showCollection ? null
+            : $this->publicTemplates()->reorder('is_premium')->orderBy('name')->first();
 
         return view('marketing.landing', [
             'page' => $content,
             'pageSlug' => $page,
+            'featuredExample' => $featuredExample,
             'pages' => $pages,
             'templates' => $templates,
             'canCreate' => ! Auth::check() || InvitationAccounts::canCreateWebsite(Auth::user()),

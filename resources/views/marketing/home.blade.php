@@ -118,7 +118,7 @@
                 @forelse($templates->take(3) as $template)
                     @include('marketing.partials.template-card', ['template' => $template, 'canCreate' => $canCreate])
                 @empty
-                    <div class="mkt-empty" style="grid-column:1/-1"><h3>First wedding design is being prepared.</h3><p>The Ever After template will show here once the WeddingBuilderSeeder has run.</p></div>
+                    <div class="mkt-empty" style="grid-column:1/-1"><h3>Our wedding design collection is being updated.</h3><p>Please check back soon to explore our available invitations.</p></div>
                 @endforelse
             </div>
         </div>

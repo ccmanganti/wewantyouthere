@@ -56,7 +56,7 @@ return [
     ],
     'wedding-website-builder' => [
         'label' => 'Wedding website builder',
-        'title' => 'Wedding Website Builder Philippines | Create Your Invitation',
+        'title' => 'Wedding Website Builder Philippines',
         'description' => 'Choose an editable wedding website template, personalize your details and photos, preview your invitation, then publish and share a custom link.',
         'h1' => 'Create a wedding website without coding',
         'kicker' => 'Your story, your design',
@@ -108,7 +108,7 @@ return [
     ],
     'online-wedding-rsvp' => [
         'label' => 'Online wedding RSVP',
-        'title' => 'Online Wedding RSVP Philippines | Guest Reply Form',
+        'title' => 'Online Wedding RSVP Philippines',
         'description' => 'Learn how an online wedding RSVP works with a wedding invitation website, guest confirmations, RSVP deadlines and premium email notifications.',
         'h1' => 'Collect wedding RSVPs online',
         'kicker' => 'Fewer messages, clearer guest replies',
@@ -160,7 +160,7 @@ return [
     ],
     'wedding-invitation-qr-code' => [
         'label' => 'Wedding invitation QR code',
-        'title' => 'Wedding Invitation QR Code | Share Your Wedding Website',
+        'title' => 'Wedding Invitation QR Code Philippines',
         'description' => 'Publish a wedding invitation website and download its QR code for printed invitations, reception cards and easy sharing with wedding guests.',
         'h1' => 'Share your wedding invitation with a QR code',
         'kicker' => 'From printed card to digital invitation',
@@ -212,7 +212,7 @@ return [
     ],
     'wedding-website-examples' => [
         'label' => 'Wedding website examples',
-        'title' => 'Wedding Website Examples Philippines | Interactive Invitation Designs',
+        'title' => 'Wedding Website Examples Philippines',
         'description' => 'Explore real interactive sample wedding websites, from classic stationery to botanical, editorial and destination designs. Preview available templates.',
         'h1' => 'Wedding website examples to inspire your invitation',
         'kicker' => 'Explore the experience before you create',
@@ -265,7 +265,7 @@ return [
     ],
     'pricing' => [
         'label' => 'Pricing',
-        'title' => 'Wedding Website Pricing Philippines | Free and Premium Invitations',
+        'title' => 'Wedding Website Pricing Philippines',
         'description' => 'Compare the free wedding invitation website plan with optional one-time premium design upgrades. See current template prices and included features.',
         'h1' => 'Wedding invitation website pricing',
         'kicker' => 'Start with what you need',
@@ -314,7 +314,7 @@ return [
     ],
     'how-it-works' => [
         'label' => 'How it works',
-        'title' => 'How to Make a Wedding Invitation Website | We Want You There',
+        'title' => 'How to Make a Wedding Invitation Website',
         'description' => 'Follow the step-by-step process for selecting a wedding template, editing your details, registering, publishing and sharing your invitation website.',
         'h1' => 'How to make and share your wedding invitation website',
         'kicker' => 'A simple guide from start to finish',
@@ -370,7 +370,7 @@ return [
     ],
     'guides' => [
         'label' => 'Wedding invitation guides',
-        'title' => 'Wedding Invitation Guides Philippines | Wording and Planning',
+        'title' => 'Wedding Invitation Guides Philippines',
         'description' => 'Practical wedding invitation planning tips for Filipino couples: wording, entourage, guest details, RSVP deadlines, QR codes and sharing etiquette.',
         'h1' => 'Wedding invitation planning guides for Filipino couples',
         'kicker' => 'Plan the details that matter',
