@@ -41,6 +41,9 @@ Route::get('/templates/{slug}/preview', [MarketingController::class, 'templatePr
 Route::get('/privacy', fn () => app(MarketingController::class)->legal('privacy'))->name('marketing.privacy');
 Route::get('/terms', fn () => app(MarketingController::class)->legal('terms'))->name('marketing.terms');
 Route::get('/sitemap.xml', [MarketingController::class, 'sitemap'])->name('marketing.sitemap');
+Route::get('/{page}', [MarketingController::class, 'landing'])
+    ->whereIn('page', array_keys(config('marketing_pages', [])))
+    ->name('marketing.landing');
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
     ->middleware('throttle:20,1')->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])

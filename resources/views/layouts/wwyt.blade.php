@@ -34,6 +34,13 @@
                 ['@type' => 'Organization', '@id' => $seoBase . '/#organization', 'name' => 'We Want You There', 'url' => $seoBase . '/'],
                 ['@type' => 'WebSite', '@id' => $seoBase . '/#website', 'name' => 'We Want You There', 'url' => $seoBase . '/', 'publisher' => ['@id' => $seoBase . '/#organization']],
             ];
+            if(request()->routeIs('marketing.landing')) {
+                $seoGraph[] = ['@type' => 'WebPage', '@id' => $seoCanonical . '#webpage', 'url' => $seoCanonical, 'name' => $page['h1'], 'description' => $page['description'], 'isPartOf' => ['@id' => $seoBase . '/#website']];
+                $seoGraph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
+                    ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $seoBase . '/'],
+                    ['@type' => 'ListItem', 'position' => 2, 'name' => $page['label'], 'item' => $seoCanonical],
+                ]];
+            }
             if(request()->routeIs('marketing.templates', 'marketing.templateDetail')) {
                 $crumbs = [
                     ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $seoBase . '/'],
@@ -97,7 +104,13 @@
     </a>
     <nav class="nav" aria-label="Main">
         <a class="hide-mobile" href="{{ route('marketing.templates') }}">Templates</a>
-        <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
+        @if($seoPublic)
+            <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'how-it-works']) }}">How it works</a>
+            <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'pricing']) }}">Pricing</a>
+            <a class="hide-mobile" href="{{ route('marketing.landing', ['page' => 'guides']) }}">Guides</a>
+        @else
+            <a class="hide-mobile" href="{{ route('home') }}#how-it-works">How it works</a>
+        @endif
         @auth
             <a class="hide-mobile" href="{{ url('/app/invitations') }}">My invitations</a>
             <a class="btn" href="{{ url('/app') }}">My dashboard <i class="fa-solid fa-gauge-high" aria-hidden="true"></i></a>
@@ -114,6 +127,14 @@
         <a href="{{ route('home') }}" aria-label="We Want You There home"><img src="{{ asset('brand/wwyt/logo-white.png') }}" width="190" height="44" loading="lazy" alt="We Want You There"></a>
         <span>© {{ date('Y') }} We Want You There. Celebrate beautifully.</span>
     </div>
+    @if($seoPublic)
+        <nav aria-label="Invitation resources" style="display:flex;flex-wrap:wrap;gap:9px 18px;flex:1 1 100%;padding:12px 0;border-top:1px solid #ffffff20">
+            <a href="{{ route('marketing.templates') }}">Wedding templates</a>
+            @foreach(config('marketing_pages', []) as $slug => $resource)
+                <a href="{{ route('marketing.landing', ['page' => $slug]) }}">{{ $resource['label'] }}</a>
+            @endforeach
+        </nav>
+    @endif
     <span><a href="{{ route('marketing.templates') }}">Templates</a> · <a href="{{ route('marketing.privacy') }}">Privacy</a> · <a href="{{ route('marketing.terms') }}">Terms</a></span>
 </div></footer>
 @if(session()->has('clear_wedding_draft'))

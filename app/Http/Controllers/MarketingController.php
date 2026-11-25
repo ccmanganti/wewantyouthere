@@ -21,12 +21,31 @@ class MarketingController extends Controller
         ]);
     }
 
+    public function landing(string $page): View
+    {
+        $pages = config('marketing_pages', []);
+        abort_unless(isset($pages[$page]), 404);
+        $content = $pages[$page];
+        $templates = in_array($content['mode'] ?? '', ['examples', 'pricing'], true)
+            ? $this->publicTemplates()->get()
+            : collect();
+
+        return view('marketing.landing', [
+            'page' => $content,
+            'pageSlug' => $page,
+            'pages' => $pages,
+            'templates' => $templates,
+            'canCreate' => ! Auth::check() || InvitationAccounts::canCreateWebsite(Auth::user()),
+        ]);
+    }
+
     public function templateDetail(string $slug): View
     {
         $template = $this->publicTemplates()->where('slug', $slug)->firstOrFail();
 
         return view('marketing.template-detail', [
             'template' => $template,
+            'relatedTemplates' => $this->publicTemplates()->where('id', '!=', $template->id)->limit(3)->get(),
             'canCreate' => ! Auth::check() || InvitationAccounts::canCreateWebsite(Auth::user()),
         ]);
     }
@@ -97,6 +116,10 @@ class MarketingController extends Controller
     {
         $base = rtrim(config('seo.canonical_base') ?: config('app.url'), '/');
         $paths = ['/', '/wedding-invitation-templates', '/privacy', '/terms'];
+
+        foreach (array_keys(config('marketing_pages', [])) as $slug) {
+            $paths[] = '/' . $slug;
+        }
 
         foreach ($this->publicTemplates()->pluck('slug') as $slug) {
             $paths[] = '/wedding-invitation-templates/' . rawurlencode($slug);

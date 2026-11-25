@@ -235,6 +235,19 @@
         </div>
     </section>
 
+    <section class="mkt-section" aria-labelledby="invitation-resources-title">
+        <div class="mkt-wrap">
+            <div class="mkt-section-head"><div><div class="mkt-kicker red">PLAN YOUR INVITATION</div><h2 id="invitation-resources-title">A little help for your <span class="mkt-serif">big day.</span></h2></div><p>Explore digital invitations, guest RSVP, pricing and practical wedding planning guides.</p></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px">
+                @foreach(config('marketing_pages', []) as $slug => $resource)
+                    <a href="{{ route('marketing.landing', ['page' => $slug]) }}" style="display:block;padding:21px;background:#fffdf7;border:1px solid #d8c9ba;border-radius:10px">
+                        <strong style="color:#810100">{{ $resource['label'] }} →</strong>
+                        <p style="margin:8px 0 0;font-size:13px;color:#554b47">{{ $resource['description'] }}</p>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
     <section class="mkt-last">
         <div class="mkt-wrap">
             <div><div class="mkt-kicker">THIS IS YOUR INVITATION TO BEGIN</div>

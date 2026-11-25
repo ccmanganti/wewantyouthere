@@ -11,7 +11,7 @@
     <section class="mkt-page-hero">
         <div class="mkt-wrap">
             <div class="mkt-kicker">THE WEDDING WEBSITE COLLECTION</div>
-            <h1 class="mkt-display">FIND YOUR <span class="mkt-serif" style="text-transform:none">forever</span> DESIGN.</h1>
+            <h1 class="mkt-display">WEDDING INVITATION <span class="mkt-serif" style="text-transform:none">website templates.</span></h1>
             <p>Explore online wedding invitation website templates built for beautiful celebrations in the Philippines. Open a full-page preview, choose the design you love, and make it uniquely yours.</p>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:25px">
                 <a class="mkt-button light" href="#catalogue">Explore wedding designs <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
@@ -42,6 +42,17 @@
             @if($templates->isEmpty())
                 <div class="mkt-empty" style="margin-top:20px"><h3>The wedding collection is being prepared.</h3><p>Our first design will appear after the starter template is published.</p></div>
             @endif
+        </div>
+    </section>
+    <section class="mkt-section" style="padding-top:20px">
+        <div class="mkt-wrap">
+            <h2 style="font-size:clamp(32px,4.5vw,52px);margin-bottom:20px">Choose a template that feels like you.</h2>
+            <p>Compare design styles, opening animations, typography and photo placements in the interactive previews. The sample names, dates and photographs are illustrative. Free designs allow basic publishing; RSVP, music, maps, programme and other advanced sections require premium access.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px">
+                <a class="mkt-button ghost" href="{{ route('marketing.landing', ['page' => 'wedding-website-examples']) }}">See wedding website examples</a>
+                <a class="mkt-button ghost" href="{{ route('marketing.landing', ['page' => 'pricing']) }}">Compare free and premium</a>
+                <a class="mkt-button ghost" href="{{ route('marketing.landing', ['page' => 'how-it-works']) }}">How to create your invitation</a>
+            </div>
         </div>
     </section>
     <section class="mkt-last"><div class="mkt-wrap"><div><div class="mkt-kicker">CREATE SOMETHING MEANINGFUL</div><h2>THE DETAILS ARE <span class="mkt-serif">all yours.</span></h2><p>Pick the layout. Tell your story. Share one beautifully simple link.</p></div>

@@ -1,7 +1,7 @@
 @extends('layouts.wwyt')
 @section('body_class', 'template-detail-page')
-@section('title', $template->name . ' Wedding Invitation Website Template | We Want You There')
-@section('meta_description', 'Preview ' . $template->name . ', a responsive wedding invitation website. Customize the entourage, ceremony, program, dress code, URL and QR code before publishing.')
+@section('title', e($template->name . ' | Wedding Website Template'))
+@section('meta_description', e(\Illuminate\Support\Str::limit(strip_tags((string) data_get($template->settings, 'description', 'Explore ' . $template->name . ', a customizable wedding invitation website with a shareable link and QR code.')), 155)))
 @push('styles')
 @include('marketing.partials.styles')
 <style>
@@ -115,7 +115,28 @@
                     @else
                         <a class="mkt-button" href="{{ route('wedding.editor', $template->slug) }}">Customize this invitation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                     @endif
-                    <p>Sample photos and wording are illustrative. Personalize your design before publishing. Maps, RSVP, video, programme and entourage are premium upgrades.</p>
+                    <p>Sample photos and wording are illustrative. Personalize your design before publishing. Maps, RSVP, music, video, programme and entourage are premium upgrades.</p>
+                    @php($showcase = config('wedding_curated_showcases.' . (\App\Support\CuratedWeddingDesign::forTemplate($template) ?? ''), []))
+                    <section style="margin-top:22px;border-top:1px solid #d8c4b9;padding-top:17px">
+                        <h2 style="font-size:23px">Style and customization</h2>
+                        @if(!empty($showcase['color_motif']))
+                            <p>Sample palette: {{ $showcase['color_motif'] }}. Suggested sample attire: {{ $showcase['dress_code'] ?? 'Wedding formal' }}. Replace the sample details with your own wedding information.</p>
+                        @else
+                            <p>Make the design your own with personalized names, event details and supported photo placements. Explore the interactive sample before you choose.</p>
+                        @endif
+                        <p><a href="{{ route('marketing.landing', ['page' => 'how-it-works']) }}" style="text-decoration:underline">How to create and publish</a> · <a href="{{ route('marketing.landing', ['page' => 'pricing']) }}" style="text-decoration:underline">Compare free and premium features</a></p>
+                    </section>
+                    @if($relatedTemplates->isNotEmpty())
+                        <section style="margin-top:18px">
+                            <h2 style="font-size:23px">Explore more wedding designs</h2>
+                            <ul style="padding-left:18px;font-size:13px">
+                                @foreach($relatedTemplates as $relatedTemplate)
+                                    <li><a href="{{ route('marketing.templateDetail', $relatedTemplate->slug) }}" style="text-decoration:underline">{{ $relatedTemplate->name }}</a></li>
+                                @endforeach
+                            </ul>
+                            <p><a href="{{ route('marketing.landing', ['page' => 'wedding-website-examples']) }}" style="text-decoration:underline">See all sample invitations</a></p>
+                        </section>
+                    @endif
                 </div>
             </div>
         </div>
